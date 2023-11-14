@@ -18,7 +18,7 @@ export const ProfileData = (props) => {
       {/*<PaginaJefeCarrera graphData={props} />*/}
       {/*<PaginaEstu graphData={props}/>*/}
       {/*<PaginaCor graphData={props}/>*/}
-      <PaginaEstu graphData={props}/>*
+      <PaginaJefeCarrera graphData={props} />
       </div>
     </Router>
       );

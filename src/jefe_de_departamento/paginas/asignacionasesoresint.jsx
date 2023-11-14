@@ -9,7 +9,7 @@ import {
   residenteaceptado,
 } from "./formato";
 import axios from "axios";
-
+import './estilos-impresion.css';
 /**
  * Renders information about the user obtained from MS Graph
  * @param props
@@ -22,7 +22,7 @@ const Asignacionasesorint = (props) => {
   const numerosComoCadena = numerosExtraidos ? numerosExtraidos[0] : "";
   // Para obtener los números como un número entero, puedes hacer:
   //const numerosComoEntero = numerosExtraidos ? parseInt(numerosExtraidos[0], 10) : null;
-  
+
   //console.log("esto es props", correo);
   const [data, setData] = useState(null);
   //PARA VISUALISAR ESPECIALIDEDEDES
@@ -60,8 +60,7 @@ const Asignacionasesorint = (props) => {
   //
   const direccionapi = "http://localhost:1337/";
   ///
-  //const residentesregistro = 
-
+  //const residentesregistro =
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -114,10 +113,10 @@ const Asignacionasesorint = (props) => {
     // Otros campos del ítem
   });
 
-//##################################################
+  //##################################################
 
-
-const crear = async () => {
+  const [mostrarPopup, setMostrarPopup] = useState(false);
+  const crear = async () => {
     /*
     const residenteSeleccionado = data.data.find(
         (item) => item.attributes.nombre === newItem.nombre
@@ -149,33 +148,49 @@ const crear = async () => {
       }
   
       */
-      console.log("PRESIONADO");
- };
+    //setMostrarVentanaEmergente(true);
+    console.log("PRESIONADO");
+  };
+  const handleCrearClick = () => {
+    // Lógica para mostrar el popup
+    setMostrarPopup(true);
+  };
 
+  const handleCerrarPopup = () => {
+    // Lógica para cerrar el popup
+    setMostrarPopup(false);
+  };
   //########################################################################
+
   const handleResidenteChange = (e) => {
-// Obtener el residente seleccionado
-const residenteSeleccionado = data.data.find(
-    (item) => item.attributes.nombre === e.target.value
-  );
-  
-  // Verificar si se encontró un residente
-  if (residenteSeleccionado) {
-    // Actualizar el estado con la información del residente seleccionado
-    setNewItem({
-      ...newItem,
-      nombre: residenteSeleccionado.attributes.nombre,
-      ncontrol: residenteSeleccionado.attributes.ncontrol,
-      nombre_anteproyecto: residenteSeleccionado.attributes.nombre_anteproyecto,
-      periodo: residenteSeleccionado.attributes.periodo,
-      empresa: residenteSeleccionado.attributes.empresa,
-      asesorE: residenteSeleccionado.attributes.asesorE,
-      carrera: residenteSeleccionado.attributes.carrera,
-    });
-  } else {
-    // Manejar el caso en que no se encontró un residente
-    console.log("Residente no encontrado");
-    setNewItem({
+    // Obtener el residente seleccionado
+    const residenteSeleccionado = data.data.find(
+      (item) => item.attributes.nombre === e.target.value
+    );
+
+    // Verificar si se encontró un residente
+    if (residenteSeleccionado) {
+      // Actualizar el estado con la información del residente seleccionado
+      setNewItem({
+        ...newItem,
+        id: residenteSeleccionado.id,
+        nombre: residenteSeleccionado.attributes.nombre,
+        ncontrol: residenteSeleccionado.attributes.ncontrol,
+        nombre_anteproyecto:
+          residenteSeleccionado.attributes.nombre_anteproyecto,
+        periodo: residenteSeleccionado.attributes.periodo,
+        empresa: residenteSeleccionado.attributes.empresa,
+        asesorE: residenteSeleccionado.attributes.asesorE,
+        carrera: residenteSeleccionado.attributes.carrera,
+       
+      });
+
+      console.log("ESTO ES ID",residenteSeleccionado.id);
+      
+    } else {
+      // Manejar el caso en que no se encontró un residente
+      console.log("Residente no encontrado");
+      setNewItem({
         ...newItem,
         nombre: "",
         ncontrol: "",
@@ -185,10 +200,43 @@ const residenteSeleccionado = data.data.find(
         asesorE: "",
         carrera: "",
       });
-  }
-  
+    }
   };
   //#####################################################################
+  const imprimir3 = () => {
+    // Ocultar otros elementos antes de imprimir
+    window.print();
+  };
+  //####################################
+  const obtenerFechaFormateada = () => {
+    const opcionesFecha = {
+      //weekday: 'long', // día de la semana completo
+      day: "numeric", // día del mes
+      month: "long", // nombre del mes completo
+      year: "numeric", // año con cuatro dígitos
+    };
+
+    const fechaActual = new Date();
+
+    const dia = fechaActual.toLocaleDateString("es-MX", opcionesFecha);
+
+    return dia;
+  };
+  const soloanio = () => {
+    const opcionesFecha = {
+  // nombre del mes completo
+      year: "numeric", // año con cuatro dígitos
+    };
+
+    const fechaActual = new Date();
+
+    const anio = fechaActual.toLocaleDateString("es-MX", opcionesFecha);
+
+    return anio;
+  };
+
+  
+
   return (
     <div className="contenido">
       <div className="contenido__texto">
@@ -198,7 +246,7 @@ const residenteSeleccionado = data.data.find(
         <div className="contenido__preguntas">
           <div className="informacion__pregunta">
             <span>Seleccione al Residente Aprobado:</span>
-            
+
             <select
               value={newItem.nombreResidente}
               onChange={handleResidenteChange}
@@ -230,7 +278,7 @@ const residenteSeleccionado = data.data.find(
                 setNewItem({ ...newItem, nombre_anteproyecto: e.target.value })
               }
             ></input>
-         <span>Numero de Control:</span>
+            <span>Numero de Control:</span>
             <input
               type="text"
               name="name"
@@ -241,7 +289,7 @@ const residenteSeleccionado = data.data.find(
             ></input>
           </div>
           <div className="informacion__pregunta">
-          <span>Nombre del Residente:</span>
+            <span>Nombre del Residente:</span>
             <input
               type="text"
               name="name"
@@ -250,7 +298,7 @@ const residenteSeleccionado = data.data.find(
                 setNewItem({ ...newItem, nombre: e.target.value })
               }
             ></input>
-          <span>Carrera:</span>
+            <span>Carrera:</span>
             <input
               type="text"
               name="name"
@@ -259,7 +307,7 @@ const residenteSeleccionado = data.data.find(
                 setNewItem({ ...newItem, carrera: e.target.value })
               }
             ></input>
-         <span>Periodo de Realizacion:</span>
+            <span>Periodo de Realizacion:</span>
             <input
               type="text"
               name="name"
@@ -271,14 +319,173 @@ const residenteSeleccionado = data.data.find(
           </div>
         </div>
       </div>
-      <button className="btn-asig" onClick={crear}>Crear</button>
-      <input
-        className="btn-asig"
-        type="submit"
-        name="register"
-        value="Imprimir"
-      ></input>
+      <button className="btn-asig" onClick={handleCrearClick}>
+        Crear
+      </button> 
+
+      
+    
+
+     
+      {mostrarPopup && (
+        <div className="popup">
+          <div className="popup-contenido" >
+          
+            <table className="mi-tabla"  >
+              <tbody>
+                <tr>
+                  <td>
+                    <img
+                      src="https://istmo.tecnm.mx/wp-content/uploads/2021/08/logo-tec-png-naranja.png"
+                      alt="Descripción de la imagen"
+                      width="100" // Establece el ancho en píxeles
+                      height="50" // Establece la altura en píxeles
+                    />
+                  </td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Instituto Tecnológico Del Istmo
+                    <br />
+                    "Por una Tecnología Propia como principio de libertad"
+                    <br />
+                    ASIGNACION DE ASESOR INTERNO DE RESIDENCIA
+                    <br />
+                    PROFESIONAL
+                  </td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Código:
+                    <br />
+                    FR-ITISMO-7.5.1-07-02
+                    <br />
+                    Versión:
+                    <br />
+                    Rev. 1
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <p style={{ textAlign: "right", fontWeight: "bold" }}>
+              Departamento: SISTEMAS Y
+              <br />
+              COMPUTACIÓN
+              <br />
+              No. Oficio: {newItem.id}{" / "} {soloanio()}
+            </p>
+            <p style={{ textAlign: "right", fontWeight: "bold" }}>
+              ASUNTO: Asesor interno de Residencia Profesionales
+            </p>
+            <p style={{ textAlign: "right" }}>
+              Hca. Ciudad de Juchitán De Zaragoza, Oaxaca, a{" "}
+              {obtenerFechaFormateada()}.
+            </p>
+            <p style={{ textAlign: "left", fontWeight: "bold" }}>
+            {newItem.asesorE}
+              <br />
+              Docente de Sistemas y Computación 
+              <br />
+              P R E S E N T E.
+            </p>
+            
+            <p style={{ textAlign: "left" }}>Por este conducto informo a usted que ha sido asignado para fungir como Asesor interno del Proyecto
+            <br />
+            de Residencia Profesionales que a continuación se describe:
+            </p>
+            <table className="mi-tabla">
+              <tbody>
+                <tr>
+                  <td>
+                  <p style={{ textAlign: "left" }}>Nombre del <br />
+                      Residente:
+                  </p>
+                  </td>
+                  <td >
+                  <p>{newItem.nombre}</p>
+                  </td> 
+                </tr>
+                <tr>
+                  <td>
+                  <p style={{ textAlign: "left" }}>Carrera:
+                  </p>
+                  </td>
+                  <td >
+                  <p>{newItem.carrera}</p>
+                  </td> 
+                </tr>
+                <tr>
+                  <td>
+                  <p style={{ textAlign: "left" }}>Nombre del 
+                      Proyecto:
+                  </p>
+                  </td>
+                  <td >
+                  <p>{newItem.nombre_anteproyecto}</p>
+                  </td> 
+                </tr>
+                <tr>
+                  <td>
+                  <p style={{ textAlign: "left" }}>Periodo de realización:
+                  </p>
+                  </td>
+                  <td >
+                  <p>{newItem.periodo}</p>
+                  </td> 
+                </tr>
+                <tr>
+                  <td>
+                  <p style={{ textAlign: "left" }}>Nombre de la Empresa:
+                  </p>
+                  </td>
+                  <td >
+                  <p>{newItem.empresa}</p>
+                  </td> 
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <p style={{ textAlign: "left" }}>Así mismo, le solicito dar el seguimiento y asesoria pertinente a la realización del proyeto aplicando <br />
+            los  lineamientos establecidos para ello e informar el avance de dicha residencia.
+            </p>
+            <p style={{ textAlign: "left" }}>Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional <br />
+            de nuestro estudiantado.
+            </p>
+
+            <p style={{ textAlign: "center", fontWeight: "bold" }}>
+              Atentamente
+            </p>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <p style={{ textAlign: "center", fontWeight: "bold" }}>
+              ING. IVAN RUIZ SANCHEZ
+              <br />
+              SISTEMAS Y COMPUTACIÓN
+            </p>
+            <br />
+            <p style={{ textAlign: "left" }}>C.c.p. Expediente</p>
+            {/* Agrega más campos según sea necesario */}
+            <button className="btn-asig" onClick={imprimir3}>
+              Imprimir
+            </button>
+            <button className="btn-asig" onClick={handleCerrarPopup}>
+              Cerrar
+            </button>
+            </div>
+          
+        </div>
+      )}
+     
+     
     </div>
+    
+   
+    
+
+
   );
 };
 export default Asignacionasesorint;
