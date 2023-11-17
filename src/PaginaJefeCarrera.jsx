@@ -11,7 +11,7 @@ import Evaluacionesreporte from "./jefe_de_departamento/paginas/evaluacionesrepo
 import Evaluacionesseguimiento from "./jefe_de_departamento/paginas/evaluacionesseguimiento.jsx";
 import Evaluacionseguimiento from "./jefe_de_departamento/paginas/evaluacionseguimiento.jsx";
 import Evaluacionreporte from "./jefe_de_departamento/paginas/evaluacionreporte.jsx";
-
+import Salir from './jefe_de_departamento/paginas/salir.jsx';
 
 /**
  * Renders information about the user obtained from MS Graph
@@ -37,6 +37,7 @@ const PaginaJefe = (props) => {
               <Route path="/evaluacionreporte" element={<Evaluacionreporte />} />
               <Route path="/evaluacionesseguimiento" element={<Evaluacionesseguimiento />} />
               <Route path="/evaluacionesreporte" element={<Evaluacionesreporte />} />
+              <Route path="/salir" element={<Salir />} />
 
             </Routes>
           </main>

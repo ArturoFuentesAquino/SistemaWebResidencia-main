@@ -809,6 +809,28 @@
   align-content: center;
   
 }
+.aprobado {
+  background-color: green;
+  color: white;
+}
+
+.en-revision {
+  background-color: yellow;
+ 
+}
+
+.corregir {
+  background-color: orange;
+  
+}
+
+.rechazado {
+  background-color: red;
+  color: white;
+  
+}
+
+
 
 
 

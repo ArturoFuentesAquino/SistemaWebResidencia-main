@@ -8,6 +8,7 @@ import Pie from "./componentes/pie_de_pagina.jsx";
 import Inicio from "./estudiante/paginas/inicio.jsx";
 import Anteproyectosubir from "./estudiante/paginas/anteproyectosubir.js";
 import Salir from './estudiante/paginas/salir.jsx';
+import Resultadoevaluaciones from "./estudiante/paginas/resultadoevaluaciones.jsx"
 /**
  * Renders information about the user obtained from MS Graph
  * @param props 
@@ -28,6 +29,7 @@ const PaginaEstu = (props) => {
               <Route path="/" element={<Inicio />} />
               <Route path="/inicio" element={<Inicio />} />
               <Route path="/anteproyectosubir" element={<Anteproyectosubir graphData={props} />} />
+              <Route path="/resultadoevaluaciones" element={<Resultadoevaluaciones graphData={props} />} />
               <Route path="/salir" element={<Salir />} />
             </Routes>
           </main>

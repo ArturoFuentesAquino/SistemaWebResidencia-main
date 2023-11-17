@@ -21,6 +21,7 @@ const Barra = ({ children }) => {
             case '/inicio':
             case '/':
             case '/anteproyectosubir':
+            case '/resultadoevaluaciones':
             case '/salir':
                 return location.pathname === ruta;
             default:
@@ -39,6 +40,10 @@ const Barra = ({ children }) => {
                 <h1>Inicio </h1>
             </div>
             <div title='Anteproyecto' className={`boton ${isActive('/anteproyectosubir') ? 'activo' : ''}`} onClick={() => navigateTo('/anteproyectosubir')}>
+                <FaRegListAlt className="icono" />
+                <h1>Subir Anteproyecto</h1>
+            </div>
+            <div title='Resultadoevaluaciones' className={`boton ${isActive('/resultadoevaluaciones') ? 'activo' : ''}`} onClick={() => navigateTo('/resultadoevaluaciones')}>
                 <FaRegListAlt className="icono" />
                 <h1>Subir Anteproyecto</h1>
             </div>

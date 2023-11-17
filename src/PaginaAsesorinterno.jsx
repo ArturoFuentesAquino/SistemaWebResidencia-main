@@ -12,8 +12,14 @@ import Evaluacionreporte from "./asesor_interno/paginas/evaluacionreporte.jsx";
 import Tablaevaluacionesseguimiento from "./asesor_interno/paginas/tablaevaluacionseguimiento.jsx";
 import Tablaevaluacionesreporte from "./asesor_interno/paginas/tablaevaluacionreporte.jsx";
 
+/**
+ * Renders information about the user obtained from MS Graph
+ * @param props 
+ */
 
-const PaginaAsesorInterno = ({ children }) => {
+
+
+const PaginaAsesorInterno = (props) => {
    
     
     return (
@@ -21,14 +27,14 @@ const PaginaAsesorInterno = ({ children }) => {
         <Barra />
         <div className="principal">
           <header className="cabecera">
-            <Cabecera />
+            <Cabecera graphData={props}  />
           </header>
           <main className="cuerpo">
             <Routes>
               <Route path="/" element={<Inicio />} />
               <Route path="/inicio" element={<Inicio />} />
-              <Route path="/alumnosresidentesasign" element={<Alumnosresidentesasign />} />
-              <Route path="/evaluacionreporte" element={<Evaluacionreporte />} />
+              <Route path="/alumnosresidentesasign" element={<Alumnosresidentesasign graphData={props} />} />
+              <Route path="/evaluacionreporte" element={<Evaluacionreporte graphData={props}/>} />
               <Route path="/tablaevaluacionesreporte" element={<Tablaevaluacionesreporte />} />
               <Route path="/evaluacionseguimiento" element={<Evaluacionseguimiento />} />
               <Route path="/tablaevaluacionesseguimiento" element={<Tablaevaluacionesseguimiento />} />

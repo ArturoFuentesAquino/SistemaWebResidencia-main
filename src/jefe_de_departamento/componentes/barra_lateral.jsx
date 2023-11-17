@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { FaTh, FaRegListAlt, FaRegFileAlt } from "react-icons/fa";
+import { FaTh, FaRegListAlt, FaRegFileAlt,FaSignOutAlt } from "react-icons/fa";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Barra = ({ children }) => {
@@ -28,6 +28,8 @@ const Barra = ({ children }) => {
                 return location.pathname === ruta;
             case '/evaluacionesreporte':
                 return location.pathname === ruta;
+                case '/salir':
+                    return location.pathname === ruta;    
             default:
                 return false;
         }
@@ -61,6 +63,10 @@ const Barra = ({ children }) => {
             <div title='Evaluaciones Reporte' className={`boton ${isActive('/evaluacionesreporte') ? 'activo' : ''}`} onClick={() => navigateTo('/evaluacionesreporte')}>
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluaciones<br />Reporte</h1>
+            </div>
+            <div title='Salir' className={`boton ${isActive('/salir') ? 'activo' : ''}`} onClick={() => navigateTo('/salir')}>
+                <FaSignOutAlt className="icono" />
+                <h1>Salir</h1>
             </div>
             <main>
                 {children}

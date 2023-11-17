@@ -18,7 +18,7 @@ export async function fetchData(nametable) {
 
   
   //METODO PARA CREAR
-  export async function createData(newItem,nametable,prueba,prueba2,prueba3,prueba4,correoi,califasesorI,califasesorE) {
+  export async function createData(newItem,nametable,prueba,prueba2,prueba3,prueba4,correoi) {
     try {
       const requestData = {
         data: {
@@ -27,10 +27,7 @@ export async function fetchData(nametable) {
           namedoc:prueba2,
           estado:prueba3,
           observaciones:prueba4,
-          correo:correoi,
-          califasesorI:califasesorI,
-          califasesorE:califasesorE
-
+          correo:correoi
         },
       };
       
@@ -59,38 +56,38 @@ export async function fetchData(nametable) {
   }
 
 
-      //METODO PARA CREAR EVALUACION
-      export async function agregarevaluacion(newItem,nametable) {
-        try {
-          const requestData = {
-            data: {
-              ...newItem
-            },
-          };
-          
-          
-          const response = await fetch(`${apiUrl}/${nametable}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData),
-          });
-      
-          if (response.ok) {
-            const successMessage = 'Elemento creado con éxito';
-            alert(successMessage);
-            return true;
-          } else {
-            const errorMessage = 'Error al crear el elemento: ' + response.statusText;
-            alert(errorMessage);
-            throw new Error(response.statusText);
-          }
-        } catch (error) {
-          console.error('Error al crear el elemento:', error);
-          throw error;
+    //METODO PARA CREAR EVALUACION
+    export async function agregarevaluacion(newItem,nametable) {
+      try {
+        const requestData = {
+          data: {
+            ...newItem
+          },
+        };
+        
+        
+        const response = await fetch(`${apiUrl}/${nametable}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        });
+    
+        if (response.ok) {
+          const successMessage = 'Elemento creado con éxito';
+          alert(successMessage);
+          return true;
+        } else {
+          const errorMessage = 'Error al crear el elemento: ' + response.statusText;
+          alert(errorMessage);
+          throw new Error(response.statusText);
         }
+      } catch (error) {
+        console.error('Error al crear el elemento:', error);
+        throw error;
       }
+    }
   //METODO PARA CREAR STATUS
   //const [newItem2, setNewItem2] = useState({ idresi: '', iddoc: '',observaciones: '', status: '' });
   export async function crearstatus(resiid,docid,obv,sta,nametable) {

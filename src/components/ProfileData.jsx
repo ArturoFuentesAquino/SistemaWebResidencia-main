@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import PaginaCor from "../PaginaCor"
 import PaginaEstu from "../PaginaEstu";
 import PaginaJefeCarrera from "../PaginaJefeCarrera"
+import PaginaAsesorInterno from "../PaginaAsesorinterno";
 /**
  * Renders information about the user obtained from MS Graph
  * @param props 
@@ -18,7 +19,9 @@ export const ProfileData = (props) => {
       {/*<PaginaJefeCarrera graphData={props} />*/}
       {/*<PaginaEstu graphData={props}/>*/}
       {/*<PaginaCor graphData={props}/>*/}
-      <PaginaJefeCarrera graphData={props} />
+      {/*<PaginaAsesorInterno graphData={props} />*/}
+      <PaginaEstu graphData={props}/>
+
       </div>
     </Router>
       );

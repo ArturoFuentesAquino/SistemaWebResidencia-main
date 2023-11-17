@@ -6,6 +6,7 @@ import {
   updateData,
   deleteData /*, conaxios*/,
   updateDataDoc,
+  agregarevaluacion
 } from "./formato";
 import axios from "axios";
 
@@ -47,6 +48,8 @@ function App(props) {
     carrera: "",
   });
 
+
+
   ///api/residentesuploads
   //pruebas de importacion
   const nombretabla = "api/residentesuploads";
@@ -59,6 +62,8 @@ function App(props) {
   //
   const direccionapi = "http://localhost:1337/";
   ///
+  const naevalua = "api/evaluacion1s";
+  const naevaluaE = "api/evaluacion1-es";
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -226,8 +231,10 @@ function App(props) {
 
         if (response.status === 200) {
           // El archivo se ha cargado con éxito
-          const estado = "En revision";
+          const estado = "En Revision";
           const observaciones = "En proceso de observaciones";
+          const califasesorI = "0";
+          const califasesorE = "0";
 
           console.log("Archivo PDF cargado con éxito.");
           setUploadedFileName(selectedFile.name);
@@ -235,20 +242,60 @@ function App(props) {
           const fileId = response.data[0].id;
           setDocumentId(fileId);
 
-          await createData(
+            await createData(
             newItem,
             nombretabla,
             fileId.toString(),
             namedocs,
             estado.toString(),
             observaciones.toString(),
-            correo
+            correo,
+            califasesorI.toString(),
+            califasesorE.toString()
           );
+        
+         
+  
 
           const updatedData2 = await fetchData(nombretabla);
           const lastIndex = updatedData2.data.length - 1;
           const lastItem = updatedData2.data[lastIndex];
           const lastItemId = lastItem.id;
+          const lastItemNombre = lastItem.attributes.asesorE;
+   
+
+          const evaluacion =  {
+            dato1: "0",
+            dato2: "0",
+            dato3: "0",
+            dato4: "0",
+            dato5: "0",
+            dato6: "0",
+            dato7: "0",
+            dato8: "0",
+            dato9: "0",
+            dato10: "0",
+            dato11: "0",
+            dato12: "0",
+            dato13: "0",
+            dato14: "0",
+            dato15: "0",
+            idevaluado:lastItemId.toString(),
+            observaciones: "En proceso de observaciones",
+            asesori:lastItemNombre.toString(),
+            
+          }
+
+          await agregarevaluacion(
+            evaluacion,
+            naevalua
+          );
+          await agregarevaluacion(
+            evaluacion,
+            naevaluaE
+          );
+
+
 
           setDocumentoCargado(true);
           //setEditingMode(true);
@@ -487,15 +534,11 @@ function App(props) {
   };
 
   const consola = async () => {
-    const datos2 = retornacorreo();
-    //console.log("esto es de consola: ", datos2.correos.toString())
-    if (datos2.correos.toString() === correo) {
-      //console.log("LOS DATOS CONICICEN CORREO DE AZURE: ",correo,"CORREO DE CONSOLA: ",datos2.correos.toString()
-      // ,"IDE DE CONSOLA: ",datos2.ids.toString())
-      return datos2.correos.toString();
-    } else {
-      return "Libre";
-    }
+    const updatedData2 = await fetchData(nombretabla);
+    const lastIndex = updatedData2.data.length - 1;
+    const lastItem = updatedData2.data[lastIndex];
+    const lastItemId = lastItem.id;
+    console.log("ESTO ES ID:",lastItemId.toString())
   };
 
   const verdocumentos = async (datos) => {
@@ -505,6 +548,84 @@ function App(props) {
 
   const [editingMode, setEditingMode] = useState(false);
   const [editingMode2, setEditingMode2] = useState(false);
+
+
+  const [errorPeriodo, setErrorPeriodo] = useState('');
+  const handlePeriodoChange = (e) => {
+    const periodo = e.target.value;
+    setNewItem({ ...newItem, periodo });
+  
+    const match = periodo.match(/^([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)\s*-\s*([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)$/);
+  
+    if (match) {
+      const [, diaInicio, preposicionInicio, mesInicio, diaFin, preposicionFin, mesFin] = match;
+  
+      console.log("diaInicio:", diaInicio);
+      console.log("preposicionInicio:", preposicionInicio);
+      console.log("mesInicio:", mesInicio);
+      console.log("diaFin:", diaFin);
+      console.log("preposicionFin:", preposicionFin);
+      console.log("mesFin:", mesFin);
+  
+      const fechaInicio = new Date(new Date().getFullYear(), obtenerIndiceMes(mesInicio), parseInt(diaInicio, 10));
+      const fechaFin = new Date(new Date().getFullYear(), obtenerIndiceMes(mesFin), parseInt(diaFin, 10));
+  
+      console.log("Fecha Inicio:", fechaInicio);
+      console.log("Fecha Fin:", fechaFin);
+  
+      // Calcula la diferencia en meses directamente
+      const diferenciaMeses = (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 + fechaFin.getMonth() - fechaInicio.getMonth();
+  
+      console.log("Diferencia Meses:", diferenciaMeses);
+  
+      if (diferenciaMeses === 3 || diferenciaMeses === 5) {
+        setErrorPeriodo('');
+      } else {
+        setErrorPeriodo('El periodo debe ser de 4 o 6 meses.');
+      }
+    } else {
+      setErrorPeriodo('Formato incorrecto. Por favor, ingrese los periodos como "1 de Enero - 1 de Febrero" y asegúrese de usar días válidos.');
+    }
+  };
+  
+  
+  
+  const calcularDiferenciaMeses = (fechaInicio, fechaFin) => {
+    return (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 + fechaFin.getMonth() - fechaInicio.getMonth();
+  };
+  
+
+  const obtenerIndiceMes = (nombreMes) => {
+    const meses = [
+      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
+      'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE',
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+
+    const mesBuscado = nombreMes.toLowerCase();
+
+    return meses.indexOf(mesBuscado);
+  };
+
+
+
+  const puedeAgregarPeriodo = !errorPeriodo && newItem.periodo.trim() !== '';
+
+  const agregarPeriodo = () => {
+    if (puedeAgregarPeriodo) {
+      // Lógica para agregar el período, por ejemplo, enviar a la API, etc.
+      console.log('Período agregado:', newItem.periodo);
+    } else {
+      alert('No se puede agregar el período debido a errores o formato incorrecto.');
+   
+    }
+  };
+
+
+
   return (
     <div className="contenido__anteproyectosubir">
       <div className="Anteproyectosubir__titulo">
@@ -555,18 +676,14 @@ function App(props) {
             </div>
 
             <div className="informacion__pregunta">
-              <span>Periodo de realización:</span>
-              <input
-                type="text"
-                placeholder="periodo"
-                value={newItem.periodo}
-                onChange={(e) =>
-                  setNewItem({ ...newItem, periodo: e.target.value })
-                }
-              />
-              {errors.periodo && (
-                <p style={{ color: "red" }}>{errors.periodo}</p>
-              )}
+            <span>Periodo de realización:</span>
+      <input
+        type="text"
+        placeholder="periodo"
+        value={newItem.periodo}
+        onChange={handlePeriodoChange}
+      />
+      {errorPeriodo && <p style={{ color: 'red' }}>{errorPeriodo}</p>}
               <span>Nombre de la empresa:</span>
               <input
                 type="text"
@@ -579,24 +696,35 @@ function App(props) {
               {errors.empresa && (
                 <p style={{ color: "red" }}>{errors.empresa}</p>
               )}
+             
               <span>Asesor:</span>
-              <select
-                value={newItem.asesorE}
-                onChange={(e) =>
-                  setNewItem({ ...newItem, asesorE: e.target.value })
-                }
-              >
-                <option value="">Selecciona un Asesor</option>
-                {asesores &&
-                  asesores.data.map((asesor) => (
-                    <option key={asesor.id} value={asesor.attributes.nombre}>
-                      {asesor.attributes.nombre}
-                    </option>
-                  ))}
-              </select>
+<select
+  value={newItem.asesorE ? newItem.asesorE : ''}
+  onChange={(e) => {
+    const selectedAsesor = asesores.data.find(
+      (asesor) => asesor.attributes.nombre === e.target.value
+    );
+
+    setNewItem({
+      ...newItem,
+      asesorE: selectedAsesor.attributes.nombre,
+      idasesor: selectedAsesor.id.toString(),
+      correoasesor: selectedAsesor.attributes.correo,
+    });
+  }}
+>
+  <option value="">Selecciona un Asesor</option>
+  {asesores &&
+    asesores.data.map((asesor) => (
+      <option key={asesor.id} value={asesor.attributes.nombre}>
+        {asesor.attributes.nombre}
+      </option>
+    ))}
+</select>
               {errors.asesorE && (
                 <p style={{ color: "red" }}>{errors.asesorE}</p>
               )}
+
 
               <span>Carrera:</span>
               <select
@@ -647,7 +775,7 @@ function App(props) {
                 </button>
               </>
             ) : (
-              <button onClick={handleCreate}>Crear</button>
+              <button onClick={handleCreate} disabled={!puedeAgregarPeriodo}>Crear</button>
             )}
           </div>
         )}
@@ -662,85 +790,105 @@ function App(props) {
                 <th>Nombre</th>
                 <th>Nombre de Anteproyecto</th>
                 <th>Nombre de documento</th>
-                <th>Esatado</th>
+                <th>Periodo de Realizacion</th>
+                <th>Estado</th>
                 <th>Carrera</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {data &&
-                data.data.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.attributes.ncontrol}</td>
-                    <td>{item.attributes.nombre}</td>
-                    <td>{item.attributes.nombre_anteproyecto}</td>
-                    <td>{item.attributes.namedoc}</td>
-                    <td>{item.attributes.estado}</td>
-                    <td>{item.attributes.carrera}</td>
-                    <td>
-                      <button
-                        className="btnsubir"
-                        onClick={() => handleEdit(item.id)}
+                data.data
+                  .filter((item) => item.attributes.correo === correo)
+                  .map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.attributes.ncontrol}</td>
+                      <td>{item.attributes.nombre}</td>
+                      <td>{item.attributes.nombre_anteproyecto}</td>
+                      <td>{item.attributes.namedoc}</td>
+                      <td>{item.attributes.periodo}</td>
+                      <td
+                        className={
+                          item.attributes.estado === "Aprobado"
+                            ? "aprobado"
+                            : item.attributes.estado === "En Revision"
+                            ? "en-revision"
+                            : item.attributes.estado === "Corregir"
+                            ? "corregir"
+                            : item.attributes.estado === "Rechazado"
+                            ? "rechazado"
+                            : ""
+                        }
                       >
-                        Editar Información
-                      </button>
-                      <button
-                        className="btnsubir"
-                        onClick={() =>
-                          handleEditDocument(
-                            item.id,
-                            item.attributes.iddocumento,
-                            item.attributes.estado
+                        {item.attributes.estado}
+                      </td>
+                      <td>{item.attributes.carrera}</td>
+                      <td>
+                        <button
+                          className="btnsubir"
+                          onClick={() => handleEdit(item.id)}
+                        >
+                          Editar Información
+                        </button>
+                        <button
+                          className="btnsubir"
+                          onClick={() =>
+                            handleEditDocument(
+                              item.id,
+                              item.attributes.iddocumento,
+                              item.attributes.estado
+                            )
+                          }
+                        >
+                          Editar Doc
+                        </button>
+                        {documents
+                          .filter(
+                            (document) =>
+                              document.id ===
+                              (typeof item.attributes.iddocumento === "string"
+                                ? parseInt(item.attributes.iddocumento, 10)
+                                : item.attributes.iddocumento)
                           )
-                        }
-                      >
-                        Editar Doc
-                      </button>
-                      {documents
-                        .filter(
-                          (document) =>
-                            document.id ===
-                            (typeof item.attributes.iddocumento === "string"
-                              ? parseInt(item.attributes.iddocumento, 10)
-                              : item.attributes.iddocumento)
-                        )
-                        .map((document) => (
-                          <div key={document.id}>
-                            <button
-                              className="btnrec"
-                              onClick={() => verdocumentos(document.url)}
-                            >
-                              ver documento
-                            </button>
-                          </div>
-                        ))}
-                      <button
-                        className="btnsubir"
-                        onClick={() =>
-                          handleDelete(item.id, item.attributes.iddocumento)
-                        }
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                          .map((document) => (
+                            <div key={document.id}>
+                              <button
+                                className="btnrec"
+                                onClick={() => verdocumentos(document.url)}
+                              >
+                                ver documento
+                              </button>
+                            </div>
+                          ))}
+                        <button
+                          className="btnsubir"
+                          onClick={() =>
+                            handleDelete(item.id, item.attributes.iddocumento)
+                          }
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>
 
         <div className="observaciones">
           {data &&
-            data.data.map((item) => (
-              <tr key={item.id}>
-                <span>Observaciones:</span>
-                <textarea
-                  name="textarea"
-                  placeholder={item.attributes.observaciones}
-                  readOnly
-                />
-              </tr>
-            ))}
+            data.data
+              .filter((item) => item.attributes.correo === correo)
+              .map((item) => (
+                <tr key={item.id}>
+                  <span>Observaciones:</span>
+                  <textarea
+                    name="textarea"
+                    placeholder={item.attributes.observaciones}
+                    readOnly
+                  />
+                </tr>
+              ))}
         </div>
       </div>
     </div>
