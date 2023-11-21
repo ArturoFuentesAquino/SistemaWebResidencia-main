@@ -35,9 +35,9 @@ const PaginaAsesorInterno = (props) => {
               <Route path="/inicio" element={<Inicio />} />
               <Route path="/alumnosresidentesasign" element={<Alumnosresidentesasign graphData={props} />} />
               <Route path="/evaluacionreporte" element={<Evaluacionreporte graphData={props}/>} />
-              <Route path="/tablaevaluacionesreporte" element={<Tablaevaluacionesreporte />} />
-              <Route path="/evaluacionseguimiento" element={<Evaluacionseguimiento />} />
-              <Route path="/tablaevaluacionesseguimiento" element={<Tablaevaluacionesseguimiento />} />
+              <Route path="/tablaevaluacionesreporte" element={<Tablaevaluacionesreporte graphData={props} />} />
+              <Route path="/evaluacionseguimiento" element={<Evaluacionseguimiento  graphData={props}/>} />
+              <Route path="/tablaevaluacionesseguimiento" element={<Tablaevaluacionesseguimiento  />} />
             </Routes>
           </main>
           <footer className="pie-pagina">

@@ -63,6 +63,14 @@ const Resultadoevaluaciones = (props) => {
   const naevalua = "api/evaluacion1s";
   const naevaluaE = "api/evaluacion1-es";
 
+  ///ESTO ES LAS 2 SEGUNDAS EVALUACIONES
+
+  const nuevalua2 = "api/evaluacion2s"
+  const nuevaluaE2 = "api/evaluacion2-es"
+
+  const [evalu2, setEvalu2] = useState(null);
+  const [evaluE2, setEvalue2] = useState(null);
+
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -87,6 +95,11 @@ const Resultadoevaluaciones = (props) => {
 
       const fetchedEvaluE = await fetchData(naevaluaE);
       setEvalue(fetchedEvaluE);
+
+      const fetchedEvalu2 = await fetchData(nuevalua2);
+      setEvalu2(fetchedEvalu2);
+      const fetchedEvaluE2 = await fetchData(nuevaluaE2);
+      setEvalue2(fetchedEvaluE2);
 
       console.log("Cargo todos los datos!", fetchedEvalu);
       //setEditingMode(true)
@@ -119,6 +132,10 @@ const Resultadoevaluaciones = (props) => {
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [mostrarPopupS, setMostrarPopupS] = useState(false);
 
+
+  const [mostrarPopup3, setMostrarPopup3] = useState(false);
+  const [mostrarPopup4, setMostrarPopup4] = useState(false);
+
   const imprimir3 = () => {
     // Ocultar otros elementos antes de imprimir
     window.print();
@@ -140,6 +157,19 @@ const Resultadoevaluaciones = (props) => {
     setMostrarPopupS(false);
   };
 
+  const mostrarp3 = () => {
+    setMostrarPopup3(true);
+  };
+  const cerrarp3 = () => {
+    setMostrarPopup3(false);
+  };
+  const mostrarp4 = () => {
+    setMostrarPopup4(true);
+  };
+  const cerrarp4 = () => {
+    setMostrarPopup4(false);
+  };
+
   const criteriosAEvaluar = [
     { label: "Portada", valor: 2, atributo: "dato1" },
     { label: "Agradecimientos", valor: 2, atributo: "dato2" },
@@ -158,6 +188,19 @@ const Resultadoevaluaciones = (props) => {
     { label: "Calificación total", valor: 100, atributo: "dato15" },
   ];
 
+
+  const criteriosAEvaluar2 = [
+    { label: "Asiste puntualmente en el horario establecido ", valor: 5, atributo: "dato1" },
+    { label: "Trabaja en equipo y se comunica de forma efectiva (oral y escrita) ", valor: 10, atributo: "dato2" },
+    { label: "Tiene iniciativa para colaborar ", valor: 5, atributo: "dato3" },
+    { label: "Propone mejoras al proyecto ", valor: 10, atributo: "dato4" },
+    { label: "Cumple con los objetivos correspondientes al proyecto ", valor: 15, atributo: "dato5" },
+    { label: "Es ordenado y cumple satisfactoriamente con las actividades encomendadas en los tiempos establecidos del cronograma ", valor: 15, atributo: "dato6" },
+    { label: "Demuestra liderazgo en su actuar ", valor: 10, atributo: "dato7" },
+    { label: "Demuestra conocimiento en el área de su especialidad ", valor: 20, atributo: "dato8" },
+    { label: "Demuestra un comportamiento ético (es disciplinado, acata órdenes, respeta a sus compañeros de trabajo, entre otros)  ", valor: 10, atributo: "dato9" },
+    { label: "Calificación total ", valor: 100, atributo: "dato10" },
+  ];
   return (
     <div className="contenido">
       <div className="Anteproyectosubir__titulo">
@@ -380,12 +423,36 @@ const Resultadoevaluaciones = (props) => {
                       <br />
                       <br />
                       <br />
-                      {data && data.data.filter((item) => item.attributes.correo === correo).map((item) => (
-                            <>
-                        {item.attributes.asesorE}
-                        </>
+                      {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evalu && evalu.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evalu.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
 
-                    ))}
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                           
+                           <p> {evaluacionCorrespondiente.attributes.asesori} </p>
+                            
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
                     </p>
                   </td>
                   <td>
@@ -495,9 +562,9 @@ const Resultadoevaluaciones = (props) => {
                     .filter((item) => item.attributes.correo === correo)
                     .map((item) => {
                       // Verificar si evalu es diferente de null y tiene la propiedad data
-                      if (evalu && evalu.data) {
+                      if (evaluE && evaluE.data) {
                         // Verificar si existe un elemento en evalu con el mismo idevaluado
-                        const evaluacionCorrespondienteE = evalu.data.find(
+                        const evaluacionCorrespondienteE = evaluE.data.find(
                           (evaluItem) =>
                             evaluItem.attributes.idevaluado ===
                             item.id.toString()
@@ -598,6 +665,496 @@ const Resultadoevaluaciones = (props) => {
           </div>
         </div>
       )}
+{/*   //////////////////////////////////////////////////////////////////////////////////////////////                          */ }
+
+<div className="informacion__tabla">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>EVALUACION Y SEGUIMIENTO DE RESIDENCIA PROFESIONAL</th>
+              <th>Calificaion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data &&
+              data.data
+                .filter((item) => item.attributes.correo === correo)
+                .map((item) => {
+                  // Verificar si evalu es diferente de null y tiene la propiedad data
+                  if (evalu2 && evalu2.data && evaluE2 && evaluE2.data) {
+                    // Verificar si existe un elemento en evalu con el mismo idevaluado
+                    const evaluacionCorrespondiente = evalu2.data.find(
+                      (evaluItem) =>
+                        evaluItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Verificar lo mismo para evaluE
+                    const evaluacionCorrespondienteE = evaluE2.data.find(
+                      (evaluEItem) =>
+                        evaluEItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
+                    if (
+                      evaluacionCorrespondiente ||
+                      evaluacionCorrespondienteE
+                    ) {
+                      return (
+                        <React.Fragment key={item.id}>
+                          {/* Fila para evalu */}
+                          {evaluacionCorrespondiente && (
+                            <tr>
+                              <td>Evaluacion de Asesor Interno</td>
+                              <td>
+                                {evaluacionCorrespondiente.attributes.dato10}
+                              </td>
+                              <button
+                                className="btn-asig"
+                                onClick={mostrarp3}
+                              >
+                                Imprimir Evaluacion Interna
+                              </button>
+                            </tr>
+                          )}
+
+                          {/* Fila para evaluE */}
+                          {evaluacionCorrespondienteE && (
+                            <tr>
+                              <td>Evaluacion de Asesor Externo</td>
+                              <td>
+                                {evaluacionCorrespondienteE.attributes.dato10}
+                              </td>
+                              <button className="btn-asig" onClick={mostrarp4}>
+                                Imprimir Evaluacion Externa
+                              </button>
+                              {/* Agrega un botón o lo que necesites para evaluE */}
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    }
+                  }
+
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                })}
+          </tbody>
+        </table>
+      </div>   
+
+      {mostrarPopup3 && (
+        <div className="popup">
+          <div className="popup-contenido">
+            <table className="mi-tabla2">
+              <tbody>
+                <tr>
+                  <td>
+                    <img
+                      src="https://istmo.tecnm.mx/wp-content/uploads/2021/08/logo-tec-png-naranja.png"
+                      alt="Descripción de la imagen"
+                      width="100" // Establece el ancho en píxeles
+                      height="50" // Establece la altura en píxeles
+                    />
+                  </td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Instituto Tecnológico Del Istmo
+                    <br />
+                    "Por una Tecnología Propia como principio de libertad"
+                    <br />
+                    EVALUACION Y SEGUIMIENTO DE RESIDENCIA
+                    <br />
+                    PROFESIONAL
+                  </td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Código:
+                    <br />
+                    FR-ITISTMO-7.5.1-07-07
+                    <br />
+                    Versión:
+                    <br />
+                    Rev. 1
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <br />
+
+            <p style={{ textAlign: "center" }}>"Hoja Oficial membretada"</p>
+            {data &&
+              data.data
+                .filter((item) => item.attributes.correo === correo)
+                .map((item) => (
+                  <>
+                    <p style={{ textAlign: "left" }}>
+                      Nombre del Residente: {item.attributes.nombre}{" "}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Numero de control: {newItem.ncontrol}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Nombre del Proyecto: {item.attributes.nombre_anteproyecto}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Programa Educativo: {item.attributes.carrera}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Periodo de realizacion de la residencia profesional:
+                      {item.attributes.periodo}{" "}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
+                      {item.attributes.califasesorI}
+                    </p>
+                  </>
+                ))}
+
+            <table className="mi-tabla2">
+              <tbody>
+                {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evalu2 && evalu2.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evalu2.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                              <tr>
+                                En qué medida el residente cumple con lo
+                                siguiente
+                              </tr>
+
+                              <th>Criterios a evaluar </th>
+                              <th>Valor</th>
+                              <th>Evaluacion</th>
+
+                              {criteriosAEvaluar2.map((criterio, index) => (
+                                <tr key={item.id + `-dato${index + 1}`}>
+                                  <td>{criterio.label}</td>
+                                  <td>{criterio.valor}</td>
+                                  <td>
+                                    {
+                                      evaluacionCorrespondiente.attributes[
+                                        criterio.atributo
+                                      ]
+                                    }
+                                  </td>
+                                </tr>
+                              ))}
+
+                              {/* Agrega más filas si es necesario */}
+                              <p style={{ textAlign: "left" }}>Observaciones</p>
+                                <p style={{ textAlign: "left" }}>
+                                    {evaluacionCorrespondiente.attributes.observaciones}
+
+                                </p>
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
+              </tbody>
+            </table>
+            <br />
+           
+            <table className="mi-tabla">
+              <tbody>
+                <tr>
+                  <td>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evalu2 && evalu2.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evalu2.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                           
+                           <p> {evaluacionCorrespondiente.attributes.asesori} </p>
+                            
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
+                    </p>
+                  </td>
+                  <td>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      Sello de la empresa, organismo o dependencia
+                    </p>
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      Fecha de evaluacion
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Agrega más campos según sea necesario */}
+            <button className="btn-asig" onClick={imprimir3}>
+              Imprimir
+            </button>
+            <button className="btn-asig" onClick={cerrarp3}>
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+
+{mostrarPopup4 && (
+        <div className="popup">
+          <div className="popup-contenido">
+            <table className="mi-tabla2">
+              <tbody>
+                <tr>
+                  <td>
+                    <img
+                      src="https://istmo.tecnm.mx/wp-content/uploads/2021/08/logo-tec-png-naranja.png"
+                      alt="Descripción de la imagen"
+                      width="100" // Establece el ancho en píxeles
+                      height="50" // Establece la altura en píxeles
+                    />
+                  </td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Instituto Tecnológico Del Istmo
+                    <br />
+                    "Por una Tecnología Propia como principio de libertad"
+                    <br />
+                    EVALUACION Y SEGUIMIENTO DE RESIDENCIA
+                    <br />
+                    PROFESIONAL
+                  </td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Código:
+                    <br />
+                    FR-ITISTMO-7.5.1-07-07
+                    <br />
+                    Versión:
+                    <br />
+                    Rev. 1
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <br />
+
+            <p style={{ textAlign: "center" }}>"Hoja Oficial membretada"</p>
+            {data &&
+              data.data
+                .filter((item) => item.attributes.correo === correo)
+                .map((item) => (
+                  <>
+                    <p style={{ textAlign: "left" }}>
+                      Nombre del Residente: {item.attributes.nombre}{" "}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Numero de control: {newItem.ncontrol}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Nombre del Proyecto: {item.attributes.nombre_anteproyecto}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Programa Educativo: {item.attributes.carrera}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Periodo de realizacion de la residencia profesional:
+                      {item.attributes.periodo}{" "}
+                    </p>
+                    <p style={{ textAlign: "left" }}>
+                      Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
+                      {item.attributes.califasesorI}
+                    </p>
+                  </>
+                ))}
+
+            <table className="mi-tabla2">
+              <tbody>
+                {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evaluE2 && evaluE2.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evaluE2.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                              <tr>
+                                En qué medida el residente cumple con lo
+                                siguiente
+                              </tr>
+
+                              <th>Criterios a evaluar </th>
+                              <th>Valor</th>
+                              <th>Evaluacion</th>
+
+                              {criteriosAEvaluar2.map((criterio, index) => (
+                                <tr key={item.id + `-dato${index + 1}`}>
+                                  <td>{criterio.label}</td>
+                                  <td>{criterio.valor}</td>
+                                  <td>
+                                    {
+                                      evaluacionCorrespondiente.attributes[
+                                        criterio.atributo
+                                      ]
+                                    }
+                                  </td>
+                                </tr>
+                              ))}
+
+                              {/* Agrega más filas si es necesario */}
+                              <p style={{ textAlign: "left" }}>Observaciones</p>
+                                <p style={{ textAlign: "left" }}>
+                                    {evaluacionCorrespondiente.attributes.observaciones}
+
+                                </p>
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
+              </tbody>
+            </table>
+            <br />
+           
+            <table className="mi-tabla">
+              <tbody>
+                <tr>
+                  <td>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evaluE2 && evaluE2.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evaluE2.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                           
+                           <p> {evaluacionCorrespondiente.attributes.asesori} </p>
+                            
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
+                    </p>
+                  </td>
+                  <td>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      Sello de la empresa, organismo o dependencia
+                    </p>
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      Fecha de evaluacion
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Agrega más campos según sea necesario */}
+            <button className="btn-asig" onClick={imprimir3}>
+              Imprimir
+            </button>
+            <button className="btn-asig" onClick={cerrarp4}>
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+
+
+
+
+
+
     </div>
   );
 };

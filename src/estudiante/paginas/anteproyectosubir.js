@@ -61,9 +61,21 @@ function App(props) {
   const contenidodocumento = "api/upload";
   //
   const direccionapi = "http://localhost:1337/";
-  ///
+  ///ESTO ES LAS 2 PIRMERAS EVALUACIONES
   const naevalua = "api/evaluacion1s";
   const naevaluaE = "api/evaluacion1-es";
+   ///ESTO ES LAS 2 SEGUNDAS EVALUACIONES
+
+   const nuevalua2 = "api/evaluacion2s"
+   const nuevaluaE2 = "api/evaluacion2-es"
+
+   //para las 2 primeras
+  const [evalu, setEvalu] = useState(null);
+  const [evaluE, setEvalue] = useState(null);
+  //para  las 2 segudnas
+  
+  const [evalu2, setEvalu2] = useState(null);
+  const [evaluE2, setEvalue2] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -81,6 +93,19 @@ function App(props) {
         setEspecialidades(especialidades);
         const asesores = await fetchData(nombreasesores);
         setAsesores(asesores);
+
+        const fetchedEvalu = await fetchData(naevalua);
+        setEvalu(fetchedEvalu);
+        const fetchedEvaluE = await fetchData(naevaluaE);
+        setEvalue(fetchedEvaluE);
+
+        const fetchedEvalu2 = await fetchData(nuevalua2);
+        setEvalu2(fetchedEvalu2);
+        const fetchedEvaluE2 = await fetchData(nuevaluaE2);
+        setEvalue2(fetchedEvaluE2);
+
+
+        
         console.log("Cargo todos los datos !");
         //setEditingMode(true)
       } catch (error) {
@@ -286,6 +311,25 @@ function App(props) {
             
           }
 
+          const evaluacion2 =  {
+            dato1: "0",
+            dato2: "0",
+            dato3: "0",
+            dato4: "0",
+            dato5: "0",
+            dato6: "0",
+            dato7: "0",
+            dato8: "0",
+            dato9: "0",
+            dato10: "0",
+            idevaluado:lastItemId.toString(),
+            observaciones: "En proceso de observaciones",
+            asesori:lastItemNombre.toString(),
+            
+          }
+
+
+
           await agregarevaluacion(
             evaluacion,
             naevalua
@@ -293,6 +337,14 @@ function App(props) {
           await agregarevaluacion(
             evaluacion,
             naevaluaE
+          );
+          await agregarevaluacion(
+            evaluacion2,
+            nuevalua2
+          );
+          await agregarevaluacion(
+            evaluacion2,
+            nuevaluaE2
           );
 
 
@@ -370,15 +422,26 @@ function App(props) {
     }
   };
 
-  const handleDelete = async (elementId, documentId) => {
+  const handleDelete = async (elementId, documentId,parametroeva,parametroaevaE,para1,para2) => {
     try {
       // Primero, elimina el elemento de la tabla
       await deleteData(elementId, nombretabla);
       // Luego, elimina el documento http://localhost:1337/api/upload/files/
       await axios.delete(`${direccionapi}${nombredocumentos}${documentId}`);
-      console.log("Esto es docuemtno id", documentId);
-      // Actualiza la lista de datos y documentos después de la eliminación
-      const updatedData = await fetchData(nombretabla);
+     
+     //posteriormente elimna las evaluaciones
+      await deleteData(parametroeva, naevalua);
+      await deleteData(parametroaevaE, naevaluaE);
+          //posteriormente elimna las evaluaciones2
+          await deleteData(para1, nuevalua2);
+          await deleteData(para2, nuevaluaE2);
+         
+       // Actualiza la lista de datos y documentos después de la eliminación
+      console.log("EVAE", para1);
+      console.log("EVA", para2);
+    
+
+     const updatedData = await fetchData(nombretabla);
       setData(updatedData);
       setDocumentoCargado(false);
       setEditingMode(true);
@@ -860,14 +923,36 @@ function App(props) {
                               </button>
                             </div>
                           ))}
-                        <button
-                          className="btnsubir"
-                          onClick={() =>
-                            handleDelete(item.id, item.attributes.iddocumento)
-                          }
-                        >
-                          Eliminar
-                        </button>
+<button
+  className="btnsubir"
+  onClick={() => {
+    
+
+    const evaluId = evalu && evalu.data ? parseInt(evalu.data.find((evaluItem) => evaluItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
+    const evaluEId = evaluE && evaluE.data ? parseInt(evaluE.data.find((evaluEItem) => evaluEItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
+
+    const evaluId2 = evalu2 && evalu2.data ? parseInt(evalu2.data.find((evaluItem) => evaluItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
+    const evaluEId2 = evaluE2 && evaluE2.data ? parseInt(evaluE2.data.find((evaluEItem) => evaluEItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
+
+    // ...
+    
+    <button
+      className="btnsubir"
+      onClick={() =>
+        handleDelete(item.id, item.attributes.iddocumento, evaluId, evaluEId,evaluId2,evaluEId2)
+      }
+    >
+      Eliminar
+    </button>
+    
+    console.log('evaluId:', evaluId);
+    console.log('evaluEId:', evaluEId);
+
+    handleDelete(item.id, item.attributes.iddocumento, evaluId, evaluEId,evaluId2,evaluEId2);
+  }}
+>
+  Eliminar
+</button>
                       </td>
                     </tr>
                   ))}

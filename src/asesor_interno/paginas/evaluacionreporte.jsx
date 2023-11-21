@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-
-import axios from 'axios';
-
+import axios from "axios";
 
 import {
   fetchData,
@@ -11,7 +9,7 @@ import {
   deleteData /*, conaxios*/,
   updateDataDoc,
   residenteaceptado,
-  agregarevaluacion
+  agregarevaluacion,
 } from "./formato";
 
 import "./estilos-impresion.css";
@@ -53,8 +51,6 @@ const Evalucionreporteresidente = (props) => {
     carrera: "",
   });
 
-
-
   const [evaluacion, setevaluacion] = useState({
     dato1: "",
     dato2: "",
@@ -72,9 +68,7 @@ const Evalucionreporteresidente = (props) => {
     dato14: "",
     dato15: "",
     idevaluado: "",
-    
   });
-
 
   const [errores, setErrores] = useState({
     nombre: "",
@@ -104,8 +98,6 @@ const Evalucionreporteresidente = (props) => {
     setSelectedFile(event.target.files[0]);
   };
 
-
-
   const naevalua = "api/evaluacion1s";
   const naevaluaE = "api/evaluacion1-es";
 
@@ -124,11 +116,11 @@ const Evalucionreporteresidente = (props) => {
         setEspecialidades(especialidades);
         const asesores = await fetchData(nombreasesores);
         setAsesores(asesores);
-       const evalu =  await fetchData(naevalua); 
+        const evalu = await fetchData(naevalua);
         setEvalu(evalu);
-        const evaluE =  await fetchData(naevaluaE); 
+        const evaluE = await fetchData(naevaluaE);
         setEvalue(evaluE);
-        console.log("Cargo todos los datos !",evaluE);
+        console.log("Cargo todos los datos !", evaluE);
         //setEditingMode(true)
       } catch (error) {
         console.error("Error al obtener los datos:", error);
@@ -194,10 +186,14 @@ const Evalucionreporteresidente = (props) => {
       return;
     }
 
-    const camposLlenos = calificaciones.every((calificacion) => calificacion.valor !== '');
+    const camposLlenos = calificaciones.every(
+      (calificacion) => calificacion.valor !== ""
+    );
 
     if (!camposLlenos) {
-      alert('Por favor, Rellene todo los criterios a evualuar para poder generar la evaluacion');
+      alert(
+        "Por favor, Rellene todo los criterios a evualuar para poder generar la evaluacion"
+      );
       return;
     }
 
@@ -224,13 +220,14 @@ const Evalucionreporteresidente = (props) => {
         id: residenteSeleccionado.id,
         nombre: residenteSeleccionado.attributes.nombre,
         ncontrol: residenteSeleccionado.attributes.ncontrol,
-        nombre_anteproyecto:residenteSeleccionado.attributes.nombre_anteproyecto,
+        nombre_anteproyecto:
+          residenteSeleccionado.attributes.nombre_anteproyecto,
         periodo: residenteSeleccionado.attributes.periodo,
         empresa: residenteSeleccionado.attributes.empresa,
         asesorE: residenteSeleccionado.attributes.asesorE,
         carrera: residenteSeleccionado.attributes.carrera,
-        califasesorI:residenteSeleccionado.attributes.califasesorI,
-        califasesorE:residenteSeleccionado.attributes.califasesorE
+        califasesorI: residenteSeleccionado.attributes.califasesorI,
+        califasesorE: residenteSeleccionado.attributes.califasesorE,
       });
 
       console.log("ESTO ES ID", residenteSeleccionado.id);
@@ -246,8 +243,8 @@ const Evalucionreporteresidente = (props) => {
         empresa: "",
         asesorE: "",
         carrera: "",
-        califasesorI:"",
-        califasesorR:""
+        califasesorI: "",
+        califasesorR: "",
       });
     }
   };
@@ -284,23 +281,54 @@ const Evalucionreporteresidente = (props) => {
     return anio;
   };
 
-
   const [calificaciones, setCalificaciones] = useState([
-    { id: 1, valor: '', maximo: 2, nombre: 'Portada' },
-    { id: 2, valor: '', maximo: 2, nombre: 'Agradecimientos.' },
-    { id: 3, valor: '', maximo: 2, nombre: 'Resumen' },
-    { id: 4, valor: '', maximo: 2, nombre: 'Índice' },
-    { id: 5, valor: '', maximo: 2, nombre: 'Introducción' },
-    { id: 6, valor: '', maximo: 5, nombre: 'Problemas a resolver, priorizándolos.' },
-    { id: 7, valor: '', maximo: 5, nombre: 'Objetivos' },
-    { id: 8, valor: '', maximo: 5, nombre: 'Justificación.' },
-    { id: 9, valor: '', maximo: 10, nombre: 'Marco teórico (fundamentos teóricos)' },
-    { id: 10, valor: '', maximo: 5, nombre: 'Procedimiento y descripción de las actividades realizadas.' },
-    { id: 11, valor: '', maximo: 45, nombre: 'Resultados, planos, gráficas, prototipos, manuales, programas, análisis estadísticos, modelos matemáticos, simulaciones, normativaes, regulaciones y restricciones, entre otros. Solo para proyectos que por su naturaleza lo requieran: estudio de mercado, estudio técnico y estudio económico.' },
-    { id: 12, valor: '', maximo: 10, nombre: 'Conclusiones, recomendaciones y experiencia profesional adquirida.' },
-    { id: 13, valor: '', maximo: 3, nombre: 'Competencias desarrolladas y/o aplicadas.' },
-    { id: 14, valor: '', maximo: 2, nombre: 'Fuentes de informacion' },
-    { id: 15, valor: 0, maximo: 100, nombre: 'Calificación total' },
+    { id: 1, valor: "", maximo: 2, nombre: "Portada" },
+    { id: 2, valor: "", maximo: 2, nombre: "Agradecimientos." },
+    { id: 3, valor: "", maximo: 2, nombre: "Resumen" },
+    { id: 4, valor: "", maximo: 2, nombre: "Índice" },
+    { id: 5, valor: "", maximo: 2, nombre: "Introducción" },
+    {
+      id: 6,
+      valor: "",
+      maximo: 5,
+      nombre: "Problemas a resolver, priorizándolos.",
+    },
+    { id: 7, valor: "", maximo: 5, nombre: "Objetivos" },
+    { id: 8, valor: "", maximo: 5, nombre: "Justificación." },
+    {
+      id: 9,
+      valor: "",
+      maximo: 10,
+      nombre: "Marco teórico (fundamentos teóricos)",
+    },
+    {
+      id: 10,
+      valor: "",
+      maximo: 5,
+      nombre: "Procedimiento y descripción de las actividades realizadas.",
+    },
+    {
+      id: 11,
+      valor: "",
+      maximo: 45,
+      nombre:
+        "Resultados, planos, gráficas, prototipos, manuales, programas, análisis estadísticos, modelos matemáticos, simulaciones, normativaes, regulaciones y restricciones, entre otros. Solo para proyectos que por su naturaleza lo requieran: estudio de mercado, estudio técnico y estudio económico.",
+    },
+    {
+      id: 12,
+      valor: "",
+      maximo: 10,
+      nombre:
+        "Conclusiones, recomendaciones y experiencia profesional adquirida.",
+    },
+    {
+      id: 13,
+      valor: "",
+      maximo: 3,
+      nombre: "Competencias desarrolladas y/o aplicadas.",
+    },
+    { id: 14, valor: "", maximo: 2, nombre: "Fuentes de informacion" },
+    { id: 15, valor: 0, maximo: 100, nombre: "Calificación total" },
     // Otras filas...
   ]);
 
@@ -311,14 +339,23 @@ const Evalucionreporteresidente = (props) => {
   };
 
   const handleCalificacionChange = (id, nuevoValor) => {
-    nuevoValor = isNaN(Number(nuevoValor)) ? 0 : Math.min(Math.max(Number(nuevoValor), 0), calificaciones.find((c) => c.id === id).maximo);
+    nuevoValor = isNaN(Number(nuevoValor))
+      ? 0
+      : Math.min(
+          Math.max(Number(nuevoValor), 0),
+          calificaciones.find((c) => c.id === id).maximo
+        );
 
     setCalificaciones((prevCalificaciones) => {
       const nuevasCalificaciones = prevCalificaciones.map((calificacion) =>
-        calificacion.id === id ? { ...calificacion, valor: nuevoValor } : calificacion
+        calificacion.id === id
+          ? { ...calificacion, valor: nuevoValor }
+          : calificacion
       );
 
-      const calificacionTotal = nuevasCalificaciones.find((calificacion) => calificacion.id === 15);
+      const calificacionTotal = nuevasCalificaciones.find(
+        (calificacion) => calificacion.id === 15
+      );
       if (calificacionTotal) {
         calificacionTotal.valor = obtenerSumatoriaTotal();
       }
@@ -326,81 +363,124 @@ const Evalucionreporteresidente = (props) => {
       return nuevasCalificaciones;
     });
   };
-  
- 
-  const [observaciones, setObservaciones] = useState('');
+
+  const [observaciones, setObservaciones] = useState("");
   function calcularDiferenciaMesesDiasDesdeTexto(textoFecha) {
     // Dividir el texto en las fechas
-    const fechas = textoFecha.split('-').map((fecha) => fecha.trim());
-  
+    const fechas = textoFecha.split("-").map((fecha) => fecha.trim());
+
     // Obtener el día, mes y año de cada fecha
-    const [diaInicio, mesInicio] = fechas[0].split(' DE ');
-    const [diaFin, mesFin] = fechas[1].split(' DE ');
-  
+    const [diaInicio, mesInicio] = fechas[0].split(" DE ");
+    const [diaFin, mesFin] = fechas[1].split(" DE ");
+
     // Obtener el índice del mes (0-indexed)
     const indiceMesInicio = obtenerIndiceMes(mesInicio);
     const indiceMesFin = obtenerIndiceMes(mesFin);
-  
+
     // Crear objetos Date para ambas fechas
-    const fechaInicio = new Date(new Date().getFullYear(), indiceMesInicio, parseInt(diaInicio, 10));
-    const fechaFin = new Date(new Date().getFullYear(), indiceMesFin, parseInt(diaFin, 10));
-  
+    const fechaInicio = new Date(
+      new Date().getFullYear(),
+      indiceMesInicio,
+      parseInt(diaInicio, 10)
+    );
+    const fechaFin = new Date(
+      new Date().getFullYear(),
+      indiceMesFin,
+      parseInt(diaFin, 10)
+    );
+
     // Calcular la diferencia en días y meses
     const diferenciaMilisegundos = fechaFin - fechaInicio;
-    const diferenciaDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+    const diferenciaDias = Math.floor(
+      diferenciaMilisegundos / (1000 * 60 * 60 * 24)
+    );
     const diferenciaMeses = Math.floor(diferenciaDias / 30);
     const diasRestantes = diferenciaDias % 30;
-  
+
     return { meses: diferenciaMeses, dias: diasRestantes };
   }
-  
+
   function obtenerIndiceMes(nombreMes) {
     const meses = [
-      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
-      'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE',
-      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
-      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+      "ENERO",
+      "FEBRERO",
+      "MARZO",
+      "ABRIL",
+      "MAYO",
+      "JUNIO",
+      "JULIO",
+      "AGOSTO",
+      "SEPTIEMBRE",
+      "OCTUBRE",
+      "NOVIEMBRE",
+      "DICIEMBRE",
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
     ];
-  
+
     return meses.indexOf(nombreMes.toUpperCase());
   }
-  
+
   // Ejemplo de uso
   //const textoFecha = "1 DE ENERO - 5 DE JUNIO";
- // const diferencia = calcularDiferenciaMesesDiasDesdeTexto(textoFecha);
- // console.log(`La diferencia es: ${diferencia.meses} meses y ${diferencia.dias} días`);
+  // const diferencia = calcularDiferenciaMesesDiasDesdeTexto(textoFecha);
+  // console.log(`La diferencia es: ${diferencia.meses} meses y ${diferencia.dias} días`);
 
-  
-  const pruebas = async () => {
+  const pruebas = async (idresidente) => {
     const residenteSeleccionado = data.data.find(
       (item) => item.attributes.nombre === newItem.nombre
     );
-  
+
     const residenteevaluado = evalu.data.find(
-      (item) => item?.attributes?.idevaluado?.toString() === newItem.id?.toString()
+      (item) =>
+        item?.attributes?.idevaluado?.toString() === newItem.id?.toString()
     );
 
     const evaExterno = evaluE.data.find(
-      (item) => item?.attributes?.idevaluado?.toString() === newItem.id?.toString()
+      (item) =>
+        item?.attributes?.idevaluado?.toString() === newItem.id?.toString()
     );
-    
-    if (evaExterno){
+
+    if (evaExterno) {
       console.log("Asesor E", evaExterno);
-    }else{
+    } else {
       console.log("Asesor NO E", evaExterno);
     }
-  
+/*
     if (residenteevaluado) {
       //console.log("Se encontró un residente evaluado:", residenteevaluado);
-      const successMessage = "Usted Ya a evaluado a "+ newItem.nombre;
+      const successMessage = "Usted Ya a evaluado a " + newItem.nombre;
       alert(successMessage);
       return;
     } else {
-      console.log("No se encontró un residente evaluado para newItem.id:", newItem.id);
-    }
-  
+      console.log(
+        "No se encontró un residente evaluado para newItem.id:",
+        newItem.id
+      );
+    }*/
+
     const fieldsToValidate = [
       "nombre",
       "ncontrol",
@@ -410,14 +490,14 @@ const Evalucionreporteresidente = (props) => {
       "asesorE",
       "carrera",
     ];
-  
+
     const newErrors = {};
     fieldsToValidate.forEach((field) => {
       if (newItem[field].trim() === "") {
         newErrors[field] = `El ${field.replace("_", " ")} es obligatorio`;
       }
     });
-  
+
     // Si hay errores, no enviar el formulario
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -425,108 +505,151 @@ const Evalucionreporteresidente = (props) => {
       alert(successMessage);
       return;
     }
-  
-    const camposLlenos = calificaciones.every((calificacion) => calificacion.valor !== '');
-  
+
+    const camposLlenos = calificaciones.every(
+      (calificacion) => calificacion.valor !== ""
+    );
+
     if (!camposLlenos) {
-      alert('Por favor, Rellene todos los criterios a evaluar para poder generar la evaluación');
+      alert(
+        "Por favor, Rellene todos los criterios a evaluar para poder generar la evaluación"
+      );
       return;
     }
-  
+
     if (residenteSeleccionado) {
       const nuevaEvaluacion = {
-        dato1: calificaciones.find((calificacion) => calificacion.id === 1).valor.toString(),
-        dato2: calificaciones.find((calificacion) => calificacion.id === 2).valor.toString(),
-        dato3: calificaciones.find((calificacion) => calificacion.id === 3).valor.toString(),
-        dato4: calificaciones.find((calificacion) => calificacion.id === 4).valor.toString(),
-        dato5: calificaciones.find((calificacion) => calificacion.id === 5).valor.toString(),
-        dato6: calificaciones.find((calificacion) => calificacion.id === 6).valor.toString(),
-        dato7: calificaciones.find((calificacion) => calificacion.id === 7).valor.toString(),
-        dato8: calificaciones.find((calificacion) => calificacion.id === 8).valor.toString(),
-        dato9: calificaciones.find((calificacion) => calificacion.id === 9).valor.toString(),
-        dato10: calificaciones.find((calificacion) => calificacion.id === 10).valor.toString(),
-        dato11: calificaciones.find((calificacion) => calificacion.id === 11).valor.toString(),
-        dato12: calificaciones.find((calificacion) => calificacion.id === 12).valor.toString(),
-        dato13: calificaciones.find((calificacion) => calificacion.id === 13).valor.toString(),
-        dato14: calificaciones.find((calificacion) => calificacion.id === 14).valor.toString(),
-        dato15: calificaciones.find((calificacion) => calificacion.id === 15).valor.toString(),
-        idevaluado: newItem.id.toString()
+        dato1: calificaciones
+          .find((calificacion) => calificacion.id === 1)
+          .valor.toString(),
+        dato2: calificaciones
+          .find((calificacion) => calificacion.id === 2)
+          .valor.toString(),
+        dato3: calificaciones
+          .find((calificacion) => calificacion.id === 3)
+          .valor.toString(),
+        dato4: calificaciones
+          .find((calificacion) => calificacion.id === 4)
+          .valor.toString(),
+        dato5: calificaciones
+          .find((calificacion) => calificacion.id === 5)
+          .valor.toString(),
+        dato6: calificaciones
+          .find((calificacion) => calificacion.id === 6)
+          .valor.toString(),
+        dato7: calificaciones
+          .find((calificacion) => calificacion.id === 7)
+          .valor.toString(),
+        dato8: calificaciones
+          .find((calificacion) => calificacion.id === 8)
+          .valor.toString(),
+        dato9: calificaciones
+          .find((calificacion) => calificacion.id === 9)
+          .valor.toString(),
+        dato10: calificaciones
+          .find((calificacion) => calificacion.id === 10)
+          .valor.toString(),
+        dato11: calificaciones
+          .find((calificacion) => calificacion.id === 11)
+          .valor.toString(),
+        dato12: calificaciones
+          .find((calificacion) => calificacion.id === 12)
+          .valor.toString(),
+        dato13: calificaciones
+          .find((calificacion) => calificacion.id === 13)
+          .valor.toString(),
+        dato14: calificaciones
+          .find((calificacion) => calificacion.id === 14)
+          .valor.toString(),
+        dato15: calificaciones
+          .find((calificacion) => calificacion.id === 15)
+          .valor.toString(),
+        idevaluado: newItem.id.toString(),
+        observaciones:observaciones.toString(),
+        asesori: nombrealm.toString()
       };
-      
-  
+
       // Actualiza el estado de evaluacion
       setevaluacion(nuevaEvaluacion);
-  
+
       try {
-        await agregarevaluacion(
-          nuevaEvaluacion,
-          naevalua,
-        );
-   
+        await updateData(idresidente, nuevaEvaluacion, naevalua);
+
         console.log("Evaluación registrada exitosamente");
-       // window.location.reload();
-        
+        // window.location.reload();
       } catch (error) {
-        alert('No se ha podido registrar la Evaluación');
+        alert("No se ha podido registrar la Evaluación");
         return;
       }
     } else {
       console.log("No se encontró ningún residente con ese nombre");
     }
   };
-  
 
+  const versuma = () => {
+    // Obtén los valores de dato15 o establece 0 si es undefined
+    // Obtén los valores de dato15 o establece 0 si es undefined
 
+    // Obtén los valores de idvaluado o establece un array vacío si es undefined
+    const idvaluadoA =
+      evalu?.data?.map((item) => item?.attributes?.idvaluado) || [];
+    const idvaluadoB =
+      evaluE?.data?.map((item) => item?.attributes?.idvaluado) || [];
 
-  
-const versuma = () => {
-// Obtén los valores de dato15 o establece 0 si es undefined
-// Obtén los valores de dato15 o establece 0 si es undefined
+    // Filtra y suma los valores de dato15 que coinciden con idvaluado
+    const suma = idvaluadoA.reduce((total, id) => {
+      // Verifica si el id está en el otro conjunto y si los valores son números
+      const valorB = idvaluadoB.includes(id)
+        ? evaluE.data.find((item) => item.attributes.idvaluado === id)
+            ?.attributes?.dato15
+        : undefined;
+      const valorA = evalu.data.find((item) => item.attributes.idvaluado === id)
+        ?.attributes?.dato15;
 
+      // Suma solo si los valores son números
+      if (!isNaN(valorA)) total += parseInt(valorA);
+      if (!isNaN(valorB)) total += parseInt(valorB);
 
-// Obtén los valores de idvaluado o establece un array vacío si es undefined
-const idvaluadoA = evalu?.data?.map(item => item?.attributes?.idvaluado) || [];
-const idvaluadoB = evaluE?.data?.map(item => item?.attributes?.idvaluado) || [];
+      return total;
+    }, 0);
 
-// Filtra y suma los valores de dato15 que coinciden con idvaluado
-const suma = idvaluadoA.reduce((total, id) => {
-  // Verifica si el id está en el otro conjunto y si los valores son números
-  const valorB = idvaluadoB.includes(id) ? evaluE.data.find(item => item.attributes.idvaluado === id)?.attributes?.dato15 : undefined;
-  const valorA = evalu.data.find(item => item.attributes.idvaluado === id)?.attributes?.dato15;
+    console.log("La suma de dato15 que coinciden con idvaluado es:", suma);
+  };
 
-  // Suma solo si los valores son números
-  if (!isNaN(valorA)) total += parseInt(valorA);
-  if (!isNaN(valorB)) total += parseInt(valorB);
+  const vercosola = (loqueseve,loquseve2) => {
+    
+    console.log("Esto es lo de la consola: EVA ", nombrealm.toString())
+    console.log("Esto es lo de la consola: EVAE ", loquseve2)
+    
+  };
 
-  return total;
-}, 0);
+  // Obtén los valores de dato15 o establece 0 si es undefined
+  // Obtén los valores de dato15 o establece 0 si es undefined
 
-console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
-};
+  // Obtén los valores de idvaluado o establece un array vacío si es undefined
+  const idvaluadoA =
+    evalu?.data?.map((item) => item?.attributes?.idvaluado) || [];
+  const idvaluadoB =
+    evaluE?.data?.map((item) => item?.attributes?.idvaluado) || [];
 
-// Obtén los valores de dato15 o establece 0 si es undefined
-// Obtén los valores de dato15 o establece 0 si es undefined
+  // Filtra y suma los valores de dato15 que coinciden con idvaluado
+  const suma = idvaluadoA.reduce((total, id) => {
+    // Verifica si el id está en el otro conjunto y si los valores son números
+    const valorB = idvaluadoB.includes(id)
+      ? evaluE.data.find((item) => item.attributes.idvaluado === id)?.attributes
+          ?.dato15
+      : undefined;
+    const valorA = evalu.data.find((item) => item.attributes.idvaluado === id)
+      ?.attributes?.dato15;
 
+    // Suma solo si los valores son números
+    if (!isNaN(valorA)) total += parseInt(valorA);
+    if (!isNaN(valorB)) total += parseInt(valorB);
 
-// Obtén los valores de idvaluado o establece un array vacío si es undefined
-const idvaluadoA = evalu?.data?.map(item => item?.attributes?.idvaluado) || [];
-const idvaluadoB = evaluE?.data?.map(item => item?.attributes?.idvaluado) || [];
+    return total;
+  }, 0);
 
-// Filtra y suma los valores de dato15 que coinciden con idvaluado
-const suma = idvaluadoA.reduce((total, id) => {
-  // Verifica si el id está en el otro conjunto y si los valores son números
-  const valorB = idvaluadoB.includes(id) ? evaluE.data.find(item => item.attributes.idvaluado === id)?.attributes?.dato15 : undefined;
-  const valorA = evalu.data.find(item => item.attributes.idvaluado === id)?.attributes?.dato15;
-
-  // Suma solo si los valores son números
-  if (!isNaN(valorA)) total += parseInt(valorA);
-  if (!isNaN(valorB)) total += parseInt(valorB);
-
-  return total;
-}, 0);
-
-console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
-
+  console.log("La suma de dato15 que coinciden con idvaluado es:", suma);
 
   return (
     <div className="contenido__Evalucionreporteresidente">
@@ -545,13 +668,17 @@ console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
               <option value="">Seleccionar Un Residente</option>
               {data &&
                 data.data
-                  .filter((item) => item.attributes.correoasesor === correo && item.attributes.califasesorI === '0')
+                  .filter(
+                    (item) =>
+                      item.attributes.correoasesor === correo &&
+                      item.attributes.califasesorI === "0"
+                  )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>
                       {item.attributes.nombre}
                     </option>
                   ))}
-                              {errores.nombre && (
+              {errores.nombre && (
                 <p style={{ color: "red" }}>{errores.nombre}</p>
               )}
             </select>
@@ -585,7 +712,7 @@ console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
             ></input>
           </div>
           <div className="informacion__pregunta">
-          <span>Numero de Control:</span>
+            <span>Numero de Control:</span>
             <input
               type="text"
               name="name"
@@ -594,7 +721,7 @@ console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
                 setNewItem({ ...newItem, ncontrol: e.target.value })
               }
             ></input>
-          <span>Programa Educativo:</span>
+            <span>Programa Educativo:</span>
             <input
               type="text"
               name="name"
@@ -607,7 +734,6 @@ console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
               Calificación Parcial <br /> (promedio de ambas evaluaciones):
             </span>
             <input
-          
               type="text"
               name="name"
               value={newItem.califasesorI}
@@ -619,62 +745,102 @@ console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
         </div>
 
         <div className="informacion__tabla">
-        <table>
-      <thead>
-        <tr>
-          <th>Criterio</th>
-          <th>Máximo</th>
-          <th>Calificación</th>
-        </tr>
-      </thead>
-      <tbody>
-        {calificaciones.map((calificacion) => (
-          <tr key={calificacion.id}>
-            <td>{calificacion.nombre}</td>
-            <td>{calificacion.maximo}</td>
-            <td>
-              <input
-                type="text"
-                pattern="[0-9]*"
-                value={calificacion.valor}
-                min="0"
-                onChange={(e) => handleCalificacionChange(calificacion.id, e.target.value)}
-              />
-            </td>
-          </tr>
-        ))}
-        
-      </tbody>
-    </table>
+          <table>
+            <thead>
+              <tr>
+                <th>Criterio</th>
+                <th>Máximo</th>
+                <th>Calificación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {calificaciones.map((calificacion) => (
+                <tr key={calificacion.id}>
+                  <td>{calificacion.nombre}</td>
+                  <td>{calificacion.maximo}</td>
+                  <td>
+                    <input
+                      type="text"
+                      pattern="[0-9]*"
+                      value={calificacion.valor}
+                      min="0"
+                      onChange={(e) =>
+                        handleCalificacionChange(
+                          calificacion.id,
+                          e.target.value
+                        )
+                      }
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           <div className="observaciones">
-      <span>Observaciones:</span>
-      <textarea
-        name="textarea"
-        placeholder="Ingrese las observaciones"
-        value={observaciones}
-        onChange={(e) => setObservaciones(e.target.value)}
-      />
-            <input
-              className="btn"
-              type="submit"
-              name="register"
-              value="Imprimir"
-            ></input>
+            <span>Observaciones:</span>
+            <textarea
+              name="textarea"
+              placeholder="Ingrese las observaciones"
+              value={observaciones}
+              onChange={(e) => setObservaciones(e.target.value)}
+            />
+           
           </div>
         </div>
-      </div>
- 
-        <button className="btn-asig" onClick={handleCrearClick}>
+      
+
+      <button className="btn-asig" onClick={handleCrearClick}>
         Imprimir Evaluacion
-        </button> 
-        <button className="btn-asig" onClick={versuma}>
-        Registrar Evaluacion
-        </button> 
+      </button>
+      {data &&
+                data.data
+                  .filter(
+                    (item) =>
+                      item.attributes.correoasesor === correo &&
+                      item.attributes.califasesorI === "0"
+                  )
+                  .map((item) => (
+
+                    
+                    <button
+                    className="btn-asig"
+                    onClick={() => {
+                      
+                  
+                      const evaluId = evalu && evalu.data ? parseInt(evalu.data.find((evaluItem) => evaluItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
+                      const evaluEId = evaluE && evaluE.data ? parseInt(evaluE.data.find((evaluEItem) => evaluEItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
+                  
+                      // ...
+                      
+                      <button
+                        className="btn-asig"
+                        onClick={() =>
+                          pruebas(evaluId)
+                        }
+                      >
+                        Registrar Evaluacion
+                      </button>
+                      
+                      console.log('evaluId:', evaluId);
+                      console.log('evaluEId:', evaluEId);
+                  
+                      pruebas(evaluId)
+                    }}
+                  >
+                    Registrar Evaluacion
+                  </button>
+
+
+
+
+                  ))}
+        
+        </div>
+      
       {mostrarPopup && (
         <div className="popup">
-          <div className="popup-contenido" >
-          
-            <table className="mi-tabla"  >
+          <div className="popup-contenido">
+            <table className="mi-tabla">
               <tbody>
                 <tr>
                   <td>
@@ -707,73 +873,79 @@ console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
               </tbody>
             </table>
 
-              <br />
+            <br />
 
-            <p style={{ textAlign: "center" }}>
-              "Hoja Oficial membretada"
+            <p style={{ textAlign: "center" }}>"Hoja Oficial membretada"</p>
+            <p style={{ textAlign: "left" }}>
+              Nombre del Residente: {newItem.nombre}{" "}
             </p>
-            <p style={{ textAlign: "left" }}>Nombre del Residente: {newItem.nombre} </p>
-            <p style={{ textAlign: "left" }}>Numero de control: {newItem.ncontrol}</p>
-            <p style={{ textAlign: "left" }}>Nombre del Proyecto: {newItem.nombre_anteproyecto}</p>
-            <p style={{ textAlign: "left" }}>Programa Educativo:  {newItem.carrera}</p>
-            <p style={{ textAlign: "left" }}>Periodo de realizacion de la residencia profesional:{newItem.periodo} </p>
-            <p style={{ textAlign: "left" }}>Calificación Parcial  (Promedio de ambas evaluaciones) : {newItem.califasesorI}</p>
-            
+            <p style={{ textAlign: "left" }}>
+              Numero de control: {newItem.ncontrol}
+            </p>
+            <p style={{ textAlign: "left" }}>
+              Nombre del Proyecto: {newItem.nombre_anteproyecto}
+            </p>
+            <p style={{ textAlign: "left" }}>
+              Programa Educativo: {newItem.carrera}
+            </p>
+            <p style={{ textAlign: "left" }}>
+              Periodo de realizacion de la residencia profesional:
+              {newItem.periodo}{" "}
+            </p>
+            <p style={{ textAlign: "left" }}>
+              Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
+              {newItem.califasesorI}
+            </p>
+
             <table className="mi-tabla">
-            <tbody>
-        {calificaciones.map((calificacion) => (
-          <tr key={calificacion.id}>
-            <td>{calificacion.nombre}</td>
-            <td>{calificacion.maximo}</td>
-           
-            <td>{calificacion.valor}</td>
-            
-          </tr>
-        ))}
-      </tbody>
+              <tbody>
+                {calificaciones.map((calificacion) => (
+                  <tr key={calificacion.id}>
+                    <td>{calificacion.nombre}</td>
+                    <td>{calificacion.maximo}</td>
+
+                    <td>{calificacion.valor}</td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
             <br />
-            <p style={{ textAlign: "left" }}>
-                Observaciones
-            </p>
-            <p style={{ textAlign: "left" }}>
-              {observaciones}
-            </p>
-            <table className="mi-tabla"  >
+            <p style={{ textAlign: "left" }}>Observaciones</p>
+            <p style={{ textAlign: "left" }}>{observaciones}</p>
+            <table className="mi-tabla">
               <tbody>
                 <tr>
                   <td>
-                  <p style={{ textAlign: "center" }}>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    {nombrealm}
-                   </p>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      {nombrealm}
+                    </p>
                   </td>
                   <td>
-                  <p style={{ textAlign: "center" }}>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    Sello de la empresa, organismo o dependencia 
-                   </p>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      Sello de la empresa, organismo o dependencia
+                    </p>
                   </td>
-                  <td style={{ textAlign: "center"}}>
-                  <p style={{ textAlign: "center" }}>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
+                  <td style={{ textAlign: "center" }}>
+                    <p style={{ textAlign: "center" }}>
+                      <br />
+                      <br />
+                      <br />
+                      <br />
                       Fecha de evaluacion
-                   </p>
+                    </p>
                   </td>
                 </tr>
               </tbody>
             </table>
 
-           
             {/* Agrega más campos según sea necesario */}
             <button className="btn-asig" onClick={imprimir3}>
               Imprimir
@@ -781,13 +953,9 @@ console.log('La suma de dato15 que coinciden con idvaluado es:', suma);
             <button className="btn-asig" onClick={handleCerrarPopup}>
               Cerrar
             </button>
-            </div>
-          
+          </div>
         </div>
       )}
-
-
-
     </div>
   );
 };
