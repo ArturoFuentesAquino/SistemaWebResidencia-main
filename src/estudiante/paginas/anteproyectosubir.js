@@ -46,6 +46,7 @@ function App(props) {
     empresa: "",
     asesorE: "",
     carrera: "",
+    asesorI: "",
   });
 
 
@@ -57,6 +58,9 @@ function App(props) {
   //#####################################
   const nombreespecialidades = "api/especialidads";
   const nombreasesores = "api/asesores-is";
+
+  const nombreasesoresE = "api/asesores-es";
+  const [asesoresE, setAsesoresE] = useState(null);
   //pruebas de importacion
   const contenidodocumento = "api/upload";
   //
@@ -104,7 +108,8 @@ function App(props) {
         const fetchedEvaluE2 = await fetchData(nuevaluaE2);
         setEvalue2(fetchedEvaluE2);
 
-
+        const asesoresE = await fetchData(nombreasesoresE);
+        setAsesoresE(asesoresE);
         
         console.log("Cargo todos los datos !");
         //setEditingMode(true)
@@ -618,38 +623,54 @@ function App(props) {
     const periodo = e.target.value;
     setNewItem({ ...newItem, periodo });
   
-    const match = periodo.match(/^([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)\s*-\s*([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)$/);
+    const match = periodo.match(/^([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)\s*-\s*([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)\s*(DEL?|del?)?\s*(\d{4})?$/);
+
   
     if (match) {
-      const [, diaInicio, preposicionInicio, mesInicio, diaFin, preposicionFin, mesFin] = match;
+      const [, diaInicio, preposicionInicio, mesInicio, diaFin, preposicionFin, mesFin, , , del, año] = match;
+
+      const añoActual = new Date().getFullYear();
+      const añoIngresado = match[8];
+      const añoIngresadoEntero = añoIngresado ? parseInt(añoIngresado, 10) : null;
+      console.log("Año ingresado (entero):", añoActual);
+    
   
-      console.log("diaInicio:", diaInicio);
-      console.log("preposicionInicio:", preposicionInicio);
-      console.log("mesInicio:", mesInicio);
-      console.log("diaFin:", diaFin);
-      console.log("preposicionFin:", preposicionFin);
-      console.log("mesFin:", mesFin);
+      if (añoIngresadoEntero  >= añoActual) {
+
+        const fechaInicio = new Date(añoActual, obtenerIndiceMes(mesInicio), parseInt(diaInicio, 10));
+        const fechaFin = new Date(añoIngresadoEntero, obtenerIndiceMes(mesFin), parseInt(diaFin, 10));
   
-      const fechaInicio = new Date(new Date().getFullYear(), obtenerIndiceMes(mesInicio), parseInt(diaInicio, 10));
-      const fechaFin = new Date(new Date().getFullYear(), obtenerIndiceMes(mesFin), parseInt(diaFin, 10));
+        console.log("año ingresado:", match);
+        console.log("año actual :", añoIngresado);
+        console.log("año actual :", añoActual);
   
-      console.log("Fecha Inicio:", fechaInicio);
-      console.log("Fecha Fin:", fechaFin);
+        const diferenciaMeses = (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 + fechaFin.getMonth() - fechaInicio.getMonth();
   
-      // Calcula la diferencia en meses directamente
-      const diferenciaMeses = (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 + fechaFin.getMonth() - fechaInicio.getMonth();
+        console.log("Diferencia Meses:", diferenciaMeses);
   
-      console.log("Diferencia Meses:", diferenciaMeses);
-  
-      if (diferenciaMeses === 3 || diferenciaMeses === 5) {
-        setErrorPeriodo('');
+        if (diferenciaMeses === 4 || diferenciaMeses === 6 ) {
+          setErrorPeriodo('');
+        } else {
+          setErrorPeriodo('El periodo debe ser de 4 o 6 meses.');
+        }
       } else {
-        setErrorPeriodo('El periodo debe ser de 4 o 6 meses.');
+        setErrorPeriodo('Por favor, ingrese el año actual.');
       }
     } else {
       setErrorPeriodo('Formato incorrecto. Por favor, ingrese los periodos como "1 de Enero - 1 de Febrero" y asegúrese de usar días válidos.');
     }
   };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -760,30 +781,33 @@ function App(props) {
                 <p style={{ color: "red" }}>{errors.empresa}</p>
               )}
              
-              <span>Asesor:</span>
+             <span>Asesor:</span>
 <select
   value={newItem.asesorE ? newItem.asesorE : ''}
   onChange={(e) => {
-    const selectedAsesor = asesores.data.find(
-      (asesor) => asesor.attributes.nombre === e.target.value
-    );
+    const selectedAsesor = asesoresE && asesoresE.data
+      ? asesoresE.data.find((asesor) => asesor.attributes.nombre === e.target.value)
+      : null;
 
-    setNewItem({
-      ...newItem,
-      asesorE: selectedAsesor.attributes.nombre,
-      idasesor: selectedAsesor.id.toString(),
-      correoasesor: selectedAsesor.attributes.correo,
-    });
+    if (selectedAsesor) {
+      setNewItem({
+        ...newItem,
+        asesorE: selectedAsesor.attributes.nombre,
+        idasesorE: selectedAsesor.id.toString(),
+        correoasesorE: selectedAsesor.attributes.correo,
+      });
+    }
   }}
 >
   <option value="">Selecciona un Asesor</option>
-  {asesores &&
-    asesores.data.map((asesor) => (
+  {asesoresE && asesoresE.data &&
+    asesoresE.data.map((asesor) => (
       <option key={asesor.id} value={asesor.attributes.nombre}>
         {asesor.attributes.nombre}
       </option>
     ))}
 </select>
+
               {errors.asesorE && (
                 <p style={{ color: "red" }}>{errors.asesorE}</p>
               )}

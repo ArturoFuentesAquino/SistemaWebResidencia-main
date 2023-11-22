@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { FaTh, FaRegListAlt, FaRegFileAlt } from "react-icons/fa";
+import { FaTh, FaRegListAlt, FaRegFileAlt,FaSignOutAlt } from "react-icons/fa";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Barra = ({ children }) => {
@@ -22,12 +22,14 @@ const Barra = ({ children }) => {
                 return location.pathname === ruta;
             case '/evaluacionreporte':
                 return location.pathname === ruta;
-            case '/tablaevaluacionesreporte':
-                return location.pathname === ruta;
             case '/evaluacionseguimiento':
                 return location.pathname === ruta;
+                case '/tablaevaluacionesreporte':
+                    return location.pathname === ruta;
            case '/tablaevaluacionesseguimiento':
                 return location.pathname === ruta;
+                case '/salir':
+                    return location.pathname === ruta;   
             default:
                 return false;
         }
@@ -50,17 +52,22 @@ const Barra = ({ children }) => {
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluación<br />Reporte</h1>
             </div>
-            <div title='Relación De Evaluación Reporte' className={`boton ${isActive('/tablaevaluacionesreporte') ? 'activo' : ''}`} onClick={() => navigateTo('/tablaevaluacionesreporte')}>
-                <FaRegFileAlt className="icono" />
-                <h1>Evaluación<br />Reporte</h1>
-            </div>
+
             <div title='Evaluación Seguimiento' className={`boton ${isActive('/evaluacionseguimiento') ? 'activo' : ''}`} onClick={() => navigateTo('/evaluacionseguimiento')}>
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluación<br />Seguimiento</h1>
             </div>
+            <div title='Relación De Evaluación Reporte' className={`boton ${isActive('/tablaevaluacionesreporte') ? 'activo' : ''}`} onClick={() => navigateTo('/tablaevaluacionesreporte')}>
+                <FaRegFileAlt className="icono" />
+                <h1>Evaluación<br />Reporte</h1>
+            </div>
             <div title='Relación De Evaluación Seguimiento' className={`boton ${isActive('/tablaevaluacionesseguimiento') ? 'activo' : ''}`} onClick={() => navigateTo('/tablaevaluacionesseguimiento')}>
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluación<br />Seguimiento</h1>
+            </div>
+            <div title='Salir' className={`boton ${isActive('/salir') ? 'activo' : ''}`} onClick={() => navigateTo('/salir')}>
+                <FaSignOutAlt className="icono" />
+                <h1>Salir</h1>
             </div>
             <main>
                 {children}

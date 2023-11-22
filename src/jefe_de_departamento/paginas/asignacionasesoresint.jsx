@@ -22,6 +22,10 @@ const Asignacionasesorint = (props) => {
   const numerosComoCadena = numerosExtraidos ? numerosExtraidos[0] : "";
   // Para obtener los números como un número entero, puedes hacer:
   //const numerosComoEntero = numerosExtraidos ? parseInt(numerosExtraidos[0], 10) : null;
+  const nombreasesoresE = "api/asesores-es";
+  const [asesoresE, setAsesoresE] = useState(null);
+
+
 
   //console.log("esto es props", correo);
   const [data, setData] = useState(null);
@@ -78,6 +82,8 @@ const Asignacionasesorint = (props) => {
         setEspecialidades(especialidades);
         const asesores = await fetchData(nombreasesores);
         setAsesores(asesores);
+        const asesoresE = await fetchData(nombreasesoresE);
+        setAsesoresE(asesoresE);
         console.log("Cargo todos los datos !");
         //setEditingMode(true)
       } catch (error) {
@@ -156,6 +162,12 @@ const Asignacionasesorint = (props) => {
     setMostrarPopup(true);
   };
 
+  const registrar =  async () =>{
+    await updateData(newItem.id, newItem, nombretabla);
+    // Lógica para mostrar el popup
+   console.log("Esto es el id del alumno a registrar: ",newItem.id)
+  };
+
   const handleCerrarPopup = () => {
     // Lógica para cerrar el popup
     setMostrarPopup(false);
@@ -181,6 +193,7 @@ const Asignacionasesorint = (props) => {
         periodo: residenteSeleccionado.attributes.periodo,
         empresa: residenteSeleccionado.attributes.empresa,
         asesorE: residenteSeleccionado.attributes.asesorE,
+        asesorI: residenteSeleccionado.attributes.asesorI,
         carrera: residenteSeleccionado.attributes.carrera,
        
       });
@@ -191,13 +204,12 @@ const Asignacionasesorint = (props) => {
       // Manejar el caso en que no se encontró un residente
       console.log("Residente no encontrado");
       setNewItem({
-        ...newItem,
+        //...newItem,
         nombre: "",
         ncontrol: "",
         nombre_anteproyecto: "",
         periodo: "",
         empresa: "",
-        asesorE: "",
         carrera: "",
       });
     }
@@ -259,15 +271,36 @@ const Asignacionasesorint = (props) => {
                   </option>
                 ))}
             </select>
-            <span>Nombre del Asesor:</span>
-            <input
-              type="text"
-              name="name"
-              value={newItem.asesorE}
-              onChange={(e) =>
-                setNewItem({ ...newItem, asesorE: e.target.value })
-              }
-            ></input>
+
+            <span>Seleccione al Asesor Externo:</span>
+<select
+  value={newItem.asesorI || ''}
+  onChange={(e) => {
+    const selectedAsesor = asesores && asesores.data
+      ? asesores.data.find((asesor) => asesor.attributes.nombre === e.target.value)
+      : null;
+
+    setNewItem({
+      ...newItem,
+      asesorI: e.target.value,
+      idasesor: selectedAsesor ? selectedAsesor.id.toString() : '',
+      correoasesor: selectedAsesor ? selectedAsesor.attributes.correo : '',
+    });
+  }}
+>
+  <option value="">Selecciona un Asesor</option>
+  {asesores && asesores.data &&
+    asesores.data.map((asesor) => (
+      <option key={asesor.id} value={asesor.attributes.nombre}>
+        {asesor.attributes.nombre}
+      </option>
+    ))}
+</select>
+
+
+
+
+
             {errors.asesorE && <p style={{ color: "red" }}>{errors.asesorE}</p>}
             <span>Nombre del proyecto:</span>
             <input
@@ -319,9 +352,19 @@ const Asignacionasesorint = (props) => {
           </div>
         </div>
       </div>
+
+     
+                  
+                          <button className="btn-asig" onClick={registrar}>
+                            Rgistrar
+                         </button> 
+                 
+          
+
       <button className="btn-asig" onClick={handleCrearClick}>
         Crear
       </button> 
+
 
       
     
@@ -379,7 +422,7 @@ const Asignacionasesorint = (props) => {
               {obtenerFechaFormateada()}.
             </p>
             <p style={{ textAlign: "left", fontWeight: "bold" }}>
-            {newItem.asesorE}
+            {newItem.asesorI}
               <br />
               Docente de Sistemas y Computación 
               <br />

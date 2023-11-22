@@ -464,7 +464,7 @@ const Evalucionreporteresidente = (props) => {
     );
 
     if (evaExterno) {
-      console.log("Asesor E", evaExterno);
+      console.log("Asesor E", idresidente);
     } else {
       console.log("Asesor NO E", evaExterno);
     }
@@ -498,13 +498,7 @@ const Evalucionreporteresidente = (props) => {
       }
     });
 
-    // Si hay errores, no enviar el formulario
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      const successMessage = "Seleccione un Residente a Evaluar";
-      alert(successMessage);
-      return;
-    }
+  
 
     const camposLlenos = calificaciones.every(
       (calificacion) => calificacion.valor !== ""
@@ -662,7 +656,7 @@ const Evalucionreporteresidente = (props) => {
             <span>Seleccione al Residente Aprobado:</span>
 
             <select
-              value={newItem.nombreResidente}
+              value={newItem.nombre}
               onChange={handleResidenteChange}
             >
               <option value="">Seleccionar Un Residente</option>
@@ -670,8 +664,7 @@ const Evalucionreporteresidente = (props) => {
                 data.data
                   .filter(
                     (item) =>
-                      item.attributes.correoasesor === correo &&
-                      item.attributes.califasesorI === "0"
+                      item.attributes.correoasesor === correo
                   )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>
@@ -792,48 +785,34 @@ const Evalucionreporteresidente = (props) => {
       <button className="btn-asig" onClick={handleCrearClick}>
         Imprimir Evaluacion
       </button>
-      {data &&
-                data.data
-                  .filter(
-                    (item) =>
-                      item.attributes.correoasesor === correo &&
-                      item.attributes.califasesorI === "0"
-                  )
-                  .map((item) => (
+{data &&
+  data.data
+    .filter(
+      (item) =>
+        item.attributes.correoasesor === correo 
+    )
+    .map((item, index, array) => (
+      // Solo mostrar el botón si es el último elemento del array filtrado
+      index === array.length - 1 && (
+        <button
+          className="btn-asig"
+          onClick={() => {
+            const evaluId = evalu && evalu.data ? parseInt(evalu.data.find((evaluItem) => evaluItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
+            const evaluEId = evaluE && evaluE.data ? parseInt(evaluE.data.find((evaluEItem) => evaluEItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
 
-                    
-                    <button
-                    className="btn-asig"
-                    onClick={() => {
-                      
-                  
-                      const evaluId = evalu && evalu.data ? parseInt(evalu.data.find((evaluItem) => evaluItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
-                      const evaluEId = evaluE && evaluE.data ? parseInt(evaluE.data.find((evaluEItem) => evaluEItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
-                  
-                      // ...
-                      
-                      <button
-                        className="btn-asig"
-                        onClick={() =>
-                          pruebas(evaluId)
-                        }
-                      >
-                        Registrar Evaluacion
-                      </button>
-                      
-                      console.log('evaluId:', evaluId);
-                      console.log('evaluEId:', evaluEId);
-                  
-                      pruebas(evaluId)
-                    }}
-                  >
-                    Registrar Evaluacion
-                  </button>
+            // ...
 
+            console.log('evaluId:', evaluId);
+            console.log('evaluEId:', evaluEId);
 
+            pruebas(evaluId);
+          }}
+        >
+          Registrar Evaluacion
+        </button>
+      )
+    ))}
 
-
-                  ))}
         
         </div>
       
