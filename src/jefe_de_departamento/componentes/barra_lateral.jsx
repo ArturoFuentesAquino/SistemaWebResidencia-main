@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { FaTh, FaRegListAlt, FaRegFileAlt,FaSignOutAlt } from "react-icons/fa";
+import { FaTh, FaRegListAlt,FaWpforms, FaRegFileAlt,FaSignOutAlt } from "react-icons/fa";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Barra = ({ children }) => {
@@ -17,6 +17,8 @@ const Barra = ({ children }) => {
         switch (ruta) {
             case '/inicio':
             case '/':
+                return location.pathname === ruta;
+            case '/anteproyectosrecibidos':
                 return location.pathname === ruta;
             case '/asignacionasesoresint':
                 return location.pathname === ruta;
@@ -43,6 +45,10 @@ const Barra = ({ children }) => {
             <div title='Inicio' className={`boton ${isActive('/inicio') ? 'activo' : ''}`} onClick={() => navigateTo('/inicio')} >
                 <FaTh className="icono"  />
                 <h1>Inicio </h1>
+            </div>
+            <div title='Ante Proyectos Recibidos' className={`boton ${isActive('/anteproyectosrecibidos') ? 'activo' : ''}`} onClick={() => navigateTo('/anteproyectosrecibidos')}>
+                <FaWpforms className="icono" />
+                <h1>AnteProyectos Recibidos <br /> Interno</h1>
             </div>
             <div title='Asignación Asesor Interno' className={`boton ${isActive('/asignacionasesoresint') ? 'activo' : ''}`} onClick={() => navigateTo('/asignacionasesoresint')}>
                 <FaRegListAlt className="icono" />

@@ -12,7 +12,7 @@ import Evaluacionesseguimiento from "./jefe_de_departamento/paginas/evaluaciones
 import Evaluacionseguimiento from "./jefe_de_departamento/paginas/evaluacionseguimiento.jsx";
 import Evaluacionreporte from "./jefe_de_departamento/paginas/evaluacionreporte.jsx";
 import Salir from './jefe_de_departamento/paginas/salir.jsx';
-
+import Anteproyectosrecibidos from './jefe_de_departamento/paginas/Anteproyectosrecibidos.jsx';
 /**
  * Renders information about the user obtained from MS Graph
  * @param props 
@@ -32,11 +32,12 @@ const PaginaJefe = (props) => {
             <Routes>
               <Route path="/" element={<Inicio />} />
               <Route path="/inicio" element={<Inicio />} />
+              <Route path="/Anteproyectosrecibidos" element={<Anteproyectosrecibidos graphData={props} />}/>
               <Route path="/asignacionasesoresint" element={<Asignacionasesoresint graphData={props} />} />
-              <Route path="/evaluacionseguimiento" element={<Evaluacionseguimiento />} />
-              <Route path="/evaluacionreporte" element={<Evaluacionreporte />} />
-              <Route path="/evaluacionesseguimiento" element={<Evaluacionesseguimiento />} />
-              <Route path="/evaluacionesreporte" element={<Evaluacionesreporte />} />
+              <Route path="/evaluacionseguimiento" element={<Evaluacionseguimiento   graphData={props} />} />
+              <Route path="/evaluacionreporte" element={<Evaluacionreporte   graphData={props} />} />
+              <Route path="/evaluacionesseguimiento" element={<Evaluacionesseguimiento  />} />
+              <Route path="/evaluacionesreporte" element={<Evaluacionesreporte  graphData={props} />} />
               <Route path="/salir" element={<Salir />} />
 
             </Routes>

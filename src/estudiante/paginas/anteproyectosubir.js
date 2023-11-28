@@ -65,21 +65,33 @@ function App(props) {
   const contenidodocumento = "api/upload";
   //
   const direccionapi = "http://localhost:1337/";
-  ///ESTO ES LAS 2 PIRMERAS EVALUACIONES
-  const naevalua = "api/evaluacion1s";
-  const naevaluaE = "api/evaluacion1-es";
-   ///ESTO ES LAS 2 SEGUNDAS EVALUACIONES
-
-   const nuevalua2 = "api/evaluacion2s"
-   const nuevaluaE2 = "api/evaluacion2-es"
-
-   //para las 2 primeras
-  const [evalu, setEvalu] = useState(null);
-  const [evaluE, setEvalue] = useState(null);
-  //para  las 2 segudnas
   
-  const [evalu2, setEvalu2] = useState(null);
-  const [evaluE2, setEvalue2] = useState(null);
+  //ESTO ES PARA LOS QUE TIENEN 15 DATOS
+//Evaluacion1 Tiene 15 datos y es para los asesores Internos Reporte de Final
+//Evaluacion1E Tiene 15 datos y es para los asesores Eterno Reporte de Final
+
+
+const naevalua = "api/evaluacion1s";
+const naevaluaE = "api/evaluacion1-es";
+
+//ESTO ES PARA LOS QUE TIENEN 10 DATOS
+
+//Evaluacion2 Tiene 10 datos y es para los asesores Internos Reporte de Seguimiento
+//Evaluacion2E Tiene 10 datos y es para los asesores Eterno  Reporte de Seguimiento
+
+
+const nuevalua2 = "api/evaluacion2s"
+const nuevaluaE2 = "api/evaluacion2-es"
+
+//para  las 2 segudnas
+
+const [evalu2, setEvalu2] = useState(null);
+const [evaluE2, setEvalue2] = useState(null);
+
+
+
+const [evalu, setEvalu] = useState(null);
+const [evaluE, setEvalue] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);

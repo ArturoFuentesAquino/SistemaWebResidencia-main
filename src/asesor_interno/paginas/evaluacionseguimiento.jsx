@@ -97,12 +97,21 @@ const Evalucionseguimiento = (props) => {
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
+//ESTO ES PARA LOS QUE TIENEN 15 DATOS
+//Evaluacion1 Tiene 15 datos y es para los asesores Internos
+//Evaluacion1E Tiene 15 datos y es para los asesores Eterno
 
-  const naevalua = "api/evaluacion1s";
-  const naevaluaE = "api/evaluacion1-es";
 
-  const nuevalua2 = "api/evaluacion2s"
-  const nuevaluaE2 = "api/evaluacion2-es"
+const naevalua = "api/evaluacion1s";
+const naevaluaE = "api/evaluacion1-es";
+
+//ESTO ES PARA LOS QUE TIENEN 10 DATOS
+
+//Evaluacion2 Tiene 10 datos y es para los asesores Internos
+//Evaluacion2E Tiene 10 datos y es para los asesores Eterno
+
+const nuevalua2 = "api/evaluacion2s"
+const nuevaluaE2 = "api/evaluacion2-es"
 
   //para  las 2 segudnas
   
@@ -529,7 +538,7 @@ const Evalucionseguimiento = (props) => {
           dato10: calificaciones
           .find((calificacion) => calificacion.id === 10)
           .valor.toString(),
-        idevaluado: newItem.id.toString(),
+        //idevaluado: newItem.id.toString(),
         observaciones:observaciones.toString(),
         asesori: nombrealm.toString()
       };
@@ -581,10 +590,10 @@ const Evalucionseguimiento = (props) => {
     console.log("La suma de dato15 que coinciden con idvaluado es:", suma);
   };
 
-  const vercosola = (loqueseve,loquseve2) => {
+  const vercosola = (ideresidente) => {
     
-    console.log("Esto es lo de la consola: EVA ", nombrealm.toString())
-    console.log("Esto es lo de la consola: EVAE ", loquseve2)
+    console.log("Esto es el ID des residente", ideresidente)
+  
     
   };
 
@@ -619,7 +628,7 @@ const Evalucionseguimiento = (props) => {
   return (
     <div className="contenido__Evalucionreporteresidente">
       <div className="Evalucionreporteresidente__titulo">
-        <h1>Evaluación De Reporte De Residencia Profesional</h1>
+        <h1>Evaluación De Seguimiento De Residencia Profesional</h1>
       </div>
       <div className="Evalucionreporteresidente__preguntas">
         <div className="contenido__preguntas">
@@ -764,40 +773,36 @@ const Evalucionseguimiento = (props) => {
                       item.attributes.correoasesor === correo &&
                       item.attributes.califasesorI === "0"
                   )
-                  .map((item) => (
-
-                    
-                    <button
-                    className="btn-asig"
-                    onClick={() => {
-                      
-                  
-                      const evaluId = evalu2 && evalu2.data ? parseInt(evalu2.data.find((evaluItem) => evaluItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
-                      const evaluEId = evaluE && evaluE.data ? parseInt(evaluE.data.find((evaluEItem) => evaluEItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
-                  
-                      // ...
-                      
+                  .map((item, index, array) => (
+                    // Solo mostrar el botón si es el último elemento del array filtrado
+                    index === array.length - 1 && (
                       <button
-                        className="btn-asig"
-                        onClick={() =>
+                      className="btn-asig"
+                      onClick={() => {
+                        const residenteSeleccionado = data.data.find(
+                          (item) => item.attributes.nombre === newItem.nombre
+                        );
+                    
+                        if (residenteSeleccionado) {
+                          const evaluItem = evalu2?.data?.find(
+                            (evaluItem) =>
+                              evaluItem.attributes.idevaluado ===
+                              residenteSeleccionado.id.toString()
+                          );
+                    
+                          const evaluId = evaluItem ? parseInt(evaluItem.id, 10) : 0;
+                    
+                          // Resto de tu lógica
+                          console.log('evaluId:', residenteSeleccionado.id);
                           pruebas(evaluId)
+                        } else {
+                          console.error('Residente no encontrado');
                         }
-                      >
-                        Registrar Evaluacion
-                      </button>
-                      
-                      console.log('evaluId:', evaluId);
-                      console.log('evaluEId:', evaluEId);
-                  
-                      pruebas(evaluId)
-                    }}
-                  >
-                    Registrar Evaluacion
-                  </button>
-
-
-
-
+                      }}
+                    >
+                      Registrar Evaluacion
+                    </button>
+                    )
                   ))}
         
         </div>

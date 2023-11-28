@@ -1,21 +1,25 @@
-/* Estilos para la versión de impresión */
+.verhorizontal {
+    
+    margin-left: 10vh;
+   /* O ajusta el ancho según tus necesidades */
+  }
+ 
 
+  th, td {
+    width: 1vh; /* Ancho de cada celda */
+    height: 1vh; /* Altura de cada celda */
+    padding: 1vh;
+    text-align: left;
+  }
+
+
+  /* Estilos para la versión de impresión */
 @media print {
   @page {
     margin: 0;
     border: 0;
     padding: 0;
-    size: 29.7cm 21cm landscape;
-    
-  }
-  
-  
-  /* Estilos para la impresión en vertical */
-  @page {
-    margin: 0;
-    border: 0;
-    padding: 0;
-    size: 29.7cm 21cm portrait;
+    size: 29.7cm 21cm;
   }
   table {
     page-break-inside: avoid;
@@ -24,13 +28,12 @@
     margin: 5;
     visibility: hidden;
     overflow-y: visible;
-    font-size: 7px;
+    font-size: 6px;
     
   }
   .popup, .popup * {
     visibility: visible;
     overflow-y: visible;
-    
   }
 
 
@@ -48,6 +51,20 @@
  
   .btn-asig{
     display: none;
+  }
+
+  .sin-borde {
+    border: none !important;
+    /* Añade otros estilos específicos para la versión de impresión si es necesario */
+  }
+  .seleccionado {
+    /* Añade estilos específicos para cuando la celda está seleccionada */
+    background-color: yellow !important;
+    /* Ajusta según sea necesario */
+  }
+  td {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
   }
   
 }
@@ -75,8 +92,8 @@
   padding: 20px;
   border-radius: 8px;
  /* width: 150vh;  Ajusta según sea necesario */
- width: 80%;
-  height: 90vh;/*ALTO*/
+ width: 150vh;
+  height: 100vh;/*ALTO*/
   overflow-y: auto;
   
 }
@@ -86,13 +103,21 @@
   width: 100%;
 }
 
-.mi-tabla2 th, .mi-tabla2 td {
+.mi-tabla2 th, .mi-tabla2 td .mi-tabla2 p  {
   border: 1px solid #000000;
   text-align: left;
   padding: 5px;
 }
 
-.mi-tabla2 th {
-  background-color: #f2f2f2;
+.mi-tabla3 {
+  border-collapse: collapse;
+  width: 100%;
 }
-
+.mi-tabla3 th, .mi-tabla3 td {
+  border: 1px solid #000000;
+  text-align: left;
+  padding: 1px;
+  margin: 0;
+  font-size: 10px;
+  width: '1vh'
+}

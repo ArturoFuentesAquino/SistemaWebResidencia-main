@@ -1,446 +1,637 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { fetchData } from "./formato";
+import "./estilosseguimiento.css";
 
-function Seguimientoresidencia() {
-  // Recupera los colores del localStorage al cargar el componente
-  const storedCellColors = JSON.parse(localStorage.getItem('cellColors')) || {};
-  const [cellColors, setCellColors] = useState(storedCellColors);
+function Seguimientoresidencia(props) {
+  const [mostrarPopup, setMostrarPopup] = useState(false);
 
-  // Función para cambiar el color de una celda
-  const handleCellClick = (cellId) => {
-    setCellColors((prevColors) => {
-      const newColors = {
-        ...prevColors,
-        [cellId]: prevColors[cellId] === 'red' ? 'white' : 'red',
-      };
-      // Almacena los colores actualizados en el localStorage
-      localStorage.setItem('cellColors', JSON.stringify(newColors));
-      return newColors;
-    });
+  const handleCerrarPopup = () => {
+    // Lógica para cerrar el popup
+    setMostrarPopup(false);
   };
 
-  useEffect(() => {
-    // Actualiza el localStorage cuando los colores cambian
-    localStorage.setItem('cellColors', JSON.stringify(cellColors));
-  }, [cellColors]);
+  const handleCrearClick = () => {
+    setMostrarPopup(true);
+  };
 
+  const imprimir3 = () => {
+    // Ocultar otros elementos antes de imprimir
+    window.print();
+  };
+
+  const [data, setData] = useState(null);
+  const [newItem, setNewItem] = useState({
+    nombre: "",
+    ncontrol: "",
+    nombre_anteproyecto: "",
+    periodo: "",
+    empresa: "",
+    asesorE: "",
+    carrera: "",
+    asesorI: "",
+  });
+
+  const nombretabla = "api/residentesuploads";
+  const correo = props.graphData.graphData.graphData.mail;
+
+  useEffect(() => {
+    fetchDataAsync();
+  }, [correo]);
+
+  async function fetchDataAsync() {
+    try {
+      const responseData = await fetchData(nombretabla);
+      const residenteSeleccionado = responseData.data.find(
+        (item) => item.attributes.correo === correo
+      );
+
+      // Actualizar el estado solo con el nombre del residente
+      const nombreResidente = residenteSeleccionado
+        ? residenteSeleccionado.attributes.nombre
+        : "";
+      const ncontrol = residenteSeleccionado
+        ? residenteSeleccionado.attributes.ncontrol
+        : "";
+      const nproyecto = residenteSeleccionado
+        ? residenteSeleccionado.attributes.nombre_anteproyecto
+        : "";
+      const perio = residenteSeleccionado
+        ? residenteSeleccionado.attributes.periodo
+        : "";
+      const nempresa = residenteSeleccionado
+        ? residenteSeleccionado.attributes.empresa
+        : "";
+      const asesorex = residenteSeleccionado
+        ? residenteSeleccionado.attributes.asesorE
+        : "";
+      const asesorin = residenteSeleccionado
+        ? residenteSeleccionado.attributes.asesorI
+        : "";
+      const especialidad = residenteSeleccionado
+        ? residenteSeleccionado.attributes.carrera
+        : "";
+
+      setNewItem({
+        nombre: nombreResidente,
+        ncontrol: ncontrol,
+        nombre_anteproyecto: nproyecto,
+        periodo: perio,
+        empresa: nempresa,
+        asesorE: asesorex,
+        carrera: especialidad,
+        asesorI: asesorin,
+      });
+
+      console.log("Esto es residente seleccionado", residenteSeleccionado);
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+    }
+  }
+  //##########################################################
+  const obtenerFilasGuardadas = () => {
+    const filasGuardadas = localStorage.getItem("filas");
+    return filasGuardadas
+      ? JSON.parse(filasGuardadas)
+      : [
+          { actividad: "", tiempo: "P" },
+          { actividad: "", tiempo: "R" },
+        ];
+  };
+
+  const obtenerColumnasGuardadas = () => {
+    const columnasGuardadas = localStorage.getItem("columnas");
+    return columnasGuardadas ? JSON.parse(columnasGuardadas) : [];
+  };
+
+  const obtenerColoresGuardados = () => {
+    const coloresGuardados = localStorage.getItem("colores");
+    return coloresGuardados
+      ? JSON.parse(coloresGuardados)
+      : Array(filas.length * columnas.length).fill("white");
+  };
+
+  const [filas, setFilas] = useState(obtenerFilasGuardadas);
+  const [columnas, setColumnas] = useState(obtenerColumnasGuardadas);
+  const [cellColors, setCellColors] = useState(obtenerColoresGuardados);
+  const [selectedCell, setSelectedCell] = useState({
+    rowIndex: null,
+    colIndex: null,
+  });
+
+  useEffect(() => {
+    localStorage.setItem("filas", JSON.stringify(filas));
+  }, [filas]);
+
+  useEffect(() => {
+    localStorage.setItem("columnas", JSON.stringify(columnas));
+    localStorage.setItem("colores", JSON.stringify(cellColors));
+  }, [columnas, cellColors]);
+
+  const getCellPosition = (rowIndex, colIndex) => {
+    return rowIndex * columnas.length + colIndex;
+  };
+
+  const agregarFila = () => {
+    const nuevasFilas = [...filas, { actividad: "", tiempo: "P" }];
+    const nuevosColores = [...cellColors];
+
+    setFilas(nuevasFilas);
+
+    // Ajusta el color de las nuevas celdas
+    for (let i = 0; i < columnas.length; i++) {
+      nuevosColores.push("white"); // Actividad (P)
+      nuevosColores.push("white"); // Tiempo (R)
+    }
+
+    setCellColors(nuevosColores);
+  };
+
+  const agregarColumna = () => {
+    const nuevasColumnas = [...columnas, ` ${columnas.length + 1}`];
+    const nuevosColores = cellColors.map((fila) => [...fila, "white"]);
+
+    setColumnas(nuevasColumnas);
+    setCellColors(nuevosColores);
+  };
+
+  const eliminarColumna = (index) => {
+    if (columnas.length > 1) {
+      const nuevasColumnas = [...columnas];
+      const nuevosColores = [];
+
+      for (let i = 0; i < filas.length * 2; i++) {
+        const filaOriginal = cellColors.slice(
+          i * nuevasColumnas.length,
+          (i + 1) * nuevasColumnas.length
+        );
+        const nuevaFila = [
+          ...filaOriginal.slice(0, index),
+          ...filaOriginal.slice(index + 1),
+        ];
+        nuevosColores.push(...nuevaFila);
+      }
+
+      nuevasColumnas.splice(index, 1);
+
+      setColumnas(nuevasColumnas);
+      setCellColors(nuevosColores);
+    }
+  };
+
+  const eliminarFila = (index) => {
+    const nuevasFilas = [...filas];
+    const nuevosColores = [...cellColors];
+    nuevasFilas.splice(index, 1);
+
+    // Elimina los colores de las celdas de la fila
+    nuevosColores.splice(index * columnas.length * 2, columnas.length * 2);
+
+    setFilas(nuevasFilas);
+    setCellColors(nuevosColores);
+  };
+
+  const handleCellClick = (rowIndex, colIndex) => {
+    const nuevosColores = [...cellColors];
+    const cellPosition = getCellPosition(rowIndex, colIndex);
+    setSelectedCell({ rowIndex, colIndex });
+
+    if (rowIndex % 2 === 0) {
+      // Para las filas de actividad (P)
+      nuevosColores[cellPosition] =
+        nuevosColores[cellPosition] === "white" ? "blue" : "white";
+    } else {
+      // Para las filas de tiempo (R)
+      nuevosColores[cellPosition] =
+        nuevosColores[cellPosition] === "white" ? "red" : "white";
+    }
+
+    setCellColors(nuevosColores);
+  };
+
+  const eliminarDatoLocalStorage = () => {
+    // Supongamos que quieres eliminar un elemento llamado "miDato"
+    
+    localStorage.removeItem("filas");
+    localStorage.removeItem("columnas");
+    localStorage.removeItem("colores");
+    alert("El dato ha sido eliminado del Local Storage.");
+    window.location.reload();
+  };
 
   return (
-<div className="contenido__seguimientoresidencia">
-  <h2>SEGUIMIENTO RESIDENCIA</h2>
-<div className="Seguimientoresidencia__preguntas">
-  <div className="contenido__preguntas">
-    <div className="informacion__pregunta">
-      <span>Nombre del residente:</span>
-      <input type="text" name="name" placeholder="Nombre del residente"></input>
-      <span>Número de control:</span>
-      <input type="number" name="numero" placeholder="N° de control"></input>
-      <span>Nombre del proyecto:</span>
-      <input type="text" name="name" placeholder="Nombre del proyecto"></input>
-      <span>Empresa:</span>
-      <input type="text" name="name" placeholder="Empresa"></input>
+    <div className="contenido__seguimientoresidencia">
+      <h2>SEGUIMIENTO RESIDENCIA</h2>
+      <div className="Seguimientoresidencia__preguntas">
+        <div className="contenido__preguntas">
+          <div className="informacion__pregunta">
+            <span>Nombre del residente:</span>
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre del residente"
+              value={newItem.nombre}
+              readOnly
+            />
+            <span>Numero de control:</span>
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre del residente"
+              value={newItem.ncontrol}
+              readOnly
+            />
+            <span>Nombre Proyecto:</span>
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre del residente"
+              value={newItem.nombre_anteproyecto}
+              readOnly
+            />
+            <span>Empresa:</span>
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre del residente"
+              value={newItem.empresa}
+              readOnly
+            />
+          </div>
+          <div className="informacion__pregunta">
+            <span>Asesor Externo:</span>
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre del residente"
+              value={newItem.asesorE}
+              readOnly
+            />
+            <span>Asesor Interno:</span>
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre del residente"
+              value={newItem.asesorI}
+              readOnly
+            />
+            <span>Periodo :</span>
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre del residente"
+              value={newItem.periodo}
+              readOnly
+            />
+          </div>
+        </div>
+        <div>
+          <table className= "mi-tabla2"border="1">
+            <thead>
+              <tr >
+                <th style={{ backgroundColor: '#1a3968' }}>
+                  <font color="White">ACTIVIDAD</font>
+                </th>
+                <th style={{ backgroundColor: '#1a3968' }}>
+                  <font color="White">TIEMPO</font>
+                </th>
+                {columnas.map((nombreColumna, index) => (
+                  <th style={{ backgroundColor: '#1a3968' }}
+                    key={index}
+                    onClick={() => handleCellClick(0, index)}
+                    onDoubleClick={() => handleCellClick(0, index)}
+                  >
+                    <font color="White">{nombreColumna}</font>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filas.map((fila, rowIndex) => (
+                <React.Fragment key={rowIndex}>
+                  <tr bgcolor="white">
+                    <td rowSpan={2}>
+                      <font color="black">
+                        <input
+                          type="text"
+                          className="actividad"
+                          value={fila.actividad}
+                          onChange={(e) => {
+                            const nuevasFilas = [...filas];
+                            nuevasFilas[rowIndex].actividad = e.target.value;
+                            setFilas(nuevasFilas);
+                          }}
+                        />
+                      </font>
+                    </td>
+                    <td>
+                      <font color="black">{fila.tiempo}</font>
+                    </td>
+                    {columnas.map((_, colIndex) => (
+                      <td
+                        key={colIndex}
+                        onClick={() => handleCellClick(rowIndex * 2, colIndex)}
+                        onDoubleClick={() =>
+                          handleCellClick(rowIndex * 2, colIndex)
+                        }
+                        style={{
+                          backgroundColor:
+                            cellColors[getCellPosition(rowIndex * 2, colIndex)],
+                        }}
+                      >
+                        <font color="black"></font>
+                      </td>
+                    ))}
+                  </tr>
+                  <tr bgcolor="white">
+                    <td>
+                      <font color="black">R</font>
+                    </td>
+                    {columnas.map((_, colIndex) => (
+                      <td
+                        key={colIndex + 1}
+                        onClick={() =>
+                          handleCellClick(rowIndex * 2 + 1, colIndex)
+                        }
+                        onDoubleClick={() =>
+                          handleCellClick(rowIndex * 2 + 1, colIndex)
+                        }
+                        style={{
+                          backgroundColor:
+                            cellColors[
+                              getCellPosition(rowIndex * 2 + 1, colIndex)
+                            ],
+                        }}
+                      >
+                        <font color="white"></font>
+                      </td>
+                    ))}
+                  </tr>
+                </React.Fragment>
+              ))}
+              <tr>
+                <th>OBSERVACIONES</th>
+                <th>{/* Celda vacía */}</th>
+                {console.log("ESTO ES OLUMNAS", columnas)}
+                {Array.from({ length: 3 }).map((_, groupIndex) => {
+                  const totalDays = columnas.length;
+                  const daysPerColumn = Math.ceil(totalDays / 3);
+                  const startDay = groupIndex * daysPerColumn + 1;
+                  const endDay = Math.min(
+                    (groupIndex + 1) * daysPerColumn,
+                    totalDays
+                  );
+
+                  return (
+                    <th key={groupIndex} colSpan={endDay - startDay + 1}></th>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <button className="btn-asig" onClick={agregarFila}>
+            Agregar Actividad
+          </button>
+          <button className="btn-asig" onClick={agregarColumna}>
+            Agregar Semana
+          </button>
+          <button
+            className="btn-asig"
+            onClick={() => eliminarFila(filas.length - 1)}
+          >
+            Eliminar Última Actividad
+          </button>
+          <button
+            className="btn-asig"
+            onClick={() => eliminarColumna(columnas.length - 1)}
+          >
+            Eliminar Última Semana
+          </button>
+        </div>
+        <button className="btn-asig" onClick={handleCrearClick}>
+          Imprimir Evaluacion Interna 1
+        </button>
+        <button className="btn-asig" onClick={eliminarDatoLocalStorage}>
+        Eliminar Dato del Local Storage
+      </button>
+      </div>
+
+      {mostrarPopup && (
+        <div className="popuphorizontal">
+          <div className="popup-contenidohorizontal">
+            <table className="mi-tabla3">
+              <tbody>
+                <tr>
+                <td style={{ textAlign: 'center', verticalAlign: 'middle', padding: '10px', margin: '0', width: '10%' }}>
+  <img
+    src="https://istmo.tecnm.mx/wp-content/uploads/2021/08/logo-tec-png-naranja.png"
+    alt="Descripción de la imagen"
+    style={{ width: '100%', height: 'auto', margin: '-10px' }}
+  />
+</td>
+
+                  <td style={{ textAlign: "center", fontWeight: "bold", padding: 0, margin: 0 }}>
+                    Instituto Tecnológico Del Istmo
+                    <br />
+                    "Por una Tecnología Propia como principio de libertad"
+                    <br />
+                    SEGUIMIENTO DE PROYECTO DE RESIDENCIA
+                    <br />
+                    PROFESIONAL
+                  </td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Código:
+                    <br />
+                    FR-ITISTMO-7.5.1-07-05
+                    <br />
+                    Versión:
+                    <br />
+                    Rev. 1
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="contenido__preguntas">
+              <div className="informacion__pregunta">
+                <p style={{ textAlign: "left", fontWeight: "bold" }} >
+                  ESTUDIANTE: {newItem.nombre}
+                </p>
+                <p style={{ textAlign: "left", fontWeight: "bold" }}>
+                  NOMBRE DEL PROYECTO: {newItem.nombre_anteproyecto}
+                </p>
+                <p style={{ textAlign: "left" , fontWeight: "bold"}}>
+                  ASESOR EXTERNO: {newItem.asesorE}
+                </p>
+                <p style={{ textAlign: "left" , fontWeight: "bold"}}>
+                  PERIODO DE REALIZAION: {newItem.periodo}
+                </p>
+              </div>
+              <div className="informacion__pregunta">
+                <p style={{ textAlign: "left" , fontWeight: "bold"}}>
+                  NUMERO DE CONTROL: {newItem.ncontrol}
+                </p>
+                <p style={{ textAlign: "left" , fontWeight: "bold" }}>EMPRESA: {newItem.empresa}</p>
+                <p style={{ textAlign: "left" , fontWeight: "bold"}}>
+                  ASESOR INTERNO: {newItem.asesorI}
+                </p>
+              </div>
+            </div>
+
+            <table className="mi-tabla2">
+              <thead>
+                <tr bgcolor="#1a3968">
+                  <th>ACTIVIDAD</th>
+                  <th>TIEMPO</th>
+                  {columnas.map((nombreColumna, index) => (
+                    <th
+                      key={index}
+                      onClick={() => handleCellClick(0, index)}
+                      onDoubleClick={() => handleCellClick(0, index)}
+                    >
+                      {nombreColumna}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filas.map((fila, rowIndex) => (
+                  <React.Fragment key={rowIndex}>
+                    <tr bgcolor="white">
+                      <td rowSpan={2}>
+                        <font color="black">
+                          <input
+                            type="text"
+                            className={`actividad ${mostrarPopup ? 'sin-borde' : ''}`}
+                            value={fila.actividad}
+                            onChange={(e) => {
+                              const nuevasFilas = [...filas];
+                              nuevasFilas[rowIndex].actividad = e.target.value;
+                              setFilas(nuevasFilas);
+                            }}
+                          />
+                        </font>
+                      </td>
+                      <td>
+                        <font color="black">{fila.tiempo}</font>
+                      </td>
+                      {columnas.map((_, colIndex) => (
+                        <td
+                          key={colIndex}
+                          onClick={() =>
+                            handleCellClick(rowIndex * 2, colIndex)
+                          }
+                          onDoubleClick={() =>
+                            handleCellClick(rowIndex * 2, colIndex)
+                          }
+                          style={{
+                            backgroundColor:
+                              cellColors[
+                                getCellPosition(rowIndex * 2, colIndex)
+                              ],
+                          }}
+                        >
+                          <font color="black"></font>
+                        </td>
+                      ))}
+                    </tr>
+                    <tr bgcolor="white">
+                      <td>
+                        <font color="black">R</font>
+                      </td>
+                      {columnas.map((_, colIndex) => (
+                        <td
+                          key={colIndex + 1}
+                          onClick={() =>
+                            handleCellClick(rowIndex * 2 + 1, colIndex)
+                          }
+                          onDoubleClick={() =>
+                            handleCellClick(rowIndex * 2 + 1, colIndex)
+                          }
+                          style={{
+                            backgroundColor:
+                              cellColors[
+                                getCellPosition(rowIndex * 2 + 1, colIndex)
+                              ],
+                          }}
+                        >
+                          <font color="white"></font>
+                        </td>
+                      ))}
+                    </tr>
+                  </React.Fragment>
+                ))}
+                <tr>
+                  <th>OBSERVACIONES</th>
+                  <th>{/* Celda vacía */}</th>
+                  {console.log("ESTO ES OLUMNAS", columnas)}
+                  {Array.from({ length: 3 }).map((_, groupIndex) => {
+                    const totalDays = columnas.length;
+                    const daysPerColumn = Math.ceil(totalDays / 3);
+                    const startDay = groupIndex * daysPerColumn + 1;
+                    const endDay = Math.min(
+                      (groupIndex + 1) * daysPerColumn,
+                      totalDays
+                    );
+
+                    return (
+                      <th key={groupIndex} colSpan={endDay - startDay + 1}></th>
+                    );
+                  })}
+                </tr>
+
+                <tr>
+                  <th>ENTREGA DE REPORTE</th>
+                  <th><table style={{ border: 'none', width: '100%' }}>
+                          <tr>
+                            <td style={{ borderBottom: '1px solid black' }}>Asesor Interno: </td>
+                          </tr>
+                          <tr>
+                            <td style={{ borderBottom: '1px solid black' }}>Estudiante</td>
+                          </tr>
+                          <tr>
+                            <td style={{ borderBottom: '1px solid black' }}>Jefe Depto.</td>
+                          </tr>
+                        </table></th>
+                  {console.log("ESTO ES OLUMNAS", columnas)}
+                  {Array.from({ length: 3 }).map((_, groupIndex) => {
+                    const totalDays = columnas.length;
+                    const daysPerColumn = Math.ceil(totalDays / 3);
+                    const startDay = groupIndex * daysPerColumn + 1;
+                    const endDay = Math.min((groupIndex + 1) * daysPerColumn, totalDays);
+
+                    return (
+                      <th key={groupIndex} colSpan={endDay - startDay + 1}>
+                        <table style={{ border: 'none', width: '100%' }}>
+                          <tr>
+                            <td style={{ borderBottom: '1px solid black' }}>{newItem.asesorI}</td>
+                          </tr>
+                          <tr>
+                            <td style={{ borderBottom: '1px solid black' }}>{newItem.nombre}</td>
+                          </tr>
+                          <tr>
+                            <td style={{ borderBottom: '1px solid black' }}>{newItem.asesorE}</td>
+                          </tr>
+                        </table>
+                      </th>
+                    );
+                  })}
+                </tr>
+                
+              </tbody>
+            </table>
+
+            <button className="btn-asig" onClick={imprimir3}>
+              Imprimir
+            </button>
+            <button className="btn-asig" onClick={handleCerrarPopup}>
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-    <div className="informacion__pregunta">
-      <span>Asesor externo:</span>
-      <input type="text" name="name" placeholder="Asesor externo"></input> 
-      <span>Asesor interno:</span>
-      <input type="text" name="name" placeholder="Asesor interno"></input>
-      <span>Periodo de realización:</span>
-      <input type="text" name="name" placeholder="Periodo de realización"></input>
-    </div>
-  </div>
-   
-
-
-
-
-    
-        
-        <table border="1">
-          <thead>
-            <tr bgcolor="#1a3968">
-              <th><font color="white">ACTIVIDAD</font></th>
-              <th><font color="white">   </font></th>
-              <th><font color="white">1</font></th>
-              <th><font color="white">2</font></th>
-              <th><font color="white">3</font></th>
-              <th><font color="white">4</font></th>
-              <th><font color="white">5</font></th>
-              <th><font color="white">6</font></th>
-              <th><font color="white">7</font></th>
-              <th><font color="white">8</font></th>
-              <th><font color="white">9</font></th>
-              <th><font color="white">10</font></th>
-              <th><font color="white">11</font></th>
-              <th><font color="white">12</font></th>
-              <th><font color="white">13</font></th>
-              <th><font color="white">14</font></th>
-              <th><font color="white">15</font></th>
-
-            </tr>
-            <tr bgcolor="white">
-              <td rowSpan={2}><font color="black"> <input type="text" className="actividad"></input></font></td>
-              <td><font color="black">P </font></td>
-              <td   style={{ backgroundColor: cellColors['cell-1'] || 'white' }}
-              onClick={() => handleCellClick('cell-1')}><font color="black">
-              </font></td>
-              <td  style={{ backgroundColor: cellColors['cell-2'] || 'white' }}
-              onClick={() => handleCellClick('cell-2')}><font color="black">
-              </font></td>
-              <td   style={{ backgroundColor: cellColors['cell-3'] || 'white' }}
-                onClick={() => handleCellClick('cell-3')}><font color="black">
-              </font></td>
-              <td   style={{ backgroundColor: cellColors['cell-4'] || 'white' }}
-                onClick={() => handleCellClick('cell-4')}><font color="black">
-              </font></td>
-              <td style={{ backgroundColor: cellColors['cell-5'] || 'white' }}
-                onClick={() => handleCellClick('cell-5')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-6'] || 'white' }}
-                onClick={() => handleCellClick('cell-6')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-7'] || 'white' }}
-                onClick={() => handleCellClick('cell-7')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-8'] || 'white' }}
-                onClick={() => handleCellClick('cell-8')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-9'] || 'white' }}
-                onClick={() => handleCellClick('cell-9')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-10'] || 'white' }}
-                onClick={() => handleCellClick('cell-10')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-11'] || 'white' }}
-                onClick={() => handleCellClick('cell-11')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-12'] || 'white' }}
-                onClick={() => handleCellClick('cell-12')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-13'] || 'white' }}
-                onClick={() => handleCellClick('cell-13')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-14'] || 'white' }}
-                onClick={() => handleCellClick('cell-14')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-15'] || 'white' }}
-                onClick={() => handleCellClick('cell-15')}><font color="black"></font></td>
-            </tr>
-            <tr bgcolor="white">
-              <td><font color="black">R</font></td>
-              <td   style={{ backgroundColor: cellColors['cell-16'] || 'white' }}
-                onClick={() => handleCellClick('cell-16')}><font color="black">
-              </font></td>
-              <td  style={{ backgroundColor: cellColors['cell-17'] || 'white' }}
-                onClick={() => handleCellClick('cell-17')}><font color="black">
-              </font></td>
-              <td   style={{ backgroundColor: cellColors['cell-18'] || 'white' }}
-                onClick={() => handleCellClick('cell-18')}><font color="black">
-              </font></td>
-              <td   style={{ backgroundColor: cellColors['cell-19'] || 'white' }}
-                onClick={() => handleCellClick('cell-19')}><font color="black">
-              </font></td>
-              <td style={{ backgroundColor: cellColors['cell-20'] || 'white' }}
-                onClick={() => handleCellClick('cell-20')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-21'] || 'white' }}
-                onClick={() => handleCellClick('cell-21')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-22'] || 'white' }}
-                onClick={() => handleCellClick('cell-22')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-23'] || 'white' }}
-                onClick={() => handleCellClick('cell-23')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-24'] || 'white' }}
-                onClick={() => handleCellClick('cell-24')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-25'] || 'white' }}
-                onClick={() => handleCellClick('cell-25')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-26'] || 'white' }}
-                onClick={() => handleCellClick('cell-26')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-27'] || 'white' }}
-                onClick={() => handleCellClick('cell-27')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-28'] || 'white' }}
-                onClick={() => handleCellClick('cell-28')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-29'] || 'white' }}
-                onClick={() => handleCellClick('cell-29')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-30'] || 'white' }}
-                onClick={() => handleCellClick('cell-30')}><font color="black"></font></td>
-
-            </tr>
-            <tr bgcolor="white">
-            <td rowSpan={2}><font color="black"> <input type="text" className="actividad"></input> </font></td>
-              <td><font color="black">P</font></td>
-              <td   style={{ backgroundColor: cellColors['cell-31'] || 'white' }}
-                onClick={() => handleCellClick('cell-1')}><font color="black">
-              </font></td>
-              <td  style={{ backgroundColor: cellColors['cell-32'] || 'white' }}
-                onClick={() => handleCellClick('cell-2')}><font color="black">
-              </font></td>
-              <td   style={{ backgroundColor: cellColors['cell-33'] || 'white' }}
-                onClick={() => handleCellClick('cell-3')}><font color="black">
-              </font></td>
-              <td   style={{ backgroundColor: cellColors['cell-34'] || 'white' }}
-                onClick={() => handleCellClick('cell-4')}><font color="black">
-              </font></td>
-              <td style={{ backgroundColor: cellColors['cell-35'] || 'white' }}
-                onClick={() => handleCellClick('cell-35')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-36'] || 'white' }}
-                onClick={() => handleCellClick('cell-36')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-37'] || 'white' }}
-                onClick={() => handleCellClick('cell-37')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-38'] || 'white' }}
-                onClick={() => handleCellClick('cell-38')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-39'] || 'white' }}
-                onClick={() => handleCellClick('cell-39')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-40'] || 'white' }}
-                onClick={() => handleCellClick('cell-40')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-41'] || 'white' }}
-                onClick={() => handleCellClick('cell-41')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-42'] || 'white' }}
-                onClick={() => handleCellClick('cell-42')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-43'] || 'white' }}
-                onClick={() => handleCellClick('cell-43')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-44'] || 'white' }}
-                onClick={() => handleCellClick('cell-44')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-45'] || 'white' }}
-                onClick={() => handleCellClick('cell-45')}><font color="black"></font></td>
-            </tr>
-            <tr bgcolor="white">   
-              <td><font color="black">R</font></td>
-              <td  style={{ backgroundColor: cellColors['cell-46'] || 'white' }}
-              onClick={() => handleCellClick('cell-46')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-47'] || 'white' }}
-                onClick={() => handleCellClick('cell-47')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-48'] || 'white' }}
-                onClick={() => handleCellClick('cell-48')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-49'] || 'white' }}
-                onClick={() => handleCellClick('cell-49')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-50'] || 'white' }}
-                onClick={() => handleCellClick('cell-50')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-51'] || 'white' }}
-                onClick={() => handleCellClick('cell-51')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-52'] || 'white' }}
-                onClick={() => handleCellClick('cell-52')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-53'] || 'white' }}
-                onClick={() => handleCellClick('cell-53')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-54'] || 'white' }}
-                onClick={() => handleCellClick('cell-54')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-55'] || 'white' }}
-                onClick={() => handleCellClick('cell-55')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-56'] || 'white' }}
-                onClick={() => handleCellClick('cell-56')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-57'] || 'white' }}
-                onClick={() => handleCellClick('cell-57')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-58'] || 'white' }}
-                onClick={() => handleCellClick('cell-58')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-58'] || 'white' }}
-                onClick={() => handleCellClick('cell-58')}><font color="black"></font></td>
-              <td style={{ backgroundColor: cellColors['cell-59'] || 'white' }}
-                onClick={() => handleCellClick('cell-59')}><font color="black"></font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td rowSpan={2}><font color="black"> <input type="text" className="actividad"></input> </font></td>
-              <td><font color="black">P</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-              <td><font color="black">R</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td rowSpan={2}><font color="black"> <input type="text" className="actividad"></input> </font></td>
-              <td><font color="black">P</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td><font color="black">R</font></td>
-            <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td rowSpan={2}><font color="black"> <input type="text" className="actividad" ></input> </font></td>
-              <td><font color="black">P</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td><font color="black">R</font></td>
-            <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td> 
-            </tr>
-            <tr bgcolor="white">   
-            <td rowSpan={2}><font color="black"> <input type="text" className="actividad"></input> </font></td>
-              <td><font color="black">P</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td><font color="black">R</font></td>
-            <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td rowSpan={2}><font color="black"> <input type="text" className="actividad"></input> </font></td>
-              <td><font color="black">P</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td><font color="black">R</font></td>
-            <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>
-              <td><font color="black">-</font></td>  
-            </tr>
-            <tr bgcolor="white">   
-            <td colSpan={2} bgcolor="#1a3968" ><font color="white"> OBSERVACIONES </font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td colSpan={1} rowSpan={3} bgcolor="#1a3968"><font color="white"> ENTREGA DE REPORTES </font></td>
-            <td><font color="black"> Asesor Interno </font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input> </font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td><font color="black"> Estudiante </font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input> </font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-            </tr>
-            <tr bgcolor="white">   
-            <td><font color="black"> Jefe Depto. </font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input> </font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-              <td colSpan={6}><font color="black"><input type="text" className="actividad"></input></font></td>
-            </tr>
-          </thead> 
-        </table>
-        <input className="btn" type="submit" name="register" value="Registrar"></input>
-        <input className="btn2" type="submit" name="register" value="Imprimir"></input>
-</div>
-</div>
-  
   );
 }
+
 export default Seguimientoresidencia;

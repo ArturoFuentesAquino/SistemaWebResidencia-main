@@ -22,6 +22,7 @@ const Barra = ({ children }) => {
             case '/':
             case '/anteproyectosubir':
             case '/resultadoevaluaciones':
+            case '/seguimientoresidencia':   
             case '/salir':
                 return location.pathname === ruta;
             default:
@@ -41,11 +42,15 @@ const Barra = ({ children }) => {
             </div>
             <div title='Anteproyecto' className={`boton ${isActive('/anteproyectosubir') ? 'activo' : ''}`} onClick={() => navigateTo('/anteproyectosubir')}>
                 <FaRegListAlt className="icono" />
-                <h1>Subir Anteproyecto</h1>
+                <h1>Anteproyecto</h1>
             </div>
             <div title='Resultadoevaluaciones' className={`boton ${isActive('/resultadoevaluaciones') ? 'activo' : ''}`} onClick={() => navigateTo('/resultadoevaluaciones')}>
                 <FaRegListAlt className="icono" />
-                <h1>Subir Anteproyecto</h1>
+                <h1>Resultado Evaluaciones</h1>
+            </div>
+            <div title='Seguimientoresidencia' className={`boton ${isActive('/seguimientoresidencia') ? 'activo' : ''}`} onClick={() => navigateTo('/seguimientoresidencia')}>
+                <FaRegListAlt className="icono" />
+                <h1>Seguimiento de residencia</h1>
             </div>
             {/* Nueva ruta para salir */}
             <div title='Salir' className={`boton ${isActive('/salir') ? 'activo' : ''}`} onClick={() => navigateTo('/salir')}>

@@ -558,7 +558,7 @@ const Evalucionreporteresidente = (props) => {
         dato15: calificaciones
           .find((calificacion) => calificacion.id === 15)
           .valor.toString(),
-        idevaluado: newItem.id.toString(),
+        //idevaluado: newItem.id.toString(),
         observaciones:observaciones.toString(),
         asesori: nombrealm.toString()
       };
@@ -610,10 +610,10 @@ const Evalucionreporteresidente = (props) => {
     console.log("La suma de dato15 que coinciden con idvaluado es:", suma);
   };
 
-  const vercosola = (loqueseve,loquseve2) => {
+  const vercosola = (ideresidente) => {
     
-    console.log("Esto es lo de la consola: EVA ", nombrealm.toString())
-    console.log("Esto es lo de la consola: EVAE ", loquseve2)
+    console.log("Esto es el ID des residente", ideresidente)
+  
     
   };
 
@@ -795,21 +795,32 @@ const Evalucionreporteresidente = (props) => {
       // Solo mostrar el botón si es el último elemento del array filtrado
       index === array.length - 1 && (
         <button
-          className="btn-asig"
-          onClick={() => {
-            const evaluId = evalu && evalu.data ? parseInt(evalu.data.find((evaluItem) => evaluItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
-            const evaluEId = evaluE && evaluE.data ? parseInt(evaluE.data.find((evaluEItem) => evaluEItem.attributes.idevaluado === item.id.toString())?.id, 10) : 0;
-
-            // ...
-
+        className="btn-asig"
+        onClick={() => {
+          const residenteSeleccionado = data.data.find(
+            (item) => item.attributes.nombre === newItem.nombre
+          );
+      
+          if (residenteSeleccionado) {
+            const evaluItem = evalu?.data?.find(
+              (evaluItem) =>
+                evaluItem.attributes.idevaluado ===
+                residenteSeleccionado.id.toString()
+            );
+      
+            const evaluId = evaluItem ? parseInt(evaluItem.id, 10) : 0;
+      
+            // Resto de tu lógica
             console.log('evaluId:', evaluId);
-            console.log('evaluEId:', evaluEId);
-
-            pruebas(evaluId);
-          }}
-        >
-          Registrar Evaluacion
-        </button>
+            pruebas(evaluId)
+          } else {
+            console.error('Residente no encontrado');
+          }
+        }}
+      >
+        Registrar Evaluacion
+      </button>
+      
       )
     ))}
 
@@ -835,7 +846,7 @@ const Evalucionreporteresidente = (props) => {
                     <br />
                     "Por una Tecnología Propia como principio de libertad"
                     <br />
-                    EVALUACION Y SEGUIMIENTO DE RESIDENCIA
+                    EVALUACION  DE REPORTE FINAL DE  RESIDENCIA PROFESIONAL
                     <br />
                     PROFESIONAL
                   </td>

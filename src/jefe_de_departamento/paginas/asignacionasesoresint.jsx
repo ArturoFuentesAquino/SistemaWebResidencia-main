@@ -163,9 +163,19 @@ const Asignacionasesorint = (props) => {
   };
 
   const registrar =  async () =>{
-    await updateData(newItem.id, newItem, nombretabla);
+    const residenteSeleccionado = data.data.find(
+      (item) => item.attributes.nombre === newItem.nombre
+    );
+    if(residenteSeleccionado){
+      await updateData(newItem.id, newItem, nombretabla);
+      window.location.reload();
+    }else{
+      console.log("No se selecciono")
+    }
+   
     // Lógica para mostrar el popup
-   console.log("Esto es el id del alumno a registrar: ",newItem.id)
+   
+   
   };
 
   const handleCerrarPopup = () => {
@@ -273,33 +283,35 @@ const Asignacionasesorint = (props) => {
             </select>
 
             <span>Seleccione al Asesor Externo:</span>
-<select
-  value={newItem.asesorI || ''}
-  onChange={(e) => {
-    const selectedAsesor = asesores && asesores.data
-      ? asesores.data.find((asesor) => asesor.attributes.nombre === e.target.value)
-      : null;
+            <select
+              value={newItem.asesorI || ""}
+              onChange={(e) => {
+                const selectedAsesor =
+                  asesores && asesores.data
+                    ? asesores.data.find(
+                        (asesor) => asesor.attributes.nombre === e.target.value
+                      )
+                    : null;
 
-    setNewItem({
-      ...newItem,
-      asesorI: e.target.value,
-      idasesor: selectedAsesor ? selectedAsesor.id.toString() : '',
-      correoasesor: selectedAsesor ? selectedAsesor.attributes.correo : '',
-    });
-  }}
->
-  <option value="">Selecciona un Asesor</option>
-  {asesores && asesores.data &&
-    asesores.data.map((asesor) => (
-      <option key={asesor.id} value={asesor.attributes.nombre}>
-        {asesor.attributes.nombre}
-      </option>
-    ))}
-</select>
-
-
-
-
+                setNewItem({
+                  ...newItem,
+                  asesorI: e.target.value,
+                  idasesor: selectedAsesor ? selectedAsesor.id.toString() : "",
+                  correoasesor: selectedAsesor
+                    ? selectedAsesor.attributes.correo
+                    : "",
+                });
+              }}
+            >
+              <option value="">Selecciona un Asesor</option>
+              {asesores &&
+                asesores.data &&
+                asesores.data.map((asesor) => (
+                  <option key={asesor.id} value={asesor.attributes.nombre}>
+                    {asesor.attributes.nombre}
+                  </option>
+                ))}
+            </select>
 
             {errors.asesorE && <p style={{ color: "red" }}>{errors.asesorE}</p>}
             <span>Nombre del proyecto:</span>
@@ -351,30 +363,19 @@ const Asignacionasesorint = (props) => {
             ></input>
           </div>
         </div>
+        <button className="btn-asig" onClick={registrar}>
+          Rgistrar
+        </button>
+
+        <button className="btn-asig" onClick={handleCrearClick}>
+          Imprimir
+        </button>
       </div>
 
-     
-                  
-                          <button className="btn-asig" onClick={registrar}>
-                            Rgistrar
-                         </button> 
-                 
-          
-
-      <button className="btn-asig" onClick={handleCrearClick}>
-        Crear
-      </button> 
-
-
-      
-    
-
-     
       {mostrarPopup && (
         <div className="popup">
-          <div className="popup-contenido" >
-          
-            <table className="mi-tabla"  >
+          <div className="popup-contenido">
+            <table className="mi-tabla">
               <tbody>
                 <tr>
                   <td>
@@ -412,7 +413,8 @@ const Asignacionasesorint = (props) => {
               <br />
               COMPUTACIÓN
               <br />
-              No. Oficio: {newItem.id}{" / "} {soloanio()}
+              No. Oficio: {newItem.id}
+              {" / "} {soloanio()}
             </p>
             <p style={{ textAlign: "right", fontWeight: "bold" }}>
               ASUNTO: Asesor interno de Residencia Profesionales
@@ -422,74 +424,76 @@ const Asignacionasesorint = (props) => {
               {obtenerFechaFormateada()}.
             </p>
             <p style={{ textAlign: "left", fontWeight: "bold" }}>
-            {newItem.asesorI}
+              {newItem.asesorI}
               <br />
-              Docente de Sistemas y Computación 
-              <br />
-              P R E S E N T E.
+              Docente de Sistemas y Computación
+              <br />P R E S E N T E.
             </p>
-            
-            <p style={{ textAlign: "left" }}>Por este conducto informo a usted que ha sido asignado para fungir como Asesor interno del Proyecto
-            <br />
-            de Residencia Profesionales que a continuación se describe:
+
+            <p style={{ textAlign: "left" }}>
+              Por este conducto informo a usted que ha sido asignado para fungir
+              como Asesor interno del Proyecto
+              <br />
+              de Residencia Profesionales que a continuación se describe:
             </p>
             <table className="mi-tabla">
               <tbody>
                 <tr>
                   <td>
-                  <p style={{ textAlign: "left" }}>Nombre del <br />
+                    <p style={{ textAlign: "left" }}>
+                      Nombre del <br />
                       Residente:
-                  </p>
+                    </p>
                   </td>
-                  <td >
-                  <p>{newItem.nombre}</p>
-                  </td> 
+                  <td>
+                    <p>{newItem.nombre}</p>
+                  </td>
                 </tr>
                 <tr>
                   <td>
-                  <p style={{ textAlign: "left" }}>Carrera:
-                  </p>
+                    <p style={{ textAlign: "left" }}>Carrera:</p>
                   </td>
-                  <td >
-                  <p>{newItem.carrera}</p>
-                  </td> 
+                  <td>
+                    <p>{newItem.carrera}</p>
+                  </td>
                 </tr>
                 <tr>
                   <td>
-                  <p style={{ textAlign: "left" }}>Nombre del 
-                      Proyecto:
-                  </p>
+                    <p style={{ textAlign: "left" }}>Nombre del Proyecto:</p>
                   </td>
-                  <td >
-                  <p>{newItem.nombre_anteproyecto}</p>
-                  </td> 
+                  <td>
+                    <p>{newItem.nombre_anteproyecto}</p>
+                  </td>
                 </tr>
                 <tr>
                   <td>
-                  <p style={{ textAlign: "left" }}>Periodo de realización:
-                  </p>
+                    <p style={{ textAlign: "left" }}>Periodo de realización:</p>
                   </td>
-                  <td >
-                  <p>{newItem.periodo}</p>
-                  </td> 
+                  <td>
+                    <p>{newItem.periodo}</p>
+                  </td>
                 </tr>
                 <tr>
                   <td>
-                  <p style={{ textAlign: "left" }}>Nombre de la Empresa:
-                  </p>
+                    <p style={{ textAlign: "left" }}>Nombre de la Empresa:</p>
                   </td>
-                  <td >
-                  <p>{newItem.empresa}</p>
-                  </td> 
+                  <td>
+                    <p>{newItem.empresa}</p>
+                  </td>
                 </tr>
               </tbody>
             </table>
             <br />
-            <p style={{ textAlign: "left" }}>Así mismo, le solicito dar el seguimiento y asesoria pertinente a la realización del proyeto aplicando <br />
-            los  lineamientos establecidos para ello e informar el avance de dicha residencia.
+            <p style={{ textAlign: "left" }}>
+              Así mismo, le solicito dar el seguimiento y asesoria pertinente a
+              la realización del proyeto aplicando <br />
+              los lineamientos establecidos para ello e informar el avance de
+              dicha residencia.
             </p>
-            <p style={{ textAlign: "left" }}>Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional <br />
-            de nuestro estudiantado.
+            <p style={{ textAlign: "left" }}>
+              Agradezco de antemano su valioso apoyo en esta importante
+              actividad para la formación profesional <br />
+              de nuestro estudiantado.
             </p>
 
             <p style={{ textAlign: "center", fontWeight: "bold" }}>
@@ -517,18 +521,10 @@ const Asignacionasesorint = (props) => {
             <button className="btn-asig" onClick={handleCerrarPopup}>
               Cerrar
             </button>
-            </div>
-          
+          </div>
         </div>
       )}
-     
-     
     </div>
-    
-   
-    
-
-
   );
 };
 export default Asignacionasesorint;
