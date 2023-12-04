@@ -26,8 +26,8 @@ const Barra = ({ children }) => {
                 return location.pathname === ruta;
                 case '/tablaevaluacionesreporte':
                     return location.pathname === ruta;
-           case '/tablaevaluacionesseguimiento':
-                return location.pathname === ruta;
+          // case '/tablaevaluacionesseguimiento':
+            //    return location.pathname === ruta;
                 case '/salir':
                     return location.pathname === ruta;   
             default:
@@ -61,10 +61,11 @@ const Barra = ({ children }) => {
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluación<br />Reporte</h1>
             </div>
-            <div title='Relación De Evaluación Seguimiento' className={`boton ${isActive('/tablaevaluacionesseguimiento') ? 'activo' : ''}`} onClick={() => navigateTo('/tablaevaluacionesseguimiento')}>
+      { /*   <div title='Relación De Evaluación Seguimiento' className={`boton ${isActive('/tablaevaluacionesseguimiento') ? 'activo' : ''}`} onClick={() => navigateTo('/tablaevaluacionesseguimiento')}>
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluación<br />Seguimiento</h1>
             </div>
+    */}  
             <div title='Salir' className={`boton ${isActive('/salir') ? 'activo' : ''}`} onClick={() => navigateTo('/salir')}>
                 <FaSignOutAlt className="icono" />
                 <h1>Salir</h1>

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import "./estilos-impresion.css";
+
+
+import "../../estilos_impresion/interno/estilos-impresion_asesor_interno.css"
+
 import {
   fetchData,
   createData,
@@ -132,8 +135,13 @@ const Tablaevaluacionreporte = (props) => {
   const [mostrarPopupS, setMostrarPopupS] = useState(false);
 
   const imprimir3 = () => {
-    // Ocultar otros elementos antes de imprimir
-    window.print();
+     // Ocultar otros elementos antes de imprimir
+     const style = document.createElement('style');
+     style.innerHTML = '@page { size: letter; }';
+   
+     // Agregar el estilo al head del documento
+     document.head.appendChild(style);
+     window.print();
   };
 
   const [activeDataset, setActiveDataset] = useState("evalu");
@@ -401,8 +409,8 @@ const Tablaevaluacionreporte = (props) => {
       )}
 
       {selectedItem && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="aivertical">
+          <div className="aiverticalcontenido">
             <table className="mi-tabla2">
               <tbody>
                 <tr>
@@ -460,7 +468,46 @@ const Tablaevaluacionreporte = (props) => {
               </p>
               <p style={{ textAlign: "left" }}>
                 Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
-                {selectedItem.attributes.califasesorI}
+                {data &&
+              data.data
+                .filter((item) => item.attributes.correoasesor === correo)
+                .map((item) => {
+                  // Verificar si evalu es diferente de null y tiene la propiedad data
+                  if (evaluE && evaluE.data && evalu && evalu.data) {
+                    // Verificar si existe un elemento en evalu con el mismo idevaluado
+                    const evaluacion1asesorinterno = evaluE.data.find(
+                      (evaluItem) =>
+                        evaluItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Verificar lo mismo para evaluE
+                    const evaluacion1asexterno = evalu.data.find(
+                      (evaluEItem) =>
+                        evaluEItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato15);
+                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato15);
+
+                    const promedio = (dato10_1 + dato10_2) / 2;
+                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
+                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
+                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
+                    if (
+                      evaluacion1asesorinterno ||
+                      evaluacion1asexterno
+                    ) {
+                      return (
+                        <React.Fragment key={item.id}>
+                          {/* Fila para evalu */}
+                        {promedio}
+                        </React.Fragment>
+                      );
+                    }
+                  }
+
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                })}
               </p>
             </>
 
@@ -570,8 +617,34 @@ const Tablaevaluacionreporte = (props) => {
                       <br />
                       <br />
                       <br />
-                      <br />
-                      Fecha de evaluacion
+                      {evalu &&
+                        evalu.data &&
+                        evalu.data
+                          .filter(
+                            (evaluItem) =>
+                              evaluItem.attributes.idevaluado ===
+                              selectedItem.id.toString()
+                          )
+                          .map((evaluacionCorrespondiente) => {
+                            // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                            if (evaluacionCorrespondiente) {
+                              return (
+                                <>
+                                  <p>
+                                    Fecha Evaluacion
+                                    <br />
+                                    {" "}
+                                    {
+                                      evaluacionCorrespondiente.attributes
+                                        .fecha
+                                    }{" "}
+                                  </p>
+                                </>
+                              );
+                            }
+
+                            return null;
+                          })}
                     </p>
                   </td>
                 </tr>
@@ -590,8 +663,8 @@ const Tablaevaluacionreporte = (props) => {
       )}
 
       {selectedItem2 && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="aivertical">
+        <div className="aiverticalcontenido">
             <table className="mi-tabla2">
               <tbody>
                 <tr>
@@ -649,7 +722,46 @@ const Tablaevaluacionreporte = (props) => {
               </p>
               <p style={{ textAlign: "left" }}>
                 Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
-                {selectedItem2.attributes.califasesorI}
+                {data &&
+              data.data
+                .filter((item) => item.attributes.correoasesor === correo)
+                .map((item) => {
+                  // Verificar si evalu es diferente de null y tiene la propiedad data
+                  if (evaluE2 && evaluE2.data && evalu2 && evalu2.data) {
+                    // Verificar si existe un elemento en evalu con el mismo idevaluado
+                    const evaluacion1asesorinterno = evaluE2.data.find(
+                      (evaluItem) =>
+                        evaluItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Verificar lo mismo para evaluE
+                    const evaluacion1asexterno = evalu2.data.find(
+                      (evaluEItem) =>
+                        evaluEItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato10);
+                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato10);
+
+                    const promedio = (dato10_1 + dato10_2) / 2;
+                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
+                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
+                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
+                    if (
+                      evaluacion1asesorinterno ||
+                      evaluacion1asexterno
+                    ) {
+                      return (
+                        <React.Fragment key={item.id}>
+                          {/* Fila para evalu */}
+                        {promedio}
+                        </React.Fragment>
+                      );
+                    }
+                  }
+
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                })}
               </p>
             </>
 
@@ -759,8 +871,34 @@ const Tablaevaluacionreporte = (props) => {
                       <br />
                       <br />
                       <br />
-                      <br />
-                      Fecha de evaluacion
+                      {evalu2 &&
+                        evalu2.data &&
+                        evalu2.data
+                          .filter(
+                            (evaluItem) =>
+                              evaluItem.attributes.idevaluado ===
+                              selectedItem2.id.toString()
+                          )
+                          .map((evaluacionCorrespondiente) => {
+                            // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                            if (evaluacionCorrespondiente) {
+                              return (
+                                <>
+                                  <p>
+                                    Fecha Evaluacion
+                                    <br />
+                                    {" "}
+                                    {
+                                      evaluacionCorrespondiente.attributes
+                                        .fecha
+                                    }{" "}
+                                  </p>
+                                </>
+                              );
+                            }
+
+                            return null;
+                          })}
                     </p>
                   </td>
                 </tr>

@@ -36,7 +36,7 @@ const PaginaJefe = (props) => {
               <Route path="/asignacionasesoresint" element={<Asignacionasesoresint graphData={props} />} />
               <Route path="/evaluacionseguimiento" element={<Evaluacionseguimiento   graphData={props} />} />
               <Route path="/evaluacionreporte" element={<Evaluacionreporte   graphData={props} />} />
-              <Route path="/evaluacionesseguimiento" element={<Evaluacionesseguimiento  />} />
+             {/*<Route path="/evaluacionesseguimiento" element={<Evaluacionesseguimiento  />} />*/} 
               <Route path="/evaluacionesreporte" element={<Evaluacionesreporte  graphData={props} />} />
               <Route path="/salir" element={<Salir />} />
 

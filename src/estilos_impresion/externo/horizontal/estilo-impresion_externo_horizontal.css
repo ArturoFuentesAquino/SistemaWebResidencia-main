@@ -7,30 +7,26 @@
       padding: 0;
       size: 29.7cm 21cm;
     }
-  
+    
+  /*
     body * {
-      margin: 5;
       visibility: hidden;
       overflow-y: visible;
-      font-size: 6px;
+      font-size: 16px;
       
-    }
-    .popuphorizontal, .popuphorizontal * {
+    }*/
+    .externohorizontal, .externohorizontal * {
       visibility: visible;
       overflow-y: visible;
     }
   
   
-    .popup-contenidohorizontal {
-      width: 18cm; /* Ancho para tamaño carta en centímetros */
-      height: 25.7cm; /* Alto para tamaño carta en centímetros */
+    .contenidoexternohorizontal {
+/* Alto para tamaño carta en centímetros */
       overflow-y: visible;
-      margin: 0;
-      padding: 0;
-    }
-    .popup-contenidohorizontal header {
-      margin: 0;
-      padding: 0;
+      margin-top: 150px;
+      color: rgb(0, 0, 0);
+      
     }
    
     .btn-asig{
@@ -50,14 +46,32 @@
       -webkit-print-color-adjust: exact;
       color-adjust: exact;
     }
+  .cabeceraimpresion {
+      position: fixed;
+      margin-top: 50px;
+      top: 0;
+      width: 125vh;
+      background-color: #ffffff; /* Color de fondo de la cabecera */
+      padding: 10px; /* Espaciado interno de la cabecera */
+      text-align: center; /* Alineación del contenido de la cabecera */
+    }
+    .pie-paginaimpresion {
+      position: fixed;
+      bottom: 0;
+      width: 125vh;
+      background-color: #ff0000; /* Color de fondo del pie de página */
+      padding: 10px; /* Espaciado interno del pie de página */
+      text-align: center;
+      margin-bottom: 20px; /* Alineación del contenido del pie de página */
+    }
     
   }
   
-  
+
   
   
   /* En TuComponente.css o tu archivo de estilos */
-  .popuphorizontal {
+  .externohorizontal {
     position: fixed;
     top: 0;
     left: 0;
@@ -66,19 +80,20 @@
     background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
     display: flex;
     justify-content: center;
-    align-items: center;
+    
     overflow-y: auto;
     
   }
   
-  .popup-contenidohorizontal {
+  .contenidoexternohorizontal {
     background: #fff; /* Fondo blanco */
     padding: 20px;
     border-radius: 8px;
    /* width: 150vh;  Ajusta según sea necesario */
-   width: 150vh;
+     width: 150vh;
     height: 100vh;/*ALTO*/
     overflow-y: auto;
+    
     
   }
   

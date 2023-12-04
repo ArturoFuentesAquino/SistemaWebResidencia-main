@@ -44,12 +44,12 @@ export async function fetchData(nametable) {
       });
   
       if (response.ok) {
-        const successMessage = 'Elemento creado con éxito';
-        alert(successMessage);
+        //const successMessage = 'Elemento creado con éxito';
+        //alert(successMessage);
         return true;
       } else {
-        const errorMessage = 'Error al crear el elemento: ' + response.statusText;
-        alert(errorMessage);
+        //const errorMessage = 'Error al crear el elemento: ' + response.statusText;
+        //alert(errorMessage);
         throw new Error(response.statusText);
       }
     } catch (error) {
@@ -78,12 +78,12 @@ export async function fetchData(nametable) {
           });
       
           if (response.ok) {
-            const successMessage = 'Elemento creado con éxito';
-            alert(successMessage);
+           // const successMessage = 'Elemento creado con éxito';
+            //alert(successMessage);
             return true;
           } else {
-            const errorMessage = 'Error al crear el elemento: ' + response.statusText;
-            alert(errorMessage);
+           // const errorMessage = 'Error al crear el elemento: ' + response.statusText;
+            //alert(errorMessage);
             throw new Error(response.statusText);
           }
         } catch (error) {
@@ -148,12 +148,12 @@ export async function fetchData(nametable) {
       });
   
       if (response.ok) {
-        const successMessage = 'Elemento Actualizado con éxito';
-        alert(successMessage);
+        //const successMessage = 'Elemento Actualizado con éxito';
+        //alert(successMessage);
         return true;
       } else {
-        const successMessage = 'Error Al actualizar elemento!';
-        alert(successMessage);
+       // const successMessage = 'Error Al actualizar elemento!';
+        //alert(successMessage);
         throw new Error(response.statusText);
       }
     } catch (error) {
@@ -201,12 +201,12 @@ export async function fetchData(nametable) {
         method: 'DELETE',
       });
       if (response.ok) {
-        const successMessage = 'Exito borrar elemento!';
-        alert(successMessage);
+        //const successMessage = 'Exito borrar elemento!';
+        //alert(successMessage);
         return true;
       } else {
-        const successMessage = 'Error borrar elemento!';
-        alert(successMessage);
+        //const successMessage = 'Error borrar elemento!';
+        //alert(successMessage);
         throw new Error(response.statusText);
       }
     } catch (error) {

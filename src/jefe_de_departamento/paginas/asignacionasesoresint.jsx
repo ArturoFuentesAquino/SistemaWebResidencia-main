@@ -9,7 +9,7 @@ import {
   residenteaceptado,
 } from "./formato";
 import axios from "axios";
-import './estilos-impresion.css';
+import './../../estilos_impresion/externo/vertical/estilos-impresion_externo_vertical.css';
 /**
  * Renders information about the user obtained from MS Graph
  * @param props
@@ -167,6 +167,20 @@ const Asignacionasesorint = (props) => {
       (item) => item.attributes.nombre === newItem.nombre
     );
     if(residenteSeleccionado){
+      setNewItem({
+        ...newItem,
+        id: residenteSeleccionado.id,
+        nombre: residenteSeleccionado.attributes.nombre,
+        ncontrol: residenteSeleccionado.attributes.ncontrol,
+        nombre_anteproyecto:
+          residenteSeleccionado.attributes.nombre_anteproyecto,
+        periodo: residenteSeleccionado.attributes.periodo,
+        empresa: residenteSeleccionado.attributes.empresa,
+        asesorE: residenteSeleccionado.attributes.asesorE,
+        asesorI: residenteSeleccionado.attributes.asesorI,
+        carrera: residenteSeleccionado.attributes.carrera,
+       
+      });
       await updateData(newItem.id, newItem, nombretabla);
       window.location.reload();
     }else{
@@ -226,8 +240,23 @@ const Asignacionasesorint = (props) => {
   };
   //#####################################################################
   const imprimir3 = () => {
-    // Ocultar otros elementos antes de imprimir
-    window.print();
+      // Ocultar otros elementos antes de imprimir
+      const style = document.createElement('style');
+      style.innerHTML = `
+      @page { 
+          size: letter;
+      }
+      @media print {
+          body *{
+              font-size: 12px;
+          }
+          
+      }
+  `;
+    
+      // Agregar el estilo al head del documento
+      document.head.appendChild(style);
+      window.print();
   };
   //####################################
   const obtenerFechaFormateada = () => {
@@ -373,8 +402,8 @@ const Asignacionasesorint = (props) => {
       </div>
 
       {mostrarPopup && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="externovertical">
+          <div className="externoverticalcontenido">
             <table className="mi-tabla">
               <tbody>
                 <tr>
@@ -502,17 +531,10 @@ const Asignacionasesorint = (props) => {
             <br />
             <br />
             <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
             <p style={{ textAlign: "center", fontWeight: "bold" }}>
-              ING. IVAN RUIZ SANCHEZ
-              <br />
+             {nombrealm}<br />
               SISTEMAS Y COMPUTACIÓN
             </p>
-            <br />
             <p style={{ textAlign: "left" }}>C.c.p. Expediente</p>
             {/* Agrega más campos según sea necesario */}
             <button className="btn-asig" onClick={imprimir3}>

@@ -12,7 +12,7 @@ import {
   agregarevaluacion,
 } from "./formato";
 
-import "./estilos-impresion.css";
+import './../../estilos_impresion/externo/vertical/estilos-impresion_externo_vertical.css';
 
 /**
  * Renders information about the user obtained from MS Graph
@@ -68,6 +68,7 @@ const Evalucionreporteresidente = (props) => {
     dato14: "",
     dato15: "",
     idevaluado: "",
+    fecha:"",
   });
 
   const [errores, setErrores] = useState({
@@ -276,8 +277,17 @@ const nuevaluaE2 = "api/evaluacion2-es"
   };
   //#####################################################################
   const imprimir3 = () => {
-    // Ocultar otros elementos antes de imprimir
-    window.print();
+       // Ocultar otros elementos antes de imprimir
+       const style = document.createElement('style');
+       style.innerHTML = `
+       @page { 
+           size: letter;
+       }
+   `;
+     
+       // Agregar el estilo al head del documento
+       document.head.appendChild(style);
+       window.print();
   };
   //####################################
   const obtenerFechaFormateada = () => {
@@ -537,6 +547,9 @@ const nuevaluaE2 = "api/evaluacion2-es"
       return;
     }
 
+    const fechactual = new Date();
+    const anioactual = fechactual.toLocaleDateString('es-ES');
+
     if (residenteSeleccionado) {
       const nuevaEvaluacion = {
         dato1: calificaciones
@@ -586,7 +599,8 @@ const nuevaluaE2 = "api/evaluacion2-es"
           .valor.toString(),
         //idevaluado: newItem.id.toString(),
         observaciones:observaciones.toString(),
-        asesori: nombrealm.toString()
+        asesori: nombrealm.toString(),
+        fecha: anioactual.toString(),
       };
 
       // Actualiza el estado de evaluacion
@@ -854,8 +868,8 @@ const nuevaluaE2 = "api/evaluacion2-es"
         </div>
       
       {mostrarPopup && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="externovertical">
+        <div className="externoverticalcontenido">
             <table className="mi-tabla">
               <tbody>
                 <tr>
@@ -872,7 +886,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
                     <br />
                     "Por una Tecnología Propia como principio de libertad"
                     <br />
-                    EVALUACION  DE REPORTE FINAL DE  RESIDENCIA PROFESIONAL
+                    EVALUACION  DE REPORTE FINAL DE  RESIDENCIA 
                     <br />
                     PROFESIONAL
                   </td>
@@ -956,6 +970,8 @@ const nuevaluaE2 = "api/evaluacion2-es"
                       <br />
                       <br />
                       Fecha de evaluacion
+                      <br />
+                      {new Date().toLocaleDateString('es-ES')}
                     </p>
                   </td>
                 </tr>

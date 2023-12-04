@@ -37,7 +37,7 @@ const PaginaAsesorInterno = (props) => {
               <Route path="/evaluacionreporte" element={<Evaluacionreporte graphData={props}/>} />
               <Route path="/evaluacionseguimiento" element={<Evaluacionseguimiento  graphData={props}/>} />
               <Route path="/tablaevaluacionesreporte" element={<Tablaevaluacionesreporte graphData={props} />} />
-              <Route path="/tablaevaluacionesseguimiento" element={<Tablaevaluacionesseguimiento  />} />
+             { /*<Route path="/tablaevaluacionesseguimiento" element={<Tablaevaluacionesseguimiento  />} />*/}
               <Route path="/salir" element={<Salir />} />
             </Routes>
           </main>

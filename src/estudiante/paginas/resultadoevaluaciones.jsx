@@ -9,7 +9,7 @@ import {
   agregarevaluacion,
 } from "./formato";
 import axios from "axios";
-import "./estilos-impresion.css";
+import "../../estilos_impresion/estudiante/estilos-impresion_estudiante.css"
 /**
  * Renders information about the user obtained from MS Graph
  * @param props
@@ -140,6 +140,21 @@ const Resultadoevaluaciones = (props) => {
 
   const imprimir3 = () => {
     // Ocultar otros elementos antes de imprimir
+    const style = document.createElement('style');
+    style.innerHTML = `
+    @page { 
+        size: letter;
+    }
+    @media print {
+        body *{
+            font-size: 13px;
+        }
+        
+    }
+`;
+  
+    // Agregar el estilo al head del documento
+    document.head.appendChild(style);
     window.print();
   };
 
@@ -171,7 +186,67 @@ const Resultadoevaluaciones = (props) => {
   const cerrarp4 = () => {
     setMostrarPopup4(false);
   };
+//########################################################
 
+useEffect(() => {
+  fetchDataAsync2();
+}, [correo]);
+
+async function fetchDataAsync2() {
+  try {
+    const responseData = await fetchData(nombretabla);
+    const residenteSeleccionado = responseData.data.find(
+      (item) => item.attributes.correo === correo
+    );
+
+    // Actualizar el estado solo con el nombre del residente
+    const nombreResidente = residenteSeleccionado
+      ? residenteSeleccionado.attributes.nombre
+      : "";
+    const ncontrol = residenteSeleccionado
+      ? residenteSeleccionado.attributes.ncontrol
+      : "";
+    const nproyecto = residenteSeleccionado
+      ? residenteSeleccionado.attributes.nombre_anteproyecto
+      : "";
+    const perio = residenteSeleccionado
+      ? residenteSeleccionado.attributes.periodo
+      : "";
+    const nempresa = residenteSeleccionado
+      ? residenteSeleccionado.attributes.empresa
+      : "";
+    const asesorex = residenteSeleccionado
+      ? residenteSeleccionado.attributes.asesorE
+      : "";
+    const asesorin = residenteSeleccionado
+      ? residenteSeleccionado.attributes.asesorI
+      : "";
+    const especialidad = residenteSeleccionado
+      ? residenteSeleccionado.attributes.carrera
+      : "";
+
+    setNewItem({
+      nombre: nombreResidente,
+      ncontrol: ncontrol,
+      nombre_anteproyecto: nproyecto,
+      periodo: perio,
+      empresa: nempresa,
+      asesorE: asesorex,
+      carrera: especialidad,
+      asesorI: asesorin,
+    });
+    
+    if(!residenteSeleccionado){
+      const successMessage = "Por favor, cargue su anteproyecto para una visualización más detallada de esta sección.";
+      alert(successMessage);
+
+    }
+    console.log("Esto es residente seleccionado", residenteSeleccionado);
+  } catch (error) {
+    console.error("Error al obtener los datos:", error);
+  }
+}
+//##########################################################
   const criteriosAEvaluar = [
     { label: "Portada", valor: 2, atributo: "dato1" },
     { label: "Agradecimientos", valor: 2, atributo: "dato2" },
@@ -280,8 +355,8 @@ const Resultadoevaluaciones = (props) => {
         </table>
       </div>
       {mostrarPopup && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="estvertical">
+          <div className="estverticalcontenido">
             <table className="mi-tabla2">
               <tbody>
                 <tr>
@@ -322,6 +397,7 @@ const Resultadoevaluaciones = (props) => {
               data.data
                 .filter((item) => item.attributes.correo === correo)
                 .map((item) => (
+                  
                   <>
                     <p style={{ textAlign: "left" }}>
                       Nombre del Residente: {item.attributes.nombre}{" "}
@@ -341,7 +417,46 @@ const Resultadoevaluaciones = (props) => {
                     </p>
                     <p style={{ textAlign: "left" }}>
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
-                      {item.attributes.califasesorI}
+                      {data &&
+              data.data
+                .filter((item) => item.attributes.correoasesor === correo)
+                .map((item) => {
+                  // Verificar si evalu es diferente de null y tiene la propiedad data
+                  if (evaluE && evaluE.data && evalu && evalu.data) {
+                    // Verificar si existe un elemento en evalu con el mismo idevaluado
+                    const evaluacion1asesorinterno = evaluE.data.find(
+                      (evaluItem) =>
+                        evaluItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Verificar lo mismo para evaluE
+                    const evaluacion1asexterno = evalu.data.find(
+                      (evaluEItem) =>
+                        evaluEItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato15);
+                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato15);
+
+                    const promedio = (dato10_1 + dato10_2) / 2;
+                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
+                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
+                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
+                    if (
+                      evaluacion1asesorinterno ||
+                      evaluacion1asexterno
+                    ) {
+                      return (
+                        <React.Fragment key={item.id}>
+                          {/* Fila para evalu */}
+                        {promedio}
+                        </React.Fragment>
+                      );
+                    }
+                  }
+
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                })}
                     </p>
                   </>
                 ))}
@@ -463,8 +578,39 @@ const Resultadoevaluaciones = (props) => {
                       <br />
                       <br />
                       <br />
-                      <br />
-                      Fecha de evaluacion
+                      {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evalu && evalu.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evalu.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                           
+                           <p>
+                            Fecha Evaluacion
+                            <br />
+                             {evaluacionCorrespondiente.attributes.fecha} </p>
+                            
+                            </>
+                          );
+                        }
+                      }
+                      // Evaluacion 1 Asesor Interno
+                      return null;
+                      
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
                     </p>
                   </td>
                 </tr>
@@ -483,8 +629,8 @@ const Resultadoevaluaciones = (props) => {
       )}
 
       {mostrarPopupS && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="estvertical">
+        <div className="estverticalcontenido">
             <table className="mi-tabla2">
               <tbody>
                 <tr>
@@ -544,7 +690,46 @@ const Resultadoevaluaciones = (props) => {
                     </p>
                     <p style={{ textAlign: "left" }}>
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
-                      {item.attributes.califasesorI}
+                      {data &&
+              data.data
+                .filter((item) => item.attributes.correoasesor === correo)
+                .map((item) => {
+                  // Verificar si evalu es diferente de null y tiene la propiedad data
+                  if (evaluE && evaluE.data && evalu && evalu.data) {
+                    // Verificar si existe un elemento en evalu con el mismo idevaluado
+                    const evaluacion1asesorinterno = evaluE.data.find(
+                      (evaluItem) =>
+                        evaluItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Verificar lo mismo para evaluE
+                    const evaluacion1asexterno = evalu.data.find(
+                      (evaluEItem) =>
+                        evaluEItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato15);
+                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato15);
+
+                    const promedio = (dato10_1 + dato10_2) / 2;
+                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
+                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
+                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
+                    if (
+                      evaluacion1asesorinterno ||
+                      evaluacion1asexterno
+                    ) {
+                      return (
+                        <React.Fragment key={item.id}>
+                          {/* Fila para evalu */}
+                        {promedio}
+                        </React.Fragment>
+                      );
+                    }
+                  }
+
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                })}
                     </p>
                   </>
                 ))}
@@ -665,8 +850,39 @@ const Resultadoevaluaciones = (props) => {
                       <br />
                       <br />
                       <br />
-                      <br />
-                      Fecha de evaluacion
+                      {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evaluE2 && evaluE2.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evaluE2.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                           
+                           <p>
+                            Fecha Evaluacion 
+                            <br />
+                             {evaluacionCorrespondiente.attributes.fecha} </p>
+                            
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      //Evaluacion 1 Asesor Externo
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
                     </p>
                   </td>
                 </tr>
@@ -760,8 +976,8 @@ const Resultadoevaluaciones = (props) => {
       </div>  
 
       {mostrarPopup3 && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="estvertical">
+        <div className="estverticalcontenido">
             <table className="mi-tabla2">
               <tbody>
                 <tr>
@@ -821,7 +1037,46 @@ const Resultadoevaluaciones = (props) => {
                     </p>
                     <p style={{ textAlign: "left" }}>
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
-                      {item.attributes.califasesorI}
+                      {data &&
+              data.data
+                .filter((item) => item.attributes.correoasesor === correo)
+                .map((item) => {
+                  // Verificar si evalu es diferente de null y tiene la propiedad data
+                  if (evaluE2 && evaluE2.data && evalu2 && evalu2.data) {
+                    // Verificar si existe un elemento en evalu con el mismo idevaluado
+                    const evaluacion1asesorinterno = evaluE2.data.find(
+                      (evaluItem) =>
+                        evaluItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Verificar lo mismo para evaluE
+                    const evaluacion1asexterno = evalu2.data.find(
+                      (evaluEItem) =>
+                        evaluEItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato10);
+                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato10);
+
+                    const promedio = (dato10_1 + dato10_2) / 2;
+                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
+                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
+                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
+                    if (
+                      evaluacion1asesorinterno ||
+                      evaluacion1asexterno
+                    ) {
+                      return (
+                        <React.Fragment key={item.id}>
+                          {/* Fila para evalu */}
+                        {promedio}
+                        </React.Fragment>
+                      );
+                    }
+                  }
+
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                })}
                     </p>
                   </>
                 ))}
@@ -943,8 +1198,39 @@ const Resultadoevaluaciones = (props) => {
                       <br />
                       <br />
                       <br />
-                      <br />
-                      Fecha de evaluacion
+                      {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evalu2 && evalu2.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evalu2.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                           
+                           <p> 
+                            Fecha Evaluacion 
+                            <br />
+                            {evaluacionCorrespondiente.attributes.fecha} </p>
+                            
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      //EVALUACION 2 ASESOR INTERNO
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
                     </p>
                   </td>
                 </tr>
@@ -964,8 +1250,8 @@ const Resultadoevaluaciones = (props) => {
 
 
 {mostrarPopup4 && (
-        <div className="popup">
-          <div className="popup-contenido">
+        <div className="estvertical">
+        <div className="estverticalcontenido">
             <table className="mi-tabla2">
               <tbody>
                 <tr>
@@ -1025,7 +1311,46 @@ const Resultadoevaluaciones = (props) => {
                     </p>
                     <p style={{ textAlign: "left" }}>
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
-                      {item.attributes.califasesorI}
+                      {data &&
+              data.data
+                .filter((item) => item.attributes.correoasesor === correo)
+                .map((item) => {
+                  // Verificar si evalu es diferente de null y tiene la propiedad data
+                  if (evaluE2 && evaluE2.data && evalu2 && evalu2.data) {
+                    // Verificar si existe un elemento en evalu con el mismo idevaluado
+                    const evaluacion1asesorinterno = evaluE2.data.find(
+                      (evaluItem) =>
+                        evaluItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    // Verificar lo mismo para evaluE
+                    const evaluacion1asexterno = evalu2.data.find(
+                      (evaluEItem) =>
+                        evaluEItem.attributes.idevaluado === item.id.toString()
+                    );
+
+                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato10);
+                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato10);
+
+                    const promedio = (dato10_1 + dato10_2) / 2;
+                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
+                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
+                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
+                    if (
+                      evaluacion1asesorinterno ||
+                      evaluacion1asexterno
+                    ) {
+                      return (
+                        <React.Fragment key={item.id}>
+                          {/* Fila para evalu */}
+                        {promedio}
+                        </React.Fragment>
+                      );
+                    }
+                  }
+
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                })}
                     </p>
                   </>
                 ))}
@@ -1147,8 +1472,39 @@ const Resultadoevaluaciones = (props) => {
                       <br />
                       <br />
                       <br />
-                      <br />
-                      Fecha de evaluacion
+                      {data &&
+                  data.data
+                    .filter((item) => item.attributes.correo === correo)
+                    .map((item) => {
+                      // Verificar si evalu es diferente de null y tiene la propiedad data
+                      if (evaluE2 && evaluE2.data) {
+                        // Verificar si existe un elemento en evalu con el mismo idevaluado
+                        const evaluacionCorrespondiente = evaluE2.data.find(
+                          (evaluItem) =>
+                            evaluItem.attributes.idevaluado ===
+                            item.id.toString()
+                        );
+
+                        // Mostrar la fila solo si se encuentra una correspondencia en evalu
+                        if (evaluacionCorrespondiente) {
+                          // Ahora puedes acceder a item.attributes.nombre si se cumple la condición
+                          return (
+                            <>
+                           
+                           <p>
+                            Fecha Evaluacion
+                            <br />
+                             {evaluacionCorrespondiente.attributes.fecha} </p>
+                            
+                            </>
+                          );
+                        }
+                      }
+
+                      return null;
+                      //EVALUACION 2 ASESOR EXTERNO
+                      // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+                    })}
                     </p>
                   </td>
                 </tr>

@@ -9,7 +9,7 @@ import {
   stado,
 } from "./Api";
 import axios from "axios";
-import "../../estudiante/paginas/estilosseguimiento.css";
+import './../../estilos_impresion/externo/horizontal/estilo-impresion_externo_horizontal.css';
 
 /**
  * Renders information about the user obtained from MS Graph
@@ -39,18 +39,26 @@ function Anteproyectosrecibidos(props) {
     empresa: "",
     asesorE: "",
   });
-
+  const [asesores, setAsesores] = useState(null);
   ///api/residentesuploads
   //pruebas de importacion
   const nombretabla = "api/residentesuploads";
   const nombredocumentos = "api/upload/files/";
   //#####################################
+  const nombreasesores = "api/asesores-is";
 
+  
   //pruebas de importacion
   const contenidodocumento = "api/upload";
   //
   const direccionapi = "http://localhost:1337/";
   ///
+//PRESIDENTE Y SUBDIRECTOACTUAL
+const presidenteactual = "api/presidenteacademicos";
+const subdirectoractual ="api/subdirectoractuals";
+const [presiactual, setpresiactual] = useState(null);
+const [subdiactual, setsubdiactual] = useState(null);
+
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -58,13 +66,22 @@ function Anteproyectosrecibidos(props) {
 
   //#######################################
 
+  const [GrupoAsesores, setGrupoAsesores] = useState(null);
   useEffect(() => {
     // Cargar los datos iniciales al montar el componente
     async function fetchDataAsync() {
       try {
         const data = await fetchData(nombretabla);
         setData(data);
-        console.log("Cargo data !", data);
+        const asesores = await fetchData(nombreasesores);
+        setAsesores(asesores);
+
+        const presiactual = await fetchData(presidenteactual);
+        setpresiactual(presiactual);
+        const subdiactual = await fetchData(subdirectoractual);
+        setsubdiactual(subdiactual);
+
+
       } catch (error) {
         console.error("Error al obtener los datos:", error);
       }
@@ -237,8 +254,22 @@ function Anteproyectosrecibidos(props) {
   };
 
   const imprimir3 = () => {
-    // Ocultar otros elementos antes de imprimir
-    window.print();
+       // Ocultar otros elementos antes de imprimir
+       const style = document.createElement('style');
+       style.innerHTML = `
+       @page { 
+           size: landscape; 
+       }
+       @media print {
+           body *{
+               font-size: 16px;
+           }
+       }
+   `;
+     
+       // Agregar el estilo al head del documento
+       document.head.appendChild(style);
+       window.print();
   };
 
   //####################################
@@ -269,7 +300,45 @@ function Anteproyectosrecibidos(props) {
     return anio;
   };
 
+  const elementosConAsesores = Array.isArray(data?.data) && Array.isArray(asesores?.data)
+    ? data.data.map(elemento => {
+        const asesor = asesores.data.find(a => a.attributes.nombre === elemento.attributes.asesorI);
+        return { ...elemento, asesorNombre: asesor ? asesor.attributes.nombre : 'Desconocido' };
+      })
+    : [];
 
+  console.log("Esto es grupo asesores !", elementosConAsesores);
+  
+  function getSemester() {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+    let semester1 = '';
+    let semester2 = '';
+
+    if (currentMonth >= 1 && currentMonth <= 6) {
+        semester1 = ` ${currentYear}`;
+        semester2 = ' ';
+    } else {
+        semester1 = ' ';
+        semester2 = `  ${currentYear}`;
+    }
+
+    return { semester1, semester2 };
+}
+const { semester1, semester2 } = getSemester();
+
+/*
+const fecha = new Date();
+const dia = String(fecha.getDate()).padStart(2, '0');
+const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript van de 0 (enero) a 11 (diciembre), por lo que sumamos 1.
+const anio = fecha.getFullYear();
+const anioactual = `${mes}/${dia}/${anio}`;
+
+const fecha = new Date();
+const anioactual = fecha.toLocaleDateString('es-ES');
+
+console.log("Esto es el año actual !", anioactual);
+*/
   return (
     <div className="contenido__anteproyectosubir">
       <div className="Anteproyectosubir__titulo">
@@ -421,9 +490,11 @@ function Anteproyectosrecibidos(props) {
       </div>
 
       {mostrarPopup && (
-        <div className="popuphorizontal">
-          <div className="popup-contenidohorizontal">
-            <table className="mi-tabla">
+        
+        <div className="externohorizontal">
+          <div className="contenidoexternohorizontal">
+          <div className ="cabeceraimpresion">
+                     <table className="mi-tabla">
               <tbody>
                 <tr>
                   <td>
@@ -455,6 +526,8 @@ function Anteproyectosrecibidos(props) {
                 </tr>
               </tbody>
             </table>
+        </div>
+
             <br />
             <p style={{ textAlign: "center", fontWeight: "bold" }}>
             INSTITUTO TECNOLÓGICO DEL ISTMO
@@ -475,15 +548,15 @@ function Anteproyectosrecibidos(props) {
               <p style={{ textAlign: "right", fontWeight: "bold" }}>
                 
               <table className="mi-tabla2" border = "1">
-    <tr>
-      <th rowSpan={2}>SEMESTRE</th>
-      <td>ENE - JUN</td>
-      <td style={{ color: 'white' }}>ENE - JUN</td>
-    </tr>
-    <tr>
-      <td>AGO - DIC</td>
-      <td></td>
-    </tr>
+              <tr>
+    <th rowSpan={2}>SEMESTRE</th>
+    <td>ENE - JUN</td>
+    <td>{semester1}</td>
+</tr>
+<tr>
+    <td>AGO - DIC</td>
+    <td>{semester2}</td>
+</tr>
               </table>
             </p>
               </div>
@@ -496,7 +569,7 @@ function Anteproyectosrecibidos(props) {
               <th>Num</th>
                 <th>Número de Control</th>
                 <th>Nombre del Estudiante</th>
-                <th>S</th>
+                <th>Genero</th>
                 <th>Nombre de Anteproyecto</th>
                 <th>Empresa</th>
                 <th>Asesor Externo</th>
@@ -509,16 +582,24 @@ function Anteproyectosrecibidos(props) {
             <tbody>
 
               {/* {data &&
-                data.data.map((item) => (*/ }
-              {data &&
+                data.data.map((item) => (
+                  o
+                    {data &&
                 data.data
                 .filter((item) => item.attributes.estado === "Aprobado")
                 .map((item,index) => (
+                  
+                  */ }
+
+
+            {elementosConAsesores
+            .filter((item) => item.attributes.estado === "Aprobado")
+            .map((item, index) => (
                   <tr key={item.id}>
                     <td>{index + 1}</td>
                     <td>{item.attributes.ncontrol}</td>
                     <td>{item.attributes.nombre}</td>
-                    <td>{index + 1}</td>
+                    <td>{item.attributes.genero}</td>
                     <td>{item.attributes.nombre_anteproyecto}</td>
               
                     <td>{item.attributes.empresa}</td>
@@ -546,6 +627,10 @@ function Anteproyectosrecibidos(props) {
             se elaborará otro registro únicamente con los anteproyectos redictaminado
             </p>
 
+
+
+
+            <div className="pie-paginaimpresion">
             <table className="mi-tabla">
               <tbody>
                 <tr>
@@ -554,8 +639,19 @@ function Anteproyectosrecibidos(props) {
                     <br />
                     <br />
                     <br />
-                    AQUI NOMBRE PRESIDENTE ACADEMICO   
-                    <br />
+                {/*    {presiactual && presiactual.data.map((item) => (
+                      <p>
+                        {item.attributes.nombre}
+                      </p>
+                    ))}
+                */} 
+
+
+                {presiactual && presiactual.data.length > 0 && (
+                  <p>
+                    {presiactual.data[0].attributes.nombre}
+                  </p>
+                )}
                     PRESIDENTE DE ACADEMIA
                   </td>
                   <td style={{ textAlign: "center", fontWeight: "bold" }}>
@@ -574,13 +670,22 @@ function Anteproyectosrecibidos(props) {
                     <br />
                     <br />
                     <br />
-                    AQUI NOMBRE    SUBDIRECTOR ACADEMICO
-                    <br />
+
+                    {subdiactual && subdiactual.data.length > 0 && (
+                  <p>
+                    {subdiactual.data[0].attributes.nombre}
+                  </p>
+                )}
                     SUBDIRECTOR ACADEMICO
                   </td>
                 </tr>
               </tbody>
             </table>
+
+
+            </div>
+
+
 
             {/* Agrega más campos según sea necesario */}
             <button className="btn-asig" onClick={imprimir3}>
@@ -590,6 +695,9 @@ function Anteproyectosrecibidos(props) {
               Cerrar
             </button>
           </div>
+
+
+
         </div>
       )}
 

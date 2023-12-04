@@ -15,8 +15,13 @@ function Seguimientoresidencia(props) {
   };
 
   const imprimir3 = () => {
-    // Ocultar otros elementos antes de imprimir
-    window.print();
+       // Ocultar otros elementos antes de imprimir
+       const style = document.createElement('style');
+       style.innerHTML = '@page { size: landscape; }';
+     
+       // Agregar el estilo al head del documento
+       document.head.appendChild(style);
+       window.print();
   };
 
   const [data, setData] = useState(null);
@@ -81,7 +86,14 @@ function Seguimientoresidencia(props) {
         carrera: especialidad,
         asesorI: asesorin,
       });
+      
+      if(!residenteSeleccionado){
+        const successMessage = "Por favor, cargue su anteproyecto para una visualización más detallada de esta sección.";
+        alert(successMessage);
 
+      }
+      handlePeriodoChange(perio)
+      setmensajeseguimiento(true)
       console.log("Esto es residente seleccionado", residenteSeleccionado);
     } catch (error) {
       console.error("Error al obtener los datos:", error);
@@ -217,6 +229,261 @@ function Seguimientoresidencia(props) {
     alert("El dato ha sido eliminado del Local Storage.");
     window.location.reload();
   };
+//############PARA HACER LO DE PERIODO #############################################
+
+const [errorPeriodo, setErrorPeriodo] = useState("");
+
+const [realizarperiodos, setrealizarperiodos] =  useState({
+ revision1: "",
+ revision2: "",
+ revision3: "",
+ cantidadsemanas:"",
+});
+
+const handlePeriodoChange = (fechas) => {
+  const periodo = fechas;
+
+
+  const match = periodo.match(
+    /^([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)\s*-\s*([1-9]|[12]\d|3[01])\s+(DE|de)\s+([a-zA-Z]+)\s*(DEL?|del?)?\s*(\d{4})?$/
+  );
+
+  if (match) {
+    const [
+      ,
+      diaInicio,
+      preposicionInicio,
+      mesInicio,
+      diaFin,
+      preposicionFin,
+      mesFin,
+      ,
+      ,
+      del,
+      año,
+    ] = match;
+
+    const añoActual = new Date().getFullYear();
+    const añoIngresado = match[8];
+    const añoIngresadoEntero = añoIngresado
+      ? parseInt(añoIngresado, 10)
+      : null;
+    console.log("Año ingresado (entero):", añoActual);
+
+    if (añoIngresadoEntero >= añoActual) {
+      const fechaInicio = new Date(
+        añoActual,
+        obtenerIndiceMes(mesInicio),
+        parseInt(diaInicio, 10)
+      );
+      const textoFechainicio = `${diaInicio} ${mesInicio} ${añoIngresado}`;
+
+      const fechaConvertida1 = convertirFecha(textoFechainicio);
+
+      const textoFechafin = `${diaFin} ${mesFin} ${añoIngresado}`;
+
+      const fechaConvertida2 = convertirFecha(textoFechafin);
+
+
+      console.log("FECHAS INICIO",diaInicio,mesInicio,añoIngresado);
+      console.log("FECHAS FINAL",diaFin,mesFin,añoIngresado);
+      console.log("TEXTO FECHA",textoFechainicio);
+      console.log("TEXTO FECHA CONVERTIDA",fechaConvertida1);
+
+      console.log("TEXTO FECHA2",textoFechafin);
+      console.log("TEXTO FECHA CONVERTIDA2",fechaConvertida2);
+      const fechaFin = new Date(
+        añoIngresadoEntero,
+        obtenerIndiceMes(mesFin),
+        parseInt(diaFin, 10)
+      );
+
+      console.log("año ingresado:", match);
+      console.log("año actual :", añoIngresado);
+      console.log("año actual :", añoActual);
+
+      const diferenciaMeses =
+        (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 +
+        fechaFin.getMonth() -
+        fechaInicio.getMonth();
+
+      console.log("Diferencia Meses:", diferenciaMeses);
+
+
+
+      const cantidadsemanas = obtenerSemanas(fechaConvertida2, fechaConvertida1);
+      if (diferenciaMeses === 4 || diferenciaMeses === 5) {
+        const fechasDivididas = dividirPeriodo(fechaConvertida1, fechaConvertida2);
+
+      console.log("FECHAS DIVIDIDAS",fechasDivididas);
+      setrealizarperiodos({
+        revision1: fechasDivididas[0],
+        revision2: fechasDivididas[1],
+        revision3: fechasDivididas[2],
+        cantidadsemanas: cantidadsemanas,
+       });
+      setErrorPeriodo("");
+      } else {
+        setErrorPeriodo("El periodo debe ser de 4 o 6 meses.");
+      }
+    } else {
+      setErrorPeriodo("Por favor, ingrese el año actual.");
+    }
+  } else {
+    setErrorPeriodo(
+      'Formato incorrecto. Por favor, ingrese los periodos como "1 de Enero - 1 de Febrero" y asegúrese de usar días válidos.'
+    );
+  }
+};
+
+const calcularDiferenciaMeses = (fechaInicio, fechaFin) => {
+  return (
+    (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 +
+    fechaFin.getMonth() -
+    fechaInicio.getMonth()
+  );
+};
+
+function dividirPeriodo(fechaInicioStr, fechaFinStr) {
+// Convertir las cadenas de fecha a objetos Date
+const fechaInicio = new Date(fechaInicioStr);
+const fechaFin = new Date(fechaFinStr);
+
+// Calcular el número total de días entre las fechas
+const duracionTotalDias = Math.ceil((fechaFin - fechaInicio) / (24 * 60 * 60 * 1000));
+
+// Calcular la duración aproximada de cada subintervalo en días
+const duracionSubintervalo = Math.floor(duracionTotalDias / 3);
+
+// Calcular las fechas para cada subintervalo y formatear la salida
+const fechasSubintervalo = Array.from({ length: 3 }, (_, index) => {
+  const inicioSubintervalo = new Date(fechaInicio.getTime() + index * duracionSubintervalo * 24 * 60 * 60 * 1000);
+  const finSubintervalo = new Date(inicioSubintervalo.getTime() + (duracionSubintervalo - 1) * 24 * 60 * 60 * 1000);
+  
+  //return `Revision ${index + 1}: ${formatoFecha(inicioSubintervalo)} al ${formatoFecha(finSubintervalo)}`;
+  return `Revision ${index + 1}: ${formatoFecha(finSubintervalo)}`;
+});
+
+return fechasSubintervalo;
+}
+
+// Función para formatear una fecha en el formato 'd de MMMM'
+function formatoFecha(fecha) {
+const opciones = { day: 'numeric', month: 'long' };
+return fecha.toLocaleDateString('es-ES', opciones);
+}
+function convertirFecha(textoFecha) {
+const meses = {
+  'enero': '01',
+  'febrero': '02',
+  'marzo': '03',
+  'abril': '04',
+  'mayo': '05',
+  'junio': '06',
+  'julio': '07',
+  'agosto': '08',
+  'septiembre': '09',
+  'octubre': '10',
+  'noviembre': '11',
+  'diciembre': '12'
+};
+
+const partes = textoFecha.toLowerCase().split(' ');
+if (partes.length === 3 && meses.hasOwnProperty(partes[1])) {
+  const dia = partes[0];
+  const mes = meses[partes[1]];
+  const año = partes[2];
+
+  return `${año}-${mes}-${dia}`;
+} else {
+  console.error('Formato de fecha no válido');
+  return null;
+}
+}
+
+// Ejemplo de uso:
+const fechaConvertida = convertirFecha('1 agosto 2023');
+console.log(fechaConvertida);
+
+
+//#####################################################################
+const obtenerIndiceMes = (nombreMes) => {
+  const meses = [
+    "ENERO",
+    "FEBRERO",
+    "MARZO",
+    "ABRIL",
+    "MAYO",
+    "JUNIO",
+    "JULIO",
+    "AGOSTO",
+    "SEPTIEMBRE",
+    "OCTUBRE",
+    "NOVIEMBRE",
+    "DICIEMBRE",
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+  ];
+
+  const mesBuscado = nombreMes.toLowerCase();
+
+  return meses.indexOf(mesBuscado);
+};
+
+const puedeAgregarPeriodo = !errorPeriodo && newItem.periodo.trim() !== "";
+
+const agregarPeriodo = () => {
+  if (puedeAgregarPeriodo) {
+    // Lógica para agregar el período, por ejemplo, enviar a la API, etc.
+    console.log("Período agregado:", newItem.periodo);
+  } else {
+    alert(
+      "No se puede agregar el período debido a errores o formato incorrecto."
+    );
+  }
+};
+
+function obtenerSemanas(fechaInicio, fechaFin) {
+  const inicio = new Date(fechaInicio);
+  const fin = new Date(fechaFin);
+
+  // Diferencia en milisegundos
+  const diferencia = Math.abs(fin - inicio);
+
+  // Convertir la diferencia a semanas
+  const semanas = Math.round(diferencia / (1000 * 60 * 60 * 24 * 7));
+
+  return semanas-1;
+}
+
+// Ejemplo de uso:
+const semanas = obtenerSemanas('2023-06-1', '2023-01-1');
+console.log(semanas);
+//##########################################################
+const [mensajeseguimiento, setmensajeseguimiento] = useState(false);
+console.log("ESTO ES EL MENSAJE", newItem.nombre);
 
   return (
     <div className="contenido__seguimientoresidencia">
@@ -409,10 +676,10 @@ function Seguimientoresidencia(props) {
           </button>
         </div>
         <button className="btn-asig" onClick={handleCrearClick}>
-          Imprimir Evaluacion Interna 1
+          Imprimir Seguimiento
         </button>
         <button className="btn-asig" onClick={eliminarDatoLocalStorage}>
-        Eliminar Dato del Local Storage
+       Reiniciar Seguimiento
       </button>
       </div>
 
@@ -630,6 +897,35 @@ function Seguimientoresidencia(props) {
           </div>
         </div>
       )}
+
+{mensajeseguimiento && (
+  <div className="mensajeseguimiento">
+      <div className="mensajeseguimientocontenido">
+      <h5>Hola! {newItem.nombre}</h5>
+      <p style={{ textAlign: 'left' }}>Si su su anteproyecto ya a sido aceptado y ya tiene usted un asesor interno porfavor lea la siguiente recomednacion:</p>
+      <p style={{ textAlign: 'left' }}>El perio que usted ingreso es </p>
+      <p style={{ textAlign: 'left', color: 'blue' }}>{newItem.periodo}</p>
+      <p style={{ textAlign: 'left' }}>Por lo tanto Sus Revisiones deberian ser las sguientes fechas del presente año: </p>
+      <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.revision1}</p>
+      <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.revision2}</p>
+      <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.revision3}</p>
+      <p style={{ textAlign: 'left' }}>Con una catindad de semanas (aproximadamente) de: </p>
+      <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.cantidadsemanas}</p>
+      <p style={{ textAlign: 'left', color: 'red' }}>Aviso!</p>
+      <p style={{ textAlign: 'left', color: 'red' }}>Una vez que usted defina las actividades, semanas y pinte lo deseado no puede volver a agregar mas actividades o semanas
+      No obstante si desea volver a realizar el seguimiento solo haga click en Reiniciar Seguimiento</p>
+      <button onClick={() => setmensajeseguimiento(false)}>Enterado</button>
+    </div>
+  </div>
+
+)}
+
+
+
+
+
+
+
     </div>
   );
 }
