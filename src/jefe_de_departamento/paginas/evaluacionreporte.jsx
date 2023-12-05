@@ -704,7 +704,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
                 data.data
                   .filter(
                     (item) =>
-                      item.attributes.correoasesorE === correo
+                      item.attributes.correoasesorE === correo && item.attributes.fuera === "No"
                   )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>

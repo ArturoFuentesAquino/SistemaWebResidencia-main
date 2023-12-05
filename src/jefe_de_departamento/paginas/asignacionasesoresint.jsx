@@ -311,7 +311,7 @@ const Asignacionasesorint = (props) => {
                 ))}
             </select>
 
-            <span>Seleccione al Asesor Externo:</span>
+            <span>Seleccione al Asesor Interno:</span>
             <select
               value={newItem.asesorI || ""}
               onChange={(e) => {

@@ -48,6 +48,7 @@ function App(props) {
     carrera: "",
     asesorI: "",
     genero:"",
+    fuera:"",
   });
 
   ///api/residentesuploads
@@ -226,8 +227,13 @@ function App(props) {
     //console.log("esto es de consola: ", datos2.correos.toString())
 
     fieldsToValidate.forEach((field) => {
-      if (newItem[field].trim() === "") {
-        newErrors[field] = `El ${field.replace("_", " ")} es obligatorio`;
+      if (newItem[field].trim() === "Otros") {
+        newErrors[field] = `El ${field.replace("_", " ")} No puede ir Otros agruegue un nombre valido, sera responsabilidad del residente ponerse en contacto con dicho asesor fuera de la institucion`;
+      }else{
+        if (newItem[field].trim() === "") {
+          newErrors[field] = ` ${field.replace("_", " ")} es obligatorio`;
+        }
+
       }
     });
 
@@ -659,10 +665,11 @@ function App(props) {
         ? parseInt(añoIngresado, 10)
         : null;
       console.log("Año ingresado (entero):", añoActual);
+      console.log("Año ingresado2 (entero):", añoIngresadoEntero);
 
       if (añoIngresadoEntero >= añoActual) {
         const fechaInicio = new Date(
-          añoActual,
+          añoIngresadoEntero,
           obtenerIndiceMes(mesInicio),
           parseInt(diaInicio, 10)
         );
@@ -688,9 +695,10 @@ function App(props) {
           (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 +
           fechaFin.getMonth() -
           fechaInicio.getMonth();
-
-        console.log("Diferencia Meses:", diferenciaMeses);
-
+          console.log("Diferencia Meses1:", fechaFin.getFullYear());
+          console.log("Diferencia Meses2:", fechaInicio);
+        console.log("Diferencia Meses2:", fechaFin);
+        console.log("Diferencia Meses2:", diferenciaMeses);
         if (diferenciaMeses === 4 || diferenciaMeses === 5) {
           const fechasDivididas = dividirPeriodo('2023-08-01', '2023-12-01');
         console.log("FECHAS DIVIDIDAS",fechasDivididas);
@@ -864,6 +872,7 @@ const [mostrarPopup, setMostrarPopup] = useState(false);
 
 
 //#####################################################################
+const [mostrarCuadroTexto, setMostrarCuadroTexto] = useState(false);
 
   return (
     <div className="contenido__anteproyectosubir">
@@ -898,21 +907,98 @@ const [mostrarPopup, setMostrarPopup] = useState(false);
                 <p style={{ color: "red" }}>{errors.ncontrol}</p>
               )}
               <span>Nombre del Anteproyecto:</span>
-              <input
-                type="text"
+              <textarea
                 placeholder="Nombre AnteProyecto"
                 value={newItem.nombre_anteproyecto}
-                onChange={(e) =>
+                style={{ width: '400px', overflow: 'auto',border: '3px solid' }}
+                onChange={(e) => {
+                  e.target.style.height = 'inherit';
+                  e.target.style.height = `${e.target.scrollHeight}px`; 
                   setNewItem({
                     ...newItem,
                     nombre_anteproyecto: e.target.value,
-                  })
-                }
+                  });
+                }}
               />
               {errors.nombre_anteproyecto && (
                 <p style={{ color: "red" }}>{errors.nombre_anteproyecto}</p>
               )}
+
+<span>Asesor Externo:</span>
+<select
+  value={newItem.asesorE ? newItem.asesorE : ""}
+  onChange={(e) => {
+    const selectedAsesor =
+      asesoresE && asesoresE.data
+        ? asesoresE.data.find(
+            (asesor) =>
+              asesor.attributes.nombre === e.target.value
+          )
+        : null;
+        if (selectedAsesor) {
+    if (selectedAsesor.attributes.nombre === "Otro") {
+      setNewItem({
+        ...newItem,
+        asesorE: "Otros",
+        idasesorE:  selectedAsesor.id.toString(), // Puedes inicializar esto como desees
+        correoasesorE: selectedAsesor.attributes.correo, 
+        fuera:"Si",// Puedes inicializar esto como desees
+      });
+      setMostrarCuadroTexto(true);
+    } else {
+      // Si se selecciona "Otro", muestra un cuadro de entrada de texto
+
+      setNewItem({
+        ...newItem,
+        asesorE: selectedAsesor.attributes.nombre,
+        idasesorE: selectedAsesor.id.toString(),
+        correoasesorE: selectedAsesor.attributes.correo,
+        fuera:"No",
+      });
+      setMostrarCuadroTexto(false);
+    }
+  }}
+}
+>
+  <option value="">Selecciona un Asesor</option>
+  {asesoresE &&
+    asesoresE.data &&
+    asesoresE.data.map((asesor) => (
+      <option key={asesor.id} value={asesor.attributes.nombre}>
+        {asesor.attributes.nombre}
+      </option>
+    ))}
+ 
+</select>
+
+<br/>
+{/* Si el asesor seleccionado es "Otro", muestra un cuadro de entrada de texto */}
+{mostrarCuadroTexto && (
+  <input
+    type="text"
+    placeholder="Ingrese el nombre del asesor"
+    value={newItem.asesorE ? newItem.asesorE : ""}
+    onChange={(e) =>
+      setNewItem({
+        ...newItem,
+        asesorE: e.target.value,  // Ajuste aquí para asignar el valor del cuadro de texto a asesorE
+      })
+    }
+  />
+)}
+   {errors.asesorE && (
+                <p style={{ color: "red" }}>{errors.asesorE}</p>
+              )}
+
+
+
+
+
+
+
+
             </div>
+            
 
             <div className="informacion__pregunta">
               <span>Periodo de realización:</span>
@@ -961,8 +1047,8 @@ const [mostrarPopup, setMostrarPopup] = useState(false);
 
 
 
-
-              <span>Asesor:</span>
+{/*
+              <span>Asesor Externo:</span>
               <select
                 value={newItem.asesorE ? newItem.asesorE : ""}
                 onChange={(e) => {
@@ -993,10 +1079,16 @@ const [mostrarPopup, setMostrarPopup] = useState(false);
                     </option>
                   ))}
               </select>
-
-              {errors.asesorE && (
+                 {errors.asesorE && (
                 <p style={{ color: "red" }}>{errors.asesorE}</p>
               )}
+*/}
+
+
+
+
+
+           
 
               <span>Carrera:</span>
               <select

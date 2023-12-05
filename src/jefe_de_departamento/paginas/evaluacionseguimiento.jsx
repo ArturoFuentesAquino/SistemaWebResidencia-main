@@ -655,7 +655,8 @@ const nuevaluaE2 = "api/evaluacion2-es"
                   .filter(
                     (item) =>
                       item.attributes.correoasesorE === correo &&
-                      item.attributes.califasesorE === "0"
+                      item.attributes.califasesorE === "0" 
+                      && item.attributes.fuera === "No"
                   )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>

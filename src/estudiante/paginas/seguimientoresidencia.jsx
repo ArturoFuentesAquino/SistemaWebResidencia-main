@@ -39,6 +39,9 @@ function Seguimientoresidencia(props) {
   const nombretabla = "api/residentesuploads";
   const correo = props.graphData.graphData.graphData.mail;
 
+  const jefes = "api/jefedepartamentos";
+  const [jefedpt, setjefedpt] = useState(null);
+
   useEffect(() => {
     fetchDataAsync();
   }, [correo]);
@@ -50,6 +53,8 @@ function Seguimientoresidencia(props) {
         (item) => item.attributes.correo === correo
       );
 
+      const jefedpt = await fetchData(jefes);
+      setjefedpt(jefedpt);
       // Actualizar el estado solo con el nombre del residente
       const nombreResidente = residenteSeleccionado
         ? residenteSeleccionado.attributes.nombre
@@ -91,9 +96,11 @@ function Seguimientoresidencia(props) {
         const successMessage = "Por favor, cargue su anteproyecto para una visualización más detallada de esta sección.";
         alert(successMessage);
 
+      }else{
+        handlePeriodoChange(perio)
+        setmensajeseguimiento(true)
       }
-      handlePeriodoChange(perio)
-      setmensajeseguimiento(true)
+     
       console.log("Esto es residente seleccionado", residenteSeleccionado);
     } catch (error) {
       console.error("Error al obtener los datos:", error);
@@ -272,7 +279,7 @@ const handlePeriodoChange = (fechas) => {
 
     if (añoIngresadoEntero >= añoActual) {
       const fechaInicio = new Date(
-        añoActual,
+        añoIngresadoEntero,
         obtenerIndiceMes(mesInicio),
         parseInt(diaInicio, 10)
       );
@@ -877,7 +884,15 @@ console.log("ESTO ES EL MENSAJE", newItem.nombre);
                             <td style={{ borderBottom: '1px solid black' }}>{newItem.nombre}</td>
                           </tr>
                           <tr>
-                            <td style={{ borderBottom: '1px solid black' }}>{newItem.asesorE}</td>
+                            <td style={{ borderBottom: '1px solid black' }}>
+                              
+                            {jefedpt && jefedpt.data.length > 0 && (
+                  <p>
+                    {jefedpt.data[0].attributes.nombre}
+                  </p>
+                )}
+                              
+                              </td>
                           </tr>
                         </table>
                       </th>

@@ -188,6 +188,9 @@ const Resultadoevaluaciones = (props) => {
   };
 //########################################################
 
+const [mensajeresultado, setmensajeresultado] = useState(false);
+
+
 useEffect(() => {
   fetchDataAsync2();
 }, [correo]);
@@ -235,11 +238,13 @@ async function fetchDataAsync2() {
       carrera: especialidad,
       asesorI: asesorin,
     });
-    
+      
     if(!residenteSeleccionado){
       const successMessage = "Por favor, cargue su anteproyecto para una visualización más detallada de esta sección.";
       alert(successMessage);
 
+    }else{
+      setmensajeresultado(true);  
     }
     console.log("Esto es residente seleccionado", residenteSeleccionado);
   } catch (error) {
@@ -332,7 +337,7 @@ async function fetchDataAsync2() {
                           )}
 
                           {/* Fila para evaluE */}
-                          {evaluacionCorrespondienteE && (
+                          {evaluacionCorrespondienteE && item.attributes.fuera === "No" && (
                             <tr>
                               <td>Evaluacion de Asesor Externo</td>
                               <td>
@@ -952,7 +957,7 @@ async function fetchDataAsync2() {
                           )}
 
                           {/* Fila para evaluE */}
-                          {evaluacionCorrespondienteE && (
+                          {evaluacionCorrespondienteE && item.attributes.fuera === "No" && (
                             <tr>
                               <td>Evaluacion de Asesor Externo</td>
                               <td>
@@ -1343,7 +1348,7 @@ async function fetchDataAsync2() {
                       return (
                         <React.Fragment key={item.id}>
                           {/* Fila para evalu */}
-                        {promedio}
+                        {promedio} no
                         </React.Fragment>
                       );
                     }
@@ -1522,7 +1527,34 @@ async function fetchDataAsync2() {
         </div>
       )}     
 
+{mensajeresultado && (
+  <div className="mensajeseguimiento">
+      <div className="mensajeseguimientocontenido">
+      <h5>Hola! {newItem.nombre}</h5>
+      <p style={{ textAlign: 'center', color: 'red' }}>Aviso!</p>
+      <p style={{ textAlign: 'left', color: 'black' }}>Si usted No esta realizando
+      su residencia profesional en la institucion,
+       favor de no tomar en cuenta la evaluacion de asesor externo
+      </p>
+      <p style={{ textAlign: 'left', color: 'black' }}>
+        Debera acudir con dicho asesor para que le realice la evaluacion
+      </p>
+      <p style={{ textAlign: 'left', color: 'black' }}>
+       De igual manera capturar la evaluacion realizada por el asesor interno
+       y realizar el calculo del promedio de ambas evaluaciones
+      </p>
+      <p style={{ textAlign: 'left', color: 'black' }}>
+       En caso contrario puede continuar con sus resultados de cada evaluacion
+       que se generaran de manera automatica si se esta realizando dentro de la institucion
+      </p>
+      <p style={{ textAlign: 'left', color: 'blue' }}>
+       Si todavia no tiene asesir interno, favor de esperar a que se le asigne uno
+      </p>
+      <button onClick={() => setmensajeresultado(false)}>Enterado</button>
+    </div>
+  </div>
 
+)}
 
 
 

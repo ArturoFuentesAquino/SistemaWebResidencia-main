@@ -306,7 +306,7 @@ const Evaluacionesreporte = (props) => {
                       return (
                         <React.Fragment key={item.id}>
                           {/* Fila para evalu */}
-                          {evaluacionCorrespondiente && (
+                          {evaluacionCorrespondiente && item.attributes.fuera === "No" && (
                             <tr>
                               <td>{item.attributes.nombre}</td>
                               <td>
@@ -367,7 +367,7 @@ const Evaluacionesreporte = (props) => {
                       return (
                         <React.Fragment key={item.id}>
                           {/* Fila para evalu */}
-                          {evaluacionCorrespondiente && (
+                          {evaluacionCorrespondiente  && item.attributes.fuera === "No" && (
                             <tr>
                               <td>{item.attributes.nombre}</td>
                               <td>
