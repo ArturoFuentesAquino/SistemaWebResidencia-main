@@ -1,0 +1,41 @@
+import { useState } from 'react';
+
+// ...
+
+const [rangoInicio, setRangoInicio] = useState(1);
+const [rangoFin, setRangoFin] = useState(elementosConAsesores.length);
+
+const elementosFiltrados = elementosConAsesores
+  .filter((item, index) => index + 1 >= rangoInicio && index + 1 <= rangoFin && item.attributes.estado === "Aprobado");
+
+// ...
+
+<select
+  value={rangoInicio}
+  onChange={(e) => setRangoInicio(Number(e.target.value))}
+>
+  {Array.from({ length: elementosConAsesores.length }, (_, index) => (
+    <option key={index + 1} value={index + 1}>
+      {`Del ${index + 1}`}
+    </option>
+  ))}
+</select>
+
+<span> a </span>
+
+<select
+  value={rangoFin}
+  onChange={(e) => setRangoFin(Number(e.target.value))}
+>
+  {Array.from({ length: elementosConAsesores.length }, (_, index) => (
+    <option key={index + 1} value={index + 1}>
+      {`Al ${index + 1}`}
+    </option>
+  ))}
+</select>
+
+{elementosFiltrados.map((item, index) => (
+  <tr key={item.id}>
+    {/*... tus columnas ...*/}
+  </tr>
+))}

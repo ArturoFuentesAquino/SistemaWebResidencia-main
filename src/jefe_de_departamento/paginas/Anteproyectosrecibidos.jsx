@@ -19,7 +19,8 @@ import './../../estilos_impresion/externo/horizontal/estilo-impresion_externo_ho
 function Anteproyectosrecibidos(props) {
 
   const nombrealm = props.graphData.graphData.graphData.displayName;
-  const correo = props.graphData.graphData.graphData.mail;
+   //const correo = props.graphData.graphData.graphData.mail;
+   const correo = props.graphData.graphData.graphData.mail.toLowerCase();
 
 
   const [data, setData] = useState(null);
@@ -339,12 +340,49 @@ const anioactual = fecha.toLocaleDateString('es-ES');
 
 console.log("Esto es el año actual !", anioactual);
 */
+
+//############
+
+const [rangoInicio, setRangoInicio] = useState(1);
+const [rangoFin, setRangoFin] = useState(3);
+
+
+const elementosFiltrados = elementosConAsesores
+  .filter((item, index) => index + 1 >= rangoInicio && index + 1 <= rangoFin && item.attributes.estado === "Aprobado");
+
   return (
     <div className="contenido__anteproyectosubir">
       <div className="Anteproyectosubir__titulo">
-        <h1>Buen Dia Jefe De Departamento, estos son los Anteproyectos
-               Aceptados Por la cordinadora
+        <h1>Buen día Jefe De Departamento, estos son los Anteproyectos
+               Aceptados Por la coordinadora
             <br/>De Residencia Profesional</h1>
+            <p>Imprimir dictamenes </p>
+            <select
+  value={rangoInicio}
+  onChange={(e) => setRangoInicio(Number(e.target.value))}
+>
+  {Array.from({ length: elementosConAsesores.length }, (_, index) => (
+    <option key={index + 1} value={index + 1}>
+      {` del ${index + 1}`}
+    </option>
+  ))}
+</select>
+
+<span> a </span>
+
+<select
+  value={rangoFin}
+  onChange={(e) => setRangoFin(Number(e.target.value))}
+>
+  {Array.from({ length: elementosConAsesores.length }, (_, index) => (
+    <option key={index + 1} value={index + 1}>
+      {`al ${index + 1}`}
+    </option>
+  ))}
+</select>
+
+
+
       </div>
       <div className="Anteproyectosubir__preguntas">
         <div className="informacion__tabla">
@@ -353,13 +391,12 @@ console.log("Esto es el año actual !", anioactual);
               <tr>
                 <th>Número de Control</th>
                 <th>Nombre</th>
-
                 <th>Nombre de Anteproyecto</th>
                 <th>Periodo</th>
                 <th>Empresa</th>
-                <th>AsesorE</th>
-                <th>AsesorI</th>
-                <th>Nombre Documento</th>
+                <th>Asesor Externo</th>
+                <th>Asesor Interno</th>
+                <th>Nombre Doc</th>
                 <th>Carrera</th>
                 <th>Estado</th>
                 <th>Observaciones</th>
@@ -403,7 +440,7 @@ console.log("Esto es el año actual !", anioactual);
                       className={
                         item.attributes.estado === "Aprobado"
                           ? "aprobado"
-                          : item.attributes.estado === "En Revision"
+                          : item.attributes.estado === "En Revisión"
                           ? "en-revision"
                           : item.attributes.estado === "Corregir"
                           ? "corregir"
@@ -591,10 +628,14 @@ console.log("Esto es el año actual !", anioactual);
                   
                   */ }
 
-
+{/*
             {elementosConAsesores
             .filter((item) => item.attributes.estado === "Aprobado")
             .map((item, index) => (
+
+            */}
+            {elementosFiltrados.map((item, index) => (
+
                   <tr key={item.id}>
                     <td>{index + 1}</td>
                     <td>{item.attributes.ncontrol}</td>

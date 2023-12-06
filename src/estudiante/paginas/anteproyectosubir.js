@@ -93,9 +93,29 @@ function App(props) {
   const [evalu, setEvalu] = useState(null);
   const [evaluE, setEvalue] = useState(null);
 
+  /*
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+  };*/
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+  
+    // Verificar si se seleccionó un archivo
+    if (selectedFile) {
+      // Verificar si el tamaño del archivo es menor o igual a 2 MB (en bytes)
+      const maxSizeInBytes = 2 * 1024 * 1024; // 2 MB
+      if (selectedFile.size > maxSizeInBytes) {
+        alert('El archivo es demasiado grande. Por favor, selecciona un archivo de hasta 2 MB.');
+        // Puedes hacer más aquí, como limpiar el campo de entrada o realizar otras acciones necesarias
+        return;
+      }
+  
+      // Aquí puedes seguir con el procesamiento del archivo, si es válido
+      // Por ejemplo, podrías almacenar el archivo en el estado o realizar otras operaciones necesarias
+     setSelectedFile(event.target.files[0]);
+    }
   };
+  
 
   //#######################################
 
@@ -126,7 +146,7 @@ function App(props) {
         const Generos = await fetchData(tablageneros);
         setgeneros(Generos);
 
-        console.log("Cargo todos los datos !",generos);
+        console.log("¡Cargo todos los datos!",generos);
         //setEditingMode(true)
       } catch (error) {
         console.error("Error al obtener los datos:", error);
@@ -228,7 +248,7 @@ function App(props) {
 
     fieldsToValidate.forEach((field) => {
       if (newItem[field].trim() === "Otros") {
-        newErrors[field] = `El ${field.replace("_", " ")} No puede ir Otros agruegue un nombre valido, sera responsabilidad del residente ponerse en contacto con dicho asesor fuera de la institucion`;
+        newErrors[field] = `El ${field.replace("_", " ")} No puede ir otros agregue un nombre válido, sera responsabilidad del residente ponerse en contacto con dicho asesor fuera de la Institucion`;
       }else{
         if (newItem[field].trim() === "") {
           newErrors[field] = ` ${field.replace("_", " ")} es obligatorio`;
@@ -261,7 +281,7 @@ function App(props) {
           datos2.ids.toString()
         );
         const successMessage =
-          nombrealm.toString() + " ¡No puedes Tener Mas de Un AnteProyecto!";
+          nombrealm.toString() + " ¡No puedes tener más de un Anteproyecto!";
         alert(successMessage);
         return;
       }
@@ -283,7 +303,7 @@ function App(props) {
 
         if (response.status === 200) {
           // El archivo se ha cargado con éxito
-          const estado = "En Revision";
+          const estado = "En Revisión";
           const observaciones = "En proceso de observaciones";
           const califasesorI = "0";
           const califasesorE = "0";
@@ -381,7 +401,7 @@ function App(props) {
         asesorE: "",
         carrera: "",
       });
-       const successMessage = 'El AnteProyecto se ha subido con éxito, pofavor espere a que sea revisado por la coordinadora y asesor externo';
+       const successMessage = 'El Anteproyecto se ha subido con éxito, pofavor espere a que sea revisado por la coordinadora y asesor externo';
         alert(successMessage);
     } catch (error) {
       const successMessage = 'Error al subir el AnteProyecto';
@@ -427,11 +447,11 @@ function App(props) {
         });
         setEditingId(null);
         setEditingMode(false);
-        const successMessage = 'El AnteProyecto se ha actualizado con éxito';
+        const successMessage = 'El Anteproyecto se ha actualizado con éxito';
         alert(successMessage);
       }
     } catch (error) {
-      const successMessage = 'El AnteProyecto no se ha actualizado con éxito';
+      const successMessage = 'El Anteproyecto no se ha actualizado con éxito';
       alert(successMessage);
     }
   };
@@ -465,10 +485,10 @@ function App(props) {
       setData(updatedData);
       setDocumentoCargado(false);
       setEditingMode(true);
-      const successMessage = 'El AnteProyecto se ha eliminado con éxito';
+      const successMessage = 'El Anteproyecto se ha eliminado con éxito';
       alert(successMessage);
     } catch (error) {
-      const successMessage = 'EL AnteProyecto no se ha eliminado con éxito';
+      const successMessage = 'EL Anteproyecto no se ha eliminado con éxito';
       alert(successMessage);
     }
   };
@@ -485,7 +505,7 @@ function App(props) {
     console.log("IDE DOCUMENTO", documentId);
     if (stado === "Aprobado") {
       const successMessage =
-        "No es posbile Actualizar documento ya a sido registrado y aprobado!";
+        "No es posbile actualizar documento ya ha sido registrado y aprobado!";
       alert(successMessage);
       return;
     }
@@ -499,6 +519,17 @@ function App(props) {
 
       fileInput.addEventListener("change", async (event) => {
         const newDocument = event.target.files[0];
+        
+        if (newDocument) {
+          // Verificar si el tamaño del archivo es menor o igual a 600 KB (en bytes)
+          const maxSizeInBytes = 600 * 1024; // 600 KB
+          if (newDocument.size > maxSizeInBytes) {
+            alert('El archivo es demasiado grande. Por favor, selecciona un archivo de hasta 600 KB.');
+            // Puedes hacer más aquí, como limpiar el campo de entrada o realizar otras acciones necesarias
+            return;
+          }
+        }
+
         await axios.delete(`${direccionapi}${nombredocumentos}${documentId}`);
 
         if (newDocument) {
@@ -540,7 +571,7 @@ function App(props) {
                 setData(updatedData);
                 setDocumentoCargado(true);
               } catch (error) {
-                console.error("Error al actualizar el Documento:", error);
+                console.error("Error al actualizar el documento:", error);
               }
               // Actualiza la lista de elementos o realiza cualquier otra acción necesaria
             }
@@ -908,7 +939,7 @@ const [mostrarCuadroTexto, setMostrarCuadroTexto] = useState(false);
               )}
               <span>Nombre del Anteproyecto:</span>
               <textarea
-                placeholder="Nombre AnteProyecto"
+                placeholder="Nombre Anteproyecto"
                 value={newItem.nombre_anteproyecto}
                 style={{ width: '400px', overflow: 'auto',border: '3px solid' }}
                 onChange={(e) => {
@@ -1125,7 +1156,7 @@ const [mostrarCuadroTexto, setMostrarCuadroTexto] = useState(false);
             {editingId ? (
               <>
                 <p>
-                  El archivo PDF no podra ser actualizado al menos que le des en
+                  El archivo PDF no podrá ser actualizado al menos que le des en
                   editar documento
                 </p>
                 <button onClick={handleUpdate}>Actualizar</button>
@@ -1156,7 +1187,7 @@ const [mostrarCuadroTexto, setMostrarCuadroTexto] = useState(false);
                 <th>Nombre</th>
                 <th>Nombre de Anteproyecto</th>
                 <th>Nombre de documento</th>
-                <th>Periodo de Realizacion</th>
+                <th>Periodo de Realización</th>
                 <th>Estado</th>
                 <th>Carrera</th>
                 <th>Acciones</th>
@@ -1177,7 +1208,7 @@ const [mostrarCuadroTexto, setMostrarCuadroTexto] = useState(false);
                         className={
                           item.attributes.estado === "Aprobado"
                             ? "aprobado"
-                            : item.attributes.estado === "En Revision"
+                            : item.attributes.estado === "En Revisión"
                             ? "en-revision"
                             : item.attributes.estado === "Corregir"
                             ? "corregir"
@@ -1340,14 +1371,14 @@ const [mostrarCuadroTexto, setMostrarCuadroTexto] = useState(false);
           <p style={{ textAlign: 'left' }}>Porfavor revise con atencion todos los datos que proporciona.</p>
           <p style={{ textAlign: 'left' }}>Verifique y agrege los datos correspondientes:</p>
           <p style={{ textAlign: 'left' }}>Nombre</p>
-          <p style={{ textAlign: 'left' }}>Numero de Control</p>
+          <p style={{ textAlign: 'left' }}>Número de Control</p>
           <p style={{ textAlign: 'left' }}>Nombre de la Dependencia</p>
-          <p style={{ textAlign: 'left' }}>El periodo de realizacion</p>
+          <p style={{ textAlign: 'left' }}>El periodo de realización</p>
           <p style={{ textAlign: 'left' }}>Empresa</p>
           <p style={{ textAlign: 'left' }}>y verifique la ortografía </p>
-          <p style={{ textAlign: 'left' }}>Una vez que usted suba su AnteProyecto sera revisado por la coordinadora y el Jefe De Departamento
+          <p style={{ textAlign: 'left' }}>Una vez que usted suba su Anteproyecto será revisado por la coordinadora y el Jefe De Departamento
           le asignara su Asesor Interno</p>
-          <p style={{ textAlign: 'left' }}>Considere que si su AnteProyecto es Aceptado no puede cambiar mas o modificar, para asi evitar redundancias</p>
+          <p style={{ textAlign: 'left' }}>Considere que si su AnteProyecto es Aceptado no puede cambiar más o modificar, para así evitar redundancias</p>
           <button onClick={() => setMostrarPopup(false)}>Enterado</button>
         </div>
       </div>

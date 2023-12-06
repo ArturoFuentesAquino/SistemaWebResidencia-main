@@ -506,7 +506,7 @@ console.log("ESTO ES EL MENSAJE", newItem.nombre);
               value={newItem.nombre}
               readOnly
             />
-            <span>Numero de control:</span>
+            <span>Número de control:</span>
             <input
               type="text"
               name="nombre"
@@ -664,29 +664,29 @@ console.log("ESTO ES EL MENSAJE", newItem.nombre);
           </table>
           <br />
           <button className="btn-asig" onClick={agregarFila}>
-            Agregar Actividad
+            Agregar actividad
           </button>
           <button className="btn-asig" onClick={agregarColumna}>
-            Agregar Semana
+            Agregar semana
           </button>
           <button
             className="btn-asig"
             onClick={() => eliminarFila(filas.length - 1)}
           >
-            Eliminar Última Actividad
+            Eliminar última actividad
           </button>
           <button
             className="btn-asig"
             onClick={() => eliminarColumna(columnas.length - 1)}
           >
-            Eliminar Última Semana
+            Eliminar última semana
           </button>
         </div>
         <button className="btn-asig" onClick={handleCrearClick}>
-          Imprimir Seguimiento
+          Imprimir seguimiento
         </button>
         <button className="btn-asig" onClick={eliminarDatoLocalStorage}>
-       Reiniciar Seguimiento
+       Reiniciar seguimiento
       </button>
       </div>
 
@@ -738,12 +738,12 @@ console.log("ESTO ES EL MENSAJE", newItem.nombre);
                   ASESOR EXTERNO: {newItem.asesorE}
                 </p>
                 <p style={{ textAlign: "left" , fontWeight: "bold"}}>
-                  PERIODO DE REALIZAION: {newItem.periodo}
+                  PERIODO DE REALIZACIÓN: {newItem.periodo}
                 </p>
               </div>
               <div className="informacion__pregunta">
                 <p style={{ textAlign: "left" , fontWeight: "bold"}}>
-                  NUMERO DE CONTROL: {newItem.ncontrol}
+                  NÚMERO DE CONTROL: {newItem.ncontrol}
                 </p>
                 <p style={{ textAlign: "left" , fontWeight: "bold" }}>EMPRESA: {newItem.empresa}</p>
                 <p style={{ textAlign: "left" , fontWeight: "bold"}}>
@@ -917,18 +917,18 @@ console.log("ESTO ES EL MENSAJE", newItem.nombre);
   <div className="mensajeseguimiento">
       <div className="mensajeseguimientocontenido">
       <h5>Hola! {newItem.nombre}</h5>
-      <p style={{ textAlign: 'left' }}>Si su su anteproyecto ya a sido aceptado y ya tiene usted un asesor interno porfavor lea la siguiente recomednacion:</p>
-      <p style={{ textAlign: 'left' }}>El perio que usted ingreso es </p>
+      <p style={{ textAlign: 'left' }}>Si su anteproyecto ya ha sido aceptado y ya tiene usted un asesor interno, porfavor, lea la siguiente recomednación:</p>
+      <p style={{ textAlign: 'left' }}>El periodo que usted ingreso es </p>
       <p style={{ textAlign: 'left', color: 'blue' }}>{newItem.periodo}</p>
-      <p style={{ textAlign: 'left' }}>Por lo tanto Sus Revisiones deberian ser las sguientes fechas del presente año: </p>
+      <p style={{ textAlign: 'left' }}>Por lo tanto, sus revisiones deberían ser las siguientes fechas del presente año: </p>
       <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.revision1}</p>
       <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.revision2}</p>
       <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.revision3}</p>
-      <p style={{ textAlign: 'left' }}>Con una catindad de semanas (aproximadamente) de: </p>
+      <p style={{ textAlign: 'left' }}>Con una cantidad de semanas (aproximadamente) de: </p>
       <p style={{ textAlign: 'left', color: 'green' }}>{realizarperiodos.cantidadsemanas}</p>
-      <p style={{ textAlign: 'left', color: 'red' }}>Aviso!</p>
-      <p style={{ textAlign: 'left', color: 'red' }}>Una vez que usted defina las actividades, semanas y pinte lo deseado no puede volver a agregar mas actividades o semanas
-      No obstante si desea volver a realizar el seguimiento solo haga click en Reiniciar Seguimiento</p>
+      <p style={{ textAlign: 'left', color: 'red' }}>¡Aviso!</p>
+      <p style={{ textAlign: 'left', color: 'red' }}>Una vez que usted defina las actividades y semanas, y configure lo deseado, no podrá agregar más actividades o semanas. 
+      No obstante, si desea reiniciar el seguimiento, simplemente haga clic en 'Reiniciar Seguimiento</p>
       <button onClick={() => setmensajeseguimiento(false)}>Enterado</button>
     </div>
   </div>
