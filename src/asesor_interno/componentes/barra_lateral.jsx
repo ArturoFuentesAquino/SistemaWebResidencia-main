@@ -48,15 +48,16 @@ const Barra = ({ children }) => {
                 <FaRegListAlt className="icono" />
                 <h1>Lista de <br /> Alumnos</h1>
             </div>
+            <div title='Evaluación Seguimiento' className={`boton ${isActive('/evaluacionseguimiento') ? 'activo' : ''}`} onClick={() => navigateTo('/evaluacionseguimiento')}>
+                <FaRegFileAlt className="icono" />
+                <h1>Evaluación<br />Seguimiento</h1>
+            </div>
             <div title='Evaluación Reporte' className={`boton ${isActive('/evaluacionreporte') ? 'activo' : ''}`} onClick={() => navigateTo('/evaluacionreporte')}>
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluación<br />Reporte</h1>
             </div>
 
-            <div title='Evaluación Seguimiento' className={`boton ${isActive('/evaluacionseguimiento') ? 'activo' : ''}`} onClick={() => navigateTo('/evaluacionseguimiento')}>
-                <FaRegFileAlt className="icono" />
-                <h1>Evaluación<br />Seguimiento</h1>
-            </div>
+           
             <div title='Relación De Evaluación Reporte' className={`boton ${isActive('/tablaevaluacionesreporte') ? 'activo' : ''}`} onClick={() => navigateTo('/tablaevaluacionesreporte')}>
                 <FaRegFileAlt className="icono" />
                 <h1>Evaluación<br />Reporte</h1>

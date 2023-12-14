@@ -134,7 +134,17 @@ const Evaluacionesreporte = (props) => {
 
   const imprimir3 = () => {
     const style = document.createElement('style');
-    style.innerHTML = '@page { size: letter; }';
+    style.innerHTML = `
+    @page { 
+        size: letter;
+    }
+    @media print {
+        body *{
+            font-size: 11px;
+        }
+        
+    }
+`;
   
     // Agregar el estilo al head del documento
     document.head.appendChild(style);
@@ -267,10 +277,11 @@ const Evaluacionesreporte = (props) => {
       <div className="Anteproyectosubir__titulo">
         <h1>¡Bienvenido Asesor Tecnm!</h1>
         <h1>
-          En este apartado tu podras visualizar las evaluaciones que ha
+          En este apartado tu podrás visualizar las evaluaciones que ha
           realizado
         </h1>
       </div>
+      <div className="contenido_general">
       <div className="informacion__tabla">
         <table border="1">
           <thead>
@@ -317,8 +328,7 @@ const Evaluacionesreporte = (props) => {
                                 className="btn-asig"
                                 onClick={() => handleCrearClick(item)}
                               >
-                                Imprimir Evaluación Interna
-                              </button>
+Imprimir Evaluación Externo                              </button>
                             </tr>
                           )}
                         </React.Fragment>
@@ -378,7 +388,7 @@ const Evaluacionesreporte = (props) => {
                                 className="btn-asig"
                                 onClick={() => handleCrearClick2(item)}
                               >
-                                Imprimir Evaluación Interna
+                                Imprimir Evaluación Externo
                               </button>
                             </tr>
                           )}
@@ -392,7 +402,7 @@ const Evaluacionesreporte = (props) => {
           </tbody>
         </table>
       </div>
-
+      </div>
       {/* AQUI SE MUESTRAN LAS EVALUACIONES  */}
 
       {selectedItem && (
@@ -469,40 +479,37 @@ const Evaluacionesreporte = (props) => {
               data.data
                 .filter((item) => item.attributes.correoasesorE === correo)
                 .map((item) => {
-                  // Verificar si evalu es diferente de null y tiene la propiedad data
                   if (evaluE && evaluE.data && evalu && evalu.data) {
-                    // Verificar si existe un elemento en evalu con el mismo idevaluado
-                    const evaluacion1asesorinterno = evaluE.data.find(
-                      (evaluItem) =>
-                        evaluItem.attributes.idevaluado === item.id.toString()
-                    );
-
-                    // Verificar lo mismo para evaluE
-                    const evaluacion1asexterno = evalu.data.find(
-                      (evaluEItem) =>
-                        evaluEItem.attributes.idevaluado === item.id.toString()
-                    );
-
-                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato15);
-                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato15);
-
-                    const promedio = (dato10_1 + dato10_2) / 2;
-                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
-                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
-                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
-                    if (
-                      evaluacion1asesorinterno ||
-                      evaluacion1asexterno
-                    ) {
-                      return (
-                        <React.Fragment key={item.id}>
-                          {/* Fila para evalu */}
-                        {promedio}
-                        </React.Fragment>
+                    // Verificar si el elemento actual es el seleccionado
+                    if (selectedItem && item.id === selectedItem.id) {
+                      const evaluacion1asesorinterno = evaluE.data.find(
+                        (evaluItem) => evaluItem.attributes.idevaluado === selectedItem.id.toString()
                       );
+            
+                      const evaluacion1asexterno = evalu.data.find(
+                        (evaluEItem) => evaluEItem.attributes.idevaluado === selectedItem.id.toString()
+                      );
+            
+                      const dato10_1 = parseFloat(evaluacion1asesorinterno?.attributes.dato15) || 0;
+                      const dato10_2 = parseFloat(evaluacion1asexterno?.attributes.dato15) || 0;
+            
+                      const promedio = (dato10_1 + dato10_2) / 2;
+            
+                      console.log("DATO 15 EXTERNO", evaluacion1asesorinterno?.attributes.dato15);
+                      console.log("DATO 15 INTERNO", evaluacion1asexterno?.attributes.dato15);
+                      console.log("Promedio:", promedio);
+            
+                      if (evaluacion1asesorinterno || evaluacion1asexterno) {
+                        return (
+                          <React.Fragment key={item.id}>
+                            {/* Fila para evalu */}
+                            {promedio}
+                          </React.Fragment>
+                        );
+                      }
                     }
                   }
-
+            
                   return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
                 })}
               </p>
@@ -724,41 +731,38 @@ const Evaluacionesreporte = (props) => {
               data.data
                 .filter((item) => item.attributes.correoasesorE === correo)
                 .map((item) => {
-                  // Verificar si evalu es diferente de null y tiene la propiedad data
-                  if (evaluE2 && evaluE2.data && evalu2 && evalu2.data) {
-                    // Verificar si existe un elemento en evalu con el mismo idevaluado
-                    const evaluacion1asesorinterno = evaluE2.data.find(
-                      (evaluItem) =>
-                        evaluItem.attributes.idevaluado === item.id.toString()
-                    );
-
-                    // Verificar lo mismo para evaluE
-                    const evaluacion1asexterno = evalu2.data.find(
-                      (evaluEItem) =>
-                        evaluEItem.attributes.idevaluado === item.id.toString()
-                    );
-
-                    const dato10_1 = parseFloat(evaluacion1asesorinterno.attributes.dato10);
-                    const dato10_2 = parseFloat(evaluacion1asexterno.attributes.dato10);
-
-                    const promedio = (dato10_1 + dato10_2) / 2;
-                    {console.log("DATO 15 EXTERNO", evaluacion1asesorinterno.attributes.dato15)}
-                    {console.log("DATO 15 INTERNO", evaluacion1asexterno.attributes.dato15)}
-                    // Mostrar la fila solo si se encuentra una correspondencia en evalu o evaluE
-                    if (
-                      evaluacion1asesorinterno ||
-                      evaluacion1asexterno
-                    ) {
-                      return (
-                        <React.Fragment key={item.id}>
-                          {/* Fila para evalu */}
-                        {promedio}
-                        </React.Fragment>
+                  if (evaluE && evaluE.data && evalu && evalu.data) {
+                    // Verificar si el elemento actual es el seleccionado
+                    if (selectedItem2 && item.id === selectedItem2.id) {
+                      const evaluacion1asesorinterno = evaluE2.data.find(
+                        (evaluItem) => evaluItem.attributes.idevaluado === selectedItem2.id.toString()
                       );
+            
+                      const evaluacion1asexterno = evalu2.data.find(
+                        (evaluEItem) => evaluEItem.attributes.idevaluado === selectedItem2.id.toString()
+                      );
+            
+                      const dato10_1 = parseFloat(evaluacion1asesorinterno?.attributes.dato10) || 0;
+                      const dato10_2 = parseFloat(evaluacion1asexterno?.attributes.dato10) || 0;
+            
+                      const promedio = (dato10_1 + dato10_2) / 2;
+            
+                      console.log("DATO 10 EXTERNO", evaluacion1asesorinterno?.attributes.dato10);
+                      console.log("DATO 10 INTERNO", evaluacion1asexterno?.attributes.dato10);
+                      console.log("Promedio:", promedio);
+            
+                      if (evaluacion1asesorinterno || evaluacion1asexterno) {
+                        return (
+                          <React.Fragment key={item.id}>
+                            {/* Fila para evalu */}
+                            {promedio}
+                          </React.Fragment>
+                        );
+                      }
                     }
                   }
-
-                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
+            
+                  return null; // O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia// O puedes mostrar un mensaje o lo que desees cuando no haya correspondencia
                 })}
               </p>
             </>
@@ -845,7 +849,7 @@ const Evaluacionesreporte = (props) => {
                                       evaluacionCorrespondiente.attributes
                                         .asesori
                                     }{" "}
-                                    DD
+                                  
                                   </p>
                                 </>
                               );

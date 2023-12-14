@@ -329,7 +329,7 @@ const Evalucionreporteresidente = (props) => {
       valor: "",
       maximo: 45,
       nombre:
-        "Resultados, planos, gráficas, prototipos, manuales, programas, análisis estadísticos, modelos matemáticos, simulaciones, normativaes, regulaciones y restricciones, entre otros. Solo para proyectos que por su naturaleza lo requieran: estudio de mercado, estudio técnico y estudio económico.",
+        "Resultados, planos, gráficas, prototipos, manuales, programas, análisis estadísticos, modelos matemáticos, simulaciones, normativas, regulaciones y restricciones, entre otros. Solo para proyectos que por su naturaleza lo requieran: estudio de mercado, estudio técnico y estudio económico.",
     },
     {
       id: 12,
@@ -591,7 +591,7 @@ const Evalucionreporteresidente = (props) => {
         await updateData(idresidente, nuevaEvaluacion, naevalua);
 
         console.log("Evaluación registrada exitosamente");
-        // window.location.reload();
+         window.location.reload();
       } catch (error) {
         alert("No se ha podido registrar la Evaluación");
         return;
@@ -669,7 +669,7 @@ const Evalucionreporteresidente = (props) => {
   return (
     <div className="contenido__Evalucionreporteresidente">
       <div className="Evalucionreporteresidente__titulo">
-        <h1>Evaluación De Reporte De Residencia Profesional</h1>
+        <h1>Evaluación Reporte Final De Residencia Profesional</h1>
       </div>
       <div className="Evalucionreporteresidente__preguntas">
         <div className="contenido__preguntas">
@@ -685,7 +685,7 @@ const Evalucionreporteresidente = (props) => {
                 data.data
                   .filter(
                     (item) =>
-                      item.attributes.correoasesor === correo
+                      item.attributes.correoasesor === correo && item.attributes.estado === "Aprobado"
                   )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>
@@ -702,6 +702,7 @@ const Evalucionreporteresidente = (props) => {
               type="text"
               name="name"
               value={newItem.nombre}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre: e.target.value })
               }
@@ -711,6 +712,7 @@ const Evalucionreporteresidente = (props) => {
               type="text"
               name="name"
               value={newItem.nombre_anteproyecto}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre_anteproyecto: e.target.value })
               }
@@ -720,6 +722,7 @@ const Evalucionreporteresidente = (props) => {
               type="text"
               name="name"
               value={newItem.periodo}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, periodo: e.target.value })
               }
@@ -731,6 +734,7 @@ const Evalucionreporteresidente = (props) => {
               type="text"
               name="name"
               value={newItem.ncontrol}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, ncontrol: e.target.value })
               }
@@ -740,6 +744,7 @@ const Evalucionreporteresidente = (props) => {
               type="text"
               name="name"
               value={newItem.carrera}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, carrera: e.target.value })
               }
@@ -751,6 +756,7 @@ const Evalucionreporteresidente = (props) => {
               type="text"
               name="name"
               value={newItem.califasesorI}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, califasesorI: e.target.value })
               }

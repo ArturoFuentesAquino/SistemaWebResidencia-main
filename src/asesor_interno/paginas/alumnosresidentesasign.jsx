@@ -118,9 +118,12 @@ const AlumnosResidentesAsign = (props) => {
   };
 
   return (
+
+    <div className="contenido">
+      <div className="contenido_generalasi"></div>
     <div className="informacion__tabla">
     <div className="Anteproyectosubir__titulo">
-      <h1>BUEN DIA {nombrealm} ESTOS SON SUS RESIDENTES ASIGNADOS:</h1>
+      <h1>BUEN DÍA {nombrealm} ESTOS SON SUS RESIDENTES ASIGNADOS:</h1>
     </div>
     <table border="1">
       <thead>
@@ -187,6 +190,7 @@ const AlumnosResidentesAsign = (props) => {
             ))}
       </tbody>
     </table>
+  </div>
   </div>
   );
 };

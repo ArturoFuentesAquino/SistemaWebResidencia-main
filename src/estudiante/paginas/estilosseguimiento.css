@@ -22,7 +22,7 @@
   
   
     .popup-contenidohorizontal {
-      width: 18cm; /* Ancho para tamaño carta en centímetros */
+      width: 'auto'; /* Ancho para tamaño carta en centímetros */
       height: 25.7cm; /* Alto para tamaño carta en centímetros */
       overflow-y: visible;
       margin: 0;
@@ -76,7 +76,7 @@
     padding: 20px;
     border-radius: 8px;
    /* width: 150vh;  Ajusta según sea necesario */
-   width: 150vh;
+   width: 'auto';
     height: 100vh;/*ALTO*/
     overflow-y: auto;
     

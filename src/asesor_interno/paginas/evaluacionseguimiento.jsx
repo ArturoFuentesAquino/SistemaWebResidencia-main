@@ -279,7 +279,17 @@ const nuevaluaE2 = "api/evaluacion2-es"
   const imprimir3 = () => {
       // Ocultar otros elementos antes de imprimir
       const style = document.createElement('style');
-      style.innerHTML = '@page { size: letter; }';
+      style.innerHTML = `
+      @page { 
+          size: letter;
+      }
+      @media print {
+          body *{
+              font-size: 12px;
+          }
+          
+      }
+  `;
     
       // Agregar el estilo al head del documento
       document.head.appendChild(style);
@@ -560,7 +570,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
         await updateData(idresidente, nuevaEvaluacion, nuevalua2);
 
         console.log("Evaluación registrada exitosamente");
-        // window.location.reload();
+         window.location.reload();
       } catch (error) {
         alert("No se ha podido registrar la Evaluación");
         return;
@@ -655,7 +665,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
                   .filter(
                     (item) =>
                       item.attributes.correoasesor === correo &&
-                      item.attributes.califasesorI === "0"
+                      item.attributes.califasesorI === "0" && item.attributes.estado === "Aprobado"
                   )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>
@@ -672,6 +682,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.nombre}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre: e.target.value })
               }
@@ -681,6 +692,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.nombre_anteproyecto}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre_anteproyecto: e.target.value })
               }
@@ -690,6 +702,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.periodo}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, periodo: e.target.value })
               }
@@ -701,6 +714,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.ncontrol}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, ncontrol: e.target.value })
               }
@@ -710,6 +724,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.carrera}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, carrera: e.target.value })
               }
@@ -721,6 +736,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.califasesorI}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, califasesorI: e.target.value })
               }
@@ -810,7 +826,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
                         }
                       }}
                     >
-                      Registrar Evaluacion
+                      Registrar Evaluación
                     </button>
                     )
                   ))}

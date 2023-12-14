@@ -424,7 +424,7 @@ async function fetchDataAsync2() {
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
                       {data &&
               data.data
-                .filter((item) => item.attributes.correoasesor === correo)
+                .filter((item) => item.attributes.correo === correo)
                 .map((item) => {
                   // Verificar si evalu es diferente de null y tiene la propiedad data
                   if (evaluE && evaluE.data && evalu && evalu.data) {
@@ -697,7 +697,7 @@ async function fetchDataAsync2() {
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
                       {data &&
               data.data
-                .filter((item) => item.attributes.correoasesor === correo)
+                .filter((item) => item.attributes.correo === correo)
                 .map((item) => {
                   // Verificar si evalu es diferente de null y tiene la propiedad data
                   if (evaluE && evaluE.data && evalu && evalu.data) {
@@ -1044,7 +1044,7 @@ async function fetchDataAsync2() {
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
                       {data &&
               data.data
-                .filter((item) => item.attributes.correoasesor === correo)
+                .filter((item) => item.attributes.correo === correo)
                 .map((item) => {
                   // Verificar si evalu es diferente de null y tiene la propiedad data
                   if (evaluE2 && evaluE2.data && evalu2 && evalu2.data) {
@@ -1318,7 +1318,7 @@ async function fetchDataAsync2() {
                       Calificación Parcial (Promedio de ambas evaluaciones) :{" "}
                       {data &&
               data.data
-                .filter((item) => item.attributes.correoasesor === correo)
+                .filter((item) => item.attributes.correo === correo)
                 .map((item) => {
                   // Verificar si evalu es diferente de null y tiene la propiedad data
                   if (evaluE2 && evaluE2.data && evalu2 && evalu2.data) {
@@ -1348,7 +1348,7 @@ async function fetchDataAsync2() {
                       return (
                         <React.Fragment key={item.id}>
                           {/* Fila para evalu */}
-                        {promedio} no
+                        {promedio}
                         </React.Fragment>
                       );
                     }
@@ -1534,21 +1534,21 @@ async function fetchDataAsync2() {
       <p style={{ textAlign: 'center', color: 'red' }}>¡Aviso!</p>
       <p style={{ textAlign: 'left', color: 'black' }}>Si usted no está realizando
       su residencia profesional en la Institución,
-      por favor, no tome en cuenta la evaluación del asesor externo
+      por favor, no tome en cuenta la evaluación del asesor externo.
       </p>
       <p style={{ textAlign: 'left', color: 'black' }}>
-        Deberá acudir con dicho asesor para que le realice la evaluación
+        Deberá acudir con dicho asesor para que le realice la evaluación.
       </p>
       <p style={{ textAlign: 'left', color: 'black' }}>
        De igual manera,deberá capturar la evaluación realizada por el asesor interno
-       y realizar el cálculo del promedio de ambas evaluaciones
+       y realizar el cálculo del promedio de ambas evaluaciones.
       </p>
       <p style={{ textAlign: 'left', color: 'black' }}>
        En caso contrario, puede continuar con sus resultados de cada evaluación
-       que se generarán de manera automática si se esta realizando dentro de la Institución
+       que se generarán de manera automática si se esta realizando dentro de la Institución.
       </p>
       <p style={{ textAlign: 'left', color: 'blue' }}>
-       Si todavía no tiene asesir interno, favor de esperar a que se le asigne uno
+       Si todavía no tiene asesor interno, favor de esperar a que se le asigne uno.
       </p>
       <button onClick={() => setmensajeresultado(false)}>Enterado</button>
     </div>

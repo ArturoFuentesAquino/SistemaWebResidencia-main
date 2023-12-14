@@ -16,8 +16,10 @@ import PaginaAsesorInterno from "../PaginaAsesorinterno";
  */
 export const ProfileData = (props) => {
   const nombreasesores = "api/asesores-is";
+  const nombrecordinador = "api/cordinadoras";
 
   const [asesores, setAsesores] = useState(null);
+  const [cordinador, setcordinador] = useState(null);
 
   useEffect(() => {
     // Cargar los datos iniciales al montar el componente
@@ -25,6 +27,10 @@ export const ProfileData = (props) => {
       try {
         const asesores = await fetchData(nombreasesores);
         setAsesores(asesores);
+
+
+        const cordinador = await fetchData(nombrecordinador);
+        setcordinador(cordinador);
         console.log(" los datos:", asesores);
         //setEditingMode(true)
       } catch (error) {
@@ -46,7 +52,15 @@ export const ProfileData = (props) => {
     }
   );
   
+  const cordinaroseleccionado = Array.isArray(cordinador?.data) && cordinador.data.find(
+    (item) => {
+      console.log("Correo en attributes:", item.attributes?.correo?.toLowerCase());
+      console.log("Correo buscado:", correo.toLowerCase());
   
+      // Verificar si item.attributes y item.attributes.correo son definidos antes de la comparación
+      return item.attributes?.correo?.toLowerCase() === correo.toLowerCase();
+    }
+  );
   
  // console.log("ESTE ES EL CORREO CORREO,",correo.toLowerCase())
   //console.log("CORREO", residenteSeleccionado.attributes.correo);
@@ -63,7 +77,7 @@ export const ProfileData = (props) => {
       {/*<PaginaCor graphData={props}/>*/}
       {/*<PaginaAsesorInterno graphData={props} />*/}
       <PaginaEstu graphData={props}/>
-       </div>
+      </div>
     </Router>
       );
   }
@@ -96,6 +110,24 @@ export const ProfileData = (props) => {
       {/*<PaginaCor graphData={props}/>*/}
       {/*<PaginaAsesorInterno graphData={props} />*/}
       <PaginaAsesorInterno graphData={props} />
+      </div>
+    </Router>
+      );
+  }
+
+  if (cordinaroseleccionado &&
+    cordinaroseleccionado.attributes &&
+    cordinaroseleccionado.attributes.correo &&
+    props.graphData.mail.toLowerCase() === cordinaroseleccionado.attributes.correo) {
+    // Realiza la navegación a la ruta "/home" si el jobTitle es "Estudiante"
+    return (
+        <Router>
+      <div>
+      {/*<PaginaJefeCarrera graphData={props} />*/}
+      {/*<PaginaEstu graphData={props}/>*/}
+      {/*<PaginaCor graphData={props}/>*/}
+      {/*<PaginaAsesorInterno graphData={props} />*/}
+      <PaginaCor graphData={props}/>
       </div>
     </Router>
       );

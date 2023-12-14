@@ -9,7 +9,9 @@ import {
   stado,
 } from "./Api";
 import axios from "axios";
-import './../../estilos_impresion/externo/horizontal/estilo-impresion_externo_horizontal.css';
+import "./../../estilos_impresion/externo/horizontal/estilo-impresion_externo_horizontal.css";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 /**
  * Renders information about the user obtained from MS Graph
@@ -17,11 +19,9 @@ import './../../estilos_impresion/externo/horizontal/estilo-impresion_externo_ho
  */
 
 function Anteproyectosrecibidos(props) {
-
   const nombrealm = props.graphData.graphData.graphData.displayName;
-   //const correo = props.graphData.graphData.graphData.mail;
-   const correo = props.graphData.graphData.graphData.mail.toLowerCase();
-
+  //const correo = props.graphData.graphData.graphData.mail;
+  const correo = props.graphData.graphData.graphData.mail.toLowerCase();
 
   const [data, setData] = useState(null);
 
@@ -48,18 +48,18 @@ function Anteproyectosrecibidos(props) {
   //#####################################
   const nombreasesores = "api/asesores-is";
 
-  
   //pruebas de importacion
   const contenidodocumento = "api/upload";
   //
   const direccionapi = "http://localhost:1337/";
   ///
-//PRESIDENTE Y SUBDIRECTOACTUAL
-const presidenteactual = "api/presidenteacademicos";
-const subdirectoractual ="api/subdirectoractuals";
-const [presiactual, setpresiactual] = useState(null);
-const [subdiactual, setsubdiactual] = useState(null);
-
+  //PRESIDENTE Y SUBDIRECTOACTUAL
+  const presidenteactual = "api/presidenteacademicos";
+  const subdirectoractual = "api/subdirectoractuals";
+  const jefedepartamento = "api/jefedepartamentos";
+  const [presiactual, setpresiactual] = useState(null);
+  const [subdiactual, setsubdiactual] = useState(null);
+  const [jefedep, setjefedep] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -82,7 +82,8 @@ const [subdiactual, setsubdiactual] = useState(null);
         const subdiactual = await fetchData(subdirectoractual);
         setsubdiactual(subdiactual);
 
-
+        const jefedep = await fetchData(jefedepartamento);
+        setjefedep(jefedep);
       } catch (error) {
         console.error("Error al obtener los datos:", error);
       }
@@ -255,9 +256,9 @@ const [subdiactual, setsubdiactual] = useState(null);
   };
 
   const imprimir3 = () => {
-       // Ocultar otros elementos antes de imprimir
-       const style = document.createElement('style');
-       style.innerHTML = `
+    // Ocultar otros elementos antes de imprimir
+    const style = document.createElement("style");
+    style.innerHTML = `
        @page { 
            size: landscape; 
        }
@@ -267,10 +268,10 @@ const [subdiactual, setsubdiactual] = useState(null);
            }
        }
    `;
-     
-       // Agregar el estilo al head del documento
-       document.head.appendChild(style);
-       window.print();
+
+    // Agregar el estilo al head del documento
+    document.head.appendChild(style);
+    window.print();
   };
 
   //####################################
@@ -290,7 +291,7 @@ const [subdiactual, setsubdiactual] = useState(null);
   };
   const soloanio = () => {
     const opcionesFecha = {
-  // nombre del mes completo
+      // nombre del mes completo
       year: "numeric", // año con cuatro dígitos
     };
 
@@ -301,34 +302,40 @@ const [subdiactual, setsubdiactual] = useState(null);
     return anio;
   };
 
-  const elementosConAsesores = Array.isArray(data?.data) && Array.isArray(asesores?.data)
-    ? data.data.map(elemento => {
-        const asesor = asesores.data.find(a => a.attributes.nombre === elemento.attributes.asesorI);
-        return { ...elemento, asesorNombre: asesor ? asesor.attributes.nombre : 'Desconocido' };
-      })
-    : [];
+  const elementosConAsesores =
+    Array.isArray(data?.data) && Array.isArray(asesores?.data)
+      ? data.data.map((elemento) => {
+          const asesor = asesores.data.find(
+            (a) => a.attributes.nombre === elemento.attributes.asesorI
+          );
+          return {
+            ...elemento,
+            asesorNombre: asesor ? asesor.attributes.nombre : "Desconocido",
+          };
+        })
+      : [];
 
   console.log("Esto es grupo asesores !", elementosConAsesores);
-  
+
   function getSemester() {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
-    let semester1 = '';
-    let semester2 = '';
+    let semester1 = "";
+    let semester2 = "";
 
     if (currentMonth >= 1 && currentMonth <= 6) {
-        semester1 = ` ${currentYear}`;
-        semester2 = ' ';
+      semester1 = ` ${currentYear}`;
+      semester2 = " ";
     } else {
-        semester1 = ' ';
-        semester2 = `  ${currentYear}`;
+      semester1 = " ";
+      semester2 = `  ${currentYear}`;
     }
 
     return { semester1, semester2 };
-}
-const { semester1, semester2 } = getSemester();
+  }
+  const { semester1, semester2 } = getSemester();
 
-/*
+  /*
 const fecha = new Date();
 const dia = String(fecha.getDate()).padStart(2, '0');
 const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript van de 0 (enero) a 11 (diciembre), por lo que sumamos 1.
@@ -341,52 +348,95 @@ const anioactual = fecha.toLocaleDateString('es-ES');
 console.log("Esto es el año actual !", anioactual);
 */
 
-//############
+  //############
 
-const [rangoInicio, setRangoInicio] = useState(1);
-const [rangoFin, setRangoFin] = useState(3);
+  //const [rangoInicio, setRangoInicio] = useState(1);
+  //const [rangoFin, setRangoFin] = useState(3);
+
+  //const elementosFiltrados = elementosConAsesores
+  //.filter((item, index) => index + 1 >= rangoInicio && index + 1 <= rangoFin && item.attributes.estado === "Aprobado");
+
+  const [rangoInicio, setRangoInicio] = useState(1);
+  const [rangoFin, setRangoFin] = useState(elementosConAsesores.length);
+
+  const elementosFiltrados = elementosConAsesores.filter(
+    (item, index) =>
+      index + 1 >= rangoInicio &&
+      index + 1 <= rangoFin &&
+      item.attributes.estado === "Aprobado"
+  );
 
 
-const elementosFiltrados = elementosConAsesores
-  .filter((item, index) => index + 1 >= rangoInicio && index + 1 <= rangoFin && item.attributes.estado === "Aprobado");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
 
   return (
     <div className="contenido__anteproyectosubir">
       <div className="Anteproyectosubir__titulo">
-        <h1>Buen día Jefe De Departamento, estos son los Anteproyectos
-               Aceptados Por la coordinadora
-            <br/>De Residencia Profesional</h1>
-            <p>Imprimir dictamenes </p>
-            <select
-  value={rangoInicio}
-  onChange={(e) => setRangoInicio(Number(e.target.value))}
+        <h1>
+          Buen día Jefe de departamento, estos son los Anteproyectos aceptados
+          por la coordinadora
+          <br />
+          De Residencia Profesional
+        </h1>
+
+      </div>
+      <div className="Anteproyectosubir__preguntas">
+      <p>Imprimir dictamenes </p>
+
+      <div>
+
+<select
+value={rangoInicio}
+onChange={(e) => setRangoInicio(Number(e.target.value))}
 >
-  {Array.from({ length: elementosConAsesores.length }, (_, index) => (
-    <option key={index + 1} value={index + 1}>
-      {` del ${index + 1}`}
-    </option>
-  ))}
+{Array.from({ length: elementosConAsesores.length }, (_, index) => (
+<option key={index + 1} value={index + 1}>
+{`Del ${index + 1}`}
+</option>
+))}
 </select>
 
 <span> a </span>
 
 <select
-  value={rangoFin}
-  onChange={(e) => setRangoFin(Number(e.target.value))}
+value={rangoFin}
+onChange={(e) => {
+const nuevoRangoFin = Number(e.target.value);
+const diferencia = nuevoRangoFin - rangoInicio;
+
+if (diferencia > 3) {
+// Si la diferencia es más de 3, ajustamos el rango final
+setRangoFin(rangoInicio + 3);
+} else {
+// Si la diferencia es 3 o menos, aceptamos el valor seleccionado
+setRangoFin(nuevoRangoFin);
+}
+}}
 >
-  {Array.from({ length: elementosConAsesores.length }, (_, index) => (
-    <option key={index + 1} value={index + 1}>
-      {`al ${index + 1}`}
-    </option>
-  ))}
+{Array.from({ length: elementosConAsesores.length }, (_, index) => (
+<option key={index + 1} value={index + 1}>
+{`Al ${index + 1}`}
+</option>
+))}
 </select>
+</div>
+<div>
+<label>Selecciona una fecha: </label>
+<DatePicker
+selected={selectedDate}
+onChange={handleDateChange}
+dateFormat="dd/MM/yyyy"
+// Ajusta otros props según tus necesidades
+/>
 
-
-
-      </div>
-      <div className="Anteproyectosubir__preguntas">
+</div>
         <div className="informacion__tabla">
-          <table border="1">
+          <table className="tablaprueba" border="1">
             <thead>
               <tr>
                 <th>Número de Control</th>
@@ -404,56 +454,77 @@ const elementosFiltrados = elementosConAsesores
               </tr>
             </thead>
             <tbody>
-
               {/* {data &&
-                data.data.map((item) => (*/ }
+                data.data.map((item) => (*/}
               {data &&
                 data.data
-                .filter((item) => item.attributes.estado === "Aprobado")
-                .map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.attributes.ncontrol}</td>
-                    <td>{item.attributes.nombre}</td>
-                    <td>{item.attributes.nombre_anteproyecto}</td>
-                    <td>{item.attributes.periodo}</td>
-                    <td>{item.attributes.empresa}</td>
-                    <td>{item.attributes.asesorE}</td>
-                    <td>{item.attributes.asesorI}</td>
+                  .filter((item) => item.attributes.estado === "Aprobado")
+                  .map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.attributes.ncontrol}</td>
+                      <td>{item.attributes.nombre}</td>
+                      <td>{item.attributes.nombre_anteproyecto}</td>
+                      <td>{item.attributes.periodo}</td>
+                      <td>{item.attributes.empresa}</td>
+                      <td>{item.attributes.asesorE}</td>
+                      <td>{item.attributes.asesorI}</td>
 
-                    <td>
-                      {documents
-                        .filter(
-                          (document) =>
-                            document.id ===
-                            (typeof item.attributes.iddocumento === "string"
-                              ? parseInt(item.attributes.iddocumento, 10)
-                              : item.attributes.iddocumento)
-                        )
-                        .map((document) => (
-                          <div key={document.id}>{document.name}</div>
-                        ))}
-                    </td>
-                    <td>
-                    {item.attributes.carrera}
-                    </td>
-                    <td
-                      className={
-                        item.attributes.estado === "Aprobado"
-                          ? "aprobado"
-                          : item.attributes.estado === "En Revisión"
-                          ? "en-revision"
-                          : item.attributes.estado === "Corregir"
-                          ? "corregir"
-                          : item.attributes.estado === "Rechazado"
-                          ? "rechazado"
-                          : ""
-                      }
-                    >
-                      
-                      {item.attributes.estado}
-                    </td>
-                    <td>
-                      <div className="observaciones">
+                      <td>
+                        {documents
+                          .filter(
+                            (document) =>
+                              document.id ===
+                              (typeof item.attributes.iddocumento === "string"
+                                ? parseInt(item.attributes.iddocumento, 10)
+                                : item.attributes.iddocumento)
+                          )
+                          .map((document) => (
+                            <div key={document.id}>{document.name}</div>
+                          ))}
+                      </td>
+                      <td>{item.attributes.carrera}</td>
+                      <td
+                        className={
+                          item.attributes.estado === "Aprobado"
+                            ? "aprobado"
+                            : item.attributes.estado === "En Revisión"
+                            ? "en-revision"
+                            : item.attributes.estado === "Corregir"
+                            ? "corregir"
+                            : item.attributes.estado === "Rechazado"
+                            ? "rechazado"
+                            : ""
+                        }
+                      >
+                        {item.attributes.estado}
+                      </td>
+                      <td>
+                        <div className="observaciones">
+                          {documents
+                            .filter(
+                              (document) =>
+                                document.id ===
+                                (typeof item.attributes.iddocumento === "string"
+                                  ? parseInt(item.attributes.iddocumento, 10)
+                                  : item.attributes.iddocumento)
+                            )
+                            .map((document) => (
+                              <div key={document.id}>
+                                <textarea
+                                  name="textarea"
+                                  onChange={handleChange}
+                                  placeholder={
+                                    "Observaciones:" +
+                                    "\n" +
+                                    item.attributes.observaciones
+                                  }
+                                />
+                              </div>
+                            ))}
+                        </div>
+                      </td>
+
+                      <td>
                         {documents
                           .filter(
                             (document) =>
@@ -464,161 +535,128 @@ const elementosFiltrados = elementosConAsesores
                           )
                           .map((document) => (
                             <div key={document.id}>
-                              <textarea
-                                name="textarea"
-                                onChange={handleChange}
-                                placeholder={
-                                  "Observaciones:" +
-                                  "\n" +
-                                  item.attributes.observaciones
-                                }
-                              />
+                              <button
+                                className="btnrec"
+                                onClick={() => pruebas(document.url)}
+                              >
+                                ver documento
+                              </button>
+                              {
+                                /*
+                                                              <button
+                                className="btnrec"
+                                onClick={() => Aceptado(item.id, texto)}
+                              >
+                                Aceptar
+                              </button>
+                                */
+                              }
+
+                              <button
+                                className="btnrec"
+                                onClick={() => Rechazado(item.id, texto)}
+                              >
+                                Rechazar
+                              </button>
+                              <button
+                                className="btnrec"
+                                onClick={() => corregir(item.id, texto)}
+                              >
+                                Corregir
+                              </button>
                             </div>
                           ))}
-                      </div>
-                    </td>
-
-                    <td>
-                      {documents
-                        .filter(
-                          (document) =>
-                            document.id ===
-                            (typeof item.attributes.iddocumento === "string"
-                              ? parseInt(item.attributes.iddocumento, 10)
-                              : item.attributes.iddocumento)
-                        )
-                        .map((document) => (
-                          <div key={document.id}>
-                            <button
-                              className="btnrec"
-                              onClick={() => pruebas(document.url)}
-                            >
-                              ver documento
-                            </button>
-                            <button
-                              className="btnrec"
-                              onClick={() => Aceptado(item.id, texto)}
-                            >
-                              Aceptar
-                            </button>
-                            <button
-                              className="btnrec"
-                              onClick={() => Rechazado(item.id, texto)}
-                            >
-                              Rechazar
-                            </button>
-                            <button
-                              className="btnrec"
-                              onClick={() => corregir(item.id, texto)}
-                            >
-                              Corregir
-                            </button>
-                          </div>
-                        ))}
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
-            
           </table>
-          <button   onClick={handleCrearClick} >   Generar Dictamen    </button>
+          <button onClick={handleCrearClick}> Generar Dictamen </button>
         </div>
-        
       </div>
 
       {mostrarPopup && (
-        
         <div className="externohorizontal">
           <div className="contenidoexternohorizontal">
-          <div className ="cabeceraimpresion">
-                     <table className="mi-tabla">
-              <tbody>
-                <tr>
-                  <td>
-                    <img
-                      src="https://istmo.tecnm.mx/wp-content/uploads/2021/08/logo-tec-png-naranja.png"
-                      alt="Descripción de la imagen"
-                      width="100" // Establece el ancho en píxeles
-                      height="50" // Establece la altura en píxeles
-                    />
-                  </td>
-                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
-                    Instituto Tecnológico Del Istmo
-                    <br />
-                    "Por una Tecnología Propia como principio de libertad"
-                    <br />
-                    FORMATO PARA DICTAMEN DE RESIDENCIAS PROFESIONALES
-                    <br />
-                    
-                  </td>
-                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
-                    Código:
-                    <br />
-                    FR-ITISTMO-7.5.1-16-01
-                    <br />
-                    Versión:
-                    <br />
-                    Rev. 1
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-        </div>
+            <div className="cabeceraimpresion">
+              <table className="mi-tabla">
+                <tbody>
+                  <tr>
+                    <td>
+                      <img
+                        src="https://istmo.tecnm.mx/wp-content/uploads/2021/08/logo-tec-png-naranja.png"
+                        alt="Descripción de la imagen"
+                        width="100" // Establece el ancho en píxeles
+                        height="50" // Establece la altura en píxeles
+                      />
+                    </td>
+                    <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                      Instituto Tecnológico Del Istmo
+                      <br />
+                      "Por una Tecnología Propia como principio de libertad"
+                      <br />
+                      FORMATO PARA DICTAMEN DE RESIDENCIAS PROFESIONALES
+                      <br />
+                    </td>
+                    <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                      Código:
+                      <br />
+                      FR-ITISTMO-7.5.1-16-01
+                      <br />
+                      Versión:
+                      <br />
+                      Rev. 1
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             <br />
             <p style={{ textAlign: "center", fontWeight: "bold" }}>
-            INSTITUTO TECNOLÓGICO DEL ISTMO
-            <br />
-          DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN
-          <br />
-    DICTAMEN DE ANTEPROYECTOS DE RESIDENCIAS PROFESIONALES
-
+              INSTITUTO TECNOLÓGICO DEL ISTMO
+              <br />
+              DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN
+              <br />
+              DICTAMEN DE ANTEPROYECTOS DE RESIDENCIAS PROFESIONALES
             </p>
 
-
-
-            <div className="contenido__preguntas">
+            <div className="dictamencontenido">
+              <div className="informacion__pregunta"></div>
               <div className="informacion__pregunta">
-
-              </div>
-              <div className="informacion__pregunta">
-              <p style={{ textAlign: "right", fontWeight: "bold" }}>
-                
-              <table className="mi-tabla2" border = "1">
-              <tr>
-    <th rowSpan={2}>SEMESTRE</th>
-    <td>ENE - JUN</td>
-    <td>{semester1}</td>
-</tr>
-<tr>
-    <td>AGO - DIC</td>
-    <td>{semester2}</td>
-</tr>
-              </table>
-            </p>
+                <p style={{ textAlign: "right", fontWeight: "bold" }}>
+                  <table className="mi-tabla2" border="1">
+                    <tr>
+                      <th rowSpan={2}>SEMESTRE</th>
+                      <td>ENE - JUN</td>
+                      <td>{semester1}</td>
+                    </tr>
+                    <tr>
+                      <td>AGO - DIC</td>
+                      <td>{semester2}</td>
+                    </tr>
+                  </table>
+                </p>
               </div>
             </div>
 
-           
-          <table className= "mi-tabla2"border="1">
-            <thead>
-              <tr>
-              <th>Num</th>
-                <th>Número de Control</th>
-                <th>Nombre del Estudiante</th>
-                <th>Genero</th>
-                <th>Nombre de Anteproyecto</th>
-                <th>Empresa</th>
-                <th>Asesor Externo</th>
-                <th>Asesor Interno</th>
-                <th>Dictamen</th>
-                <th>Fecha Dictamen</th>
-
-              </tr>
-            </thead>
-            <tbody>
-
-              {/* {data &&
+            <table className="mi-tabla2" border="1">
+              <thead>
+                <tr>
+                  <th>Num</th>
+                  <th>Número de Control</th>
+                  <th>Nombre del Estudiante</th>
+                  <th>Genero</th>
+                  <th>Nombre de Anteproyecto</th>
+                  <th>Empresa</th>
+                  <th>Asesor Externo</th>
+                  <th>Asesor Interno</th>
+                  <th>Dictamen</th>
+                  <th>Fecha Dictamen</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* {data &&
                 data.data.map((item) => (
                   o
                     {data &&
@@ -626,107 +664,82 @@ const elementosFiltrados = elementosConAsesores
                 .filter((item) => item.attributes.estado === "Aprobado")
                 .map((item,index) => (
                   
-                  */ }
+                  */}
 
-{/*
+                {/*
             {elementosConAsesores
             .filter((item) => item.attributes.estado === "Aprobado")
             .map((item, index) => (
 
             */}
-            {elementosFiltrados.map((item, index) => (
-
+                {elementosFiltrados.map((item, index) => (
                   <tr key={item.id}>
-                    <td>{index + 1}</td>
-                    <td>{item.attributes.ncontrol}</td>
-                    <td>{item.attributes.nombre}</td>
-                    <td>{item.attributes.genero}</td>
-                    <td>{item.attributes.nombre_anteproyecto}</td>
-              
-                    <td>{item.attributes.empresa}</td>
-                    <td>{item.attributes.asesorE}</td>
-                    <td>{item.attributes.asesorI}</td>
-                    <td>
-                    {item.attributes.estado}
-                    </td>
-                    <td  >
-                    {new Date().toLocaleDateString('es-ES')}
-                    </td>
+                    <td style={{ textAlign: 'center'}}>{rangoInicio + index}</td>
+                    <td style={{ textAlign: 'center'}}>{item.attributes.ncontrol.toUpperCase()}</td>
+                    <td >{item.attributes.nombre.toUpperCase()}</td>
+                    <td style={{ textAlign: 'center'}}>{item.attributes.genero.toUpperCase()}</td>
+                    <td >{item.attributes.nombre_anteproyecto.toUpperCase()}</td>
 
-      
+                    <td>{item.attributes.empresa.toUpperCase()}</td>
+                    <td >{item.attributes.asesorE.toUpperCase()}</td>
+                    <td >{item.attributes.asesorI.toUpperCase()}</td>
+                    <td style={{ textAlign: 'center'}}>{item.attributes.estado.toUpperCase()}</td>
+                    <td style={{ textAlign: 'center'}}>{selectedDate.toLocaleDateString("es-ES")}</td>
                   </tr>
                 ))}
-            </tbody>
-            
-          </table>
-         
-    
+              </tbody>
+            </table>
 
             <p style={{ textAlign: "center" }}>
-            <br />
-            En caso que uno o más Anteproyectos sean rechazados 
-            se elaborará otro registro únicamente con los anteproyectos redictaminado
+              <br />
+              En caso que uno o más Anteproyectos sean rechazados se elaborará
+              otro registro únicamente con los anteproyectos redictaminado
             </p>
 
-
-
-
             <div className="pie-paginaimpresion">
-            <table className="mi-tabla">
-              <tbody>
-                <tr>
-                <td style={{ textAlign: "center", fontWeight: "bold" }}>
-                    Propone
-                    <br />
-                    <br />
-                    <br />
-                {/*    {presiactual && presiactual.data.map((item) => (
+              <table className="mi-tabla">
+                <tbody>
+                  <tr>
+                    <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                      Propone
+                      <br />
+                      <br />
+                      <br />
+                      {/*    {presiactual && presiactual.data.map((item) => (
                       <p>
                         {item.attributes.nombre}
                       </p>
                     ))}
-                */} 
-
-
-                {presiactual && presiactual.data.length > 0 && (
-                  <p>
-                    {presiactual.data[0].attributes.nombre}
-                  </p>
-                )}
-                    PRESIDENTE DE ACADEMIA
-                  </td>
-                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
-                    Valida
-                    <br />
-                    <br />
-                    <br />
-                    {nombrealm}
-                    <br />
-                    JEFE DEL DEPTO. ACADEMICO
-                    <br />
-                    
-                  </td>
-                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
-                    Vo Bo.
-                    <br />
-                    <br />
-                    <br />
-
-                    {subdiactual && subdiactual.data.length > 0 && (
-                  <p>
-                    {subdiactual.data[0].attributes.nombre}
-                  </p>
-                )}
-                    SUBDIRECTOR ACADEMICO
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-
+                */}
+                      {presiactual && presiactual.data.length > 0 && (
+                        <p>{presiactual.data[0].attributes.nombre}</p>
+                      )}
+                      PRESIDENTE DE ACADEMIA
+                    </td>
+                    <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                      Valida
+                      <br />
+                      <br />
+                      <br />
+                      {jefedep && jefedep.data.length > 0 && (
+                        <p>{jefedep.data[0].attributes.nombre}</p>
+                      )}
+                      JEFE DEL DEPTO. ACADEMICO
+                    </td>
+                    <td style={{ textAlign: "center", fontWeight: "bold" }}>
+                      Vo Bo.
+                      <br />
+                      <br />
+                      <br />
+                      {subdiactual && subdiactual.data.length > 0 && (
+                        <p>{subdiactual.data[0].attributes.nombre}</p>
+                      )}
+                      SUBDIRECTOR ACADEMICO
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-
-
 
             {/* Agrega más campos según sea necesario */}
             <button className="btn-asig" onClick={imprimir3}>
@@ -736,17 +749,8 @@ const elementosFiltrados = elementosConAsesores
               Cerrar
             </button>
           </div>
-
-
-
         </div>
       )}
-
-
-
-
-
-      
     </div>
   );
 }

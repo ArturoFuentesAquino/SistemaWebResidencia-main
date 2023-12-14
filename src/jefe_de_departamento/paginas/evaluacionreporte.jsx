@@ -96,6 +96,9 @@ const Evalucionreporteresidente = (props) => {
   ///
   //const residentesregistro =
 
+  const jefedepartamento = "api/jefedepartamentos";
+  const [jefedep, setjefedep] = useState(null);
+
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -148,6 +151,9 @@ const nuevaluaE2 = "api/evaluacion2-es"
         setEvalu2(fetchedEvalu2);
         const fetchedEvaluE2 = await fetchData(nuevaluaE2);
         setEvalue2(fetchedEvaluE2);
+
+        const jefedep = await fetchData(jefedepartamento);
+        setjefedep(jefedep);
         console.log("Cargo todos los datos !", evaluE);
         //setEditingMode(true)
       } catch (error) {
@@ -284,6 +290,12 @@ const nuevaluaE2 = "api/evaluacion2-es"
        @page { 
            size: letter;
        }
+       @media print {
+           body *{
+               font-size: 11px;
+           }
+           
+       }
    `;
      
        // Agregar el estilo al head del documento
@@ -349,7 +361,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
       valor: "",
       maximo: 45,
       nombre:
-        "Resultados, planos, gráficas, prototipos, manuales, programas, análisis estadísticos, modelos matemáticos, simulaciones, normativaes, regulaciones y restricciones, entre otros. Solo para proyectos que por su naturaleza lo requieran: estudio de mercado, estudio técnico y estudio económico.",
+        "Resultados, planos, gráficas, prototipos, manuales, programas, análisis estadísticos, modelos matemáticos, simulaciones, normativas, regulaciones y restricciones, entre otros. Solo para proyectos que por su naturaleza lo requieran: estudio de mercado, estudio técnico y estudio económico.",
     },
     {
       id: 12,
@@ -612,7 +624,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
         await updateData(idresidente, nuevaEvaluacion, naevaluaE);
 
         console.log("Evaluación registrada exitosamente");
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {
         alert("No se ha podido registrar la Evaluación");
         return;
@@ -706,7 +718,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
                 data.data
                   .filter(
                     (item) =>
-                      item.attributes.correoasesorE === correo && item.attributes.fuera === "No"
+                      item.attributes.correoasesorE === correo && item.attributes.fuera === "No" && item.attributes.estado === "Aprobado"
                   )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>
@@ -723,6 +735,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.nombre}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre: e.target.value })
               }
@@ -732,6 +745,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.nombre_anteproyecto}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre_anteproyecto: e.target.value })
               }
@@ -741,6 +755,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.periodo}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, periodo: e.target.value })
               }
@@ -752,6 +767,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.ncontrol}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, ncontrol: e.target.value })
               }
@@ -761,6 +777,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.carrera}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, carrera: e.target.value })
               }
@@ -772,6 +789,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.califasesorI}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, califasesorI: e.target.value })
               }
@@ -949,11 +967,16 @@ const nuevaluaE2 = "api/evaluacion2-es"
                 <tr>
                   <td>
                     <p style={{ textAlign: "center" }}>
+                    <br />
                       <br />
                       <br />
                       <br />
-                      <br />
-                      {nombrealm}
+          
+              
+                      {jefedep && jefedep.data.length > 0 && (
+                        
+                        <p>{jefedep.data[0].attributes.nombre}</p>
+                      )}
                     </p>
                   </td>
                   <td>

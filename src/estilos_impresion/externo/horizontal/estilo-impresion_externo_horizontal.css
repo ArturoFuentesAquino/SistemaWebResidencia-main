@@ -145,3 +145,11 @@
     border-collapse: collapse;
     width: 10%;
   }
+
+  .dictamencontenido {
+    display: flex;
+    flex-direction: row;
+  
+    align-items: center;
+    justify-content: flex-end;
+  }

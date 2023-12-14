@@ -66,6 +66,8 @@ const Asignacionasesorint = (props) => {
   const direccionapi = "http://localhost:1337/";
   ///
   //const residentesregistro =
+  const jefedepartamento = "api/jefedepartamentos";
+  const [jefedep, setjefedep] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -85,6 +87,9 @@ const Asignacionasesorint = (props) => {
         setAsesores(asesores);
         const asesoresE = await fetchData(nombreasesoresE);
         setAsesoresE(asesoresE);
+
+        const jefedep = await fetchData(jefedepartamento);
+        setjefedep(jefedep);
         console.log("¡Cargo todos los datos!");
         //setEditingMode(true)
       } catch (error) {
@@ -304,8 +309,12 @@ const Asignacionasesorint = (props) => {
               onChange={handleResidenteChange}
             >
               <option value="">Seleccionar Un Residente</option>
-              {data &&
-                data.data.map((item) => (
+               {/* {data &&
+                data.data.map((item) => (*/}
+               {data &&
+                data.data
+                  .filter((item) => item.attributes.estado === "Aprobado")
+                  .map((item) => (
                   <option key={item.id} value={item.attributes.nombre}>
                     {item.attributes.nombre}
                   </option>
@@ -349,6 +358,7 @@ const Asignacionasesorint = (props) => {
               type="text"
               name="name"
               value={newItem.nombre_anteproyecto}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre_anteproyecto: e.target.value })
               }
@@ -358,6 +368,7 @@ const Asignacionasesorint = (props) => {
               type="text"
               name="name"
               value={newItem.ncontrol}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, ncontrol: e.target.value })
               }
@@ -369,6 +380,7 @@ const Asignacionasesorint = (props) => {
               type="text"
               name="name"
               value={newItem.nombre}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre: e.target.value })
               }
@@ -378,6 +390,7 @@ const Asignacionasesorint = (props) => {
               type="text"
               name="name"
               value={newItem.carrera}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, carrera: e.target.value })
               }
@@ -387,6 +400,7 @@ const Asignacionasesorint = (props) => {
               type="text"
               name="name"
               value={newItem.periodo}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, periodo: e.target.value })
               }
@@ -533,7 +547,10 @@ const Asignacionasesorint = (props) => {
             <br />
             <br />
             <p style={{ textAlign: "center", fontWeight: "bold" }}>
-             {nombrealm}<br />
+            {jefedep && jefedep.data.length > 0 && (
+                        <p>{jefedep.data[0].attributes.nombre}</p>
+                      )}<br />
+             
               SISTEMAS Y COMPUTACIÓN
             </p>
             <p style={{ textAlign: "left" }}>C.c.p. Expediente</p>

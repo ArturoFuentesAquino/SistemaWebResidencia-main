@@ -127,6 +127,10 @@ const nuevaluaE2 = "api/evaluacion2-es"
   const [evaluE, setEvalue] = useState(null);
   //#######################################
 
+  const jefedepartamento = "api/jefedepartamentos";
+  const [jefedep, setjefedep] = useState(null);
+
+
   useEffect(() => {
     // Cargar los datos iniciales al montar el componente
     async function fetchDataAsync() {
@@ -146,6 +150,9 @@ const nuevaluaE2 = "api/evaluacion2-es"
         setEvalu2(fetchedEvalu2);
         const fetchedEvaluE2 = await fetchData(nuevaluaE2);
         setEvalue2(fetchedEvaluE2);
+
+        const jefedep = await fetchData(jefedepartamento);
+        setjefedep(jefedep);
 
         console.log("Cargo todos los datos !", evaluE);
         //setEditingMode(true)
@@ -279,7 +286,17 @@ const nuevaluaE2 = "api/evaluacion2-es"
   const imprimir3 = () => {
         // Ocultar otros elementos antes de imprimir
         const style = document.createElement('style');
-        style.innerHTML = '@page { size: letter; }';
+        style.innerHTML = `
+        @page { 
+            size: letter;
+        }
+        @media print {
+            body *{
+                font-size: 11px;
+            }
+            
+        }
+    `;
       
         // Agregar el estilo al head del documento
         document.head.appendChild(style);
@@ -557,12 +574,13 @@ const nuevaluaE2 = "api/evaluacion2-es"
 
       // Actualiza el estado de evaluacion
       setevaluacion(nuevaEvaluacion);
+      
 
       try {
         await updateData(idresidente, nuevaEvaluacion, nuevaluaE2);
 
         console.log("Evaluación registrada exitosamente");
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {
         alert("No se ha podido registrar la Evaluación");
         return;
@@ -658,7 +676,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
                     (item) =>
                       item.attributes.correoasesorE === correo &&
                       item.attributes.califasesorE === "0" 
-                      && item.attributes.fuera === "No"
+                      && item.attributes.fuera === "No" && item.attributes.estado === "Aprobado"
                   )
                   .map((item) => (
                     <option key={item.id} value={item.attributes.nombre}>
@@ -675,6 +693,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.nombre}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre: e.target.value })
               }
@@ -684,6 +703,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.nombre_anteproyecto}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, nombre_anteproyecto: e.target.value })
               }
@@ -693,6 +713,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.periodo}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, periodo: e.target.value })
               }
@@ -704,6 +725,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.ncontrol}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, ncontrol: e.target.value })
               }
@@ -713,6 +735,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.carrera}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, carrera: e.target.value })
               }
@@ -724,6 +747,7 @@ const nuevaluaE2 = "api/evaluacion2-es"
               type="text"
               name="name"
               value={newItem.califasesorI}
+              readOnly
               onChange={(e) =>
                 setNewItem({ ...newItem, califasesorI: e.target.value })
               }
@@ -903,8 +927,9 @@ const nuevaluaE2 = "api/evaluacion2-es"
                       <br />
                       <br />
                       <br />
-                      <br />
-                      {nombrealm}
+                      {jefedep && jefedep.data.length > 0 && (
+                        <p>{jefedep.data[0].attributes.nombre}</p>
+                      )}
                     </p>
                   </td>
                   <td>

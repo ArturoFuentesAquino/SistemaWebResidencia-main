@@ -38,7 +38,7 @@ const Barra = ({ children }) => {
             </div>
             <div title='Anteproyectos' className={`boton ${isActive('/anteproyectosrecibidos') ? 'activo' : ''}`} onClick={() => navigateTo('/anteproyectosrecibidos')}>
                 <FaRegListAlt className="icono" />
-                <h1>Lista de <br /> Alumnos</h1>
+                <h1>Anteproyectos <br /> Recibidos</h1>
             </div>
               {/* Nueva ruta para salir */}
               <div title='Salir' className={`boton ${isActive('/salir') ? 'activo' : ''}`} onClick={() => navigateTo('/salir')}>
